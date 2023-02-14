@@ -1,0 +1,206 @@
+[
+    {
+        "id": 1,
+        "nombre": "Renta Grandes Contribuyentes",
+        "frecuencia": "Personalizado",
+        "cuotas": [
+            {
+                "id": 1,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 2,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            },
+            {
+                "id": 3,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "nombre": "Renta Personas Juridicas",
+        "frecuencia": "Personalizado",
+        "cuotas": [
+            {
+                "id": 1,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 2,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "nombre": "Renta Personas Naturales",
+        "frecuencia": "Anual",
+        "cuotas": [
+            {
+                "id": 1,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "nombre": "Iva Bimestral",
+        "frecuencia": "Bimestral",
+        "cuotas": [
+            {
+                "id": 1,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 2,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            },
+            {
+                "id": 3,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 4,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 5,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            },
+            {
+                "id": 6,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "nombre": "IVA Cuatrimestral",
+        "frecuencia": "Cuatrimestral",
+        "cuotas": [
+            {
+                "id": 1,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 2,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            },
+            {
+                "id": 3,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "nombre": "Retención en la fuente",
+        "frecuencia": "Mensual",
+        "cuotas": [
+            {
+                "id": 1,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 2,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            },
+            {
+                "id": 3,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 4,
+                "nombre": "Cuota 1",
+                "inicio": "2019-01-01",
+                "fin": "2019-01-31"
+            },
+            {
+                "id": 5,
+                "nombre": "Cuota 2",
+                "inicio": "2019-02-01",
+                "fin": "2019-02-28"
+            },
+            {
+                "id": 6,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 7,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 8,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 9,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 10,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 11,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            },
+            {
+                "id": 12,
+                "nombre": "Cuota 3",
+                "inicio": "2019-03-01",
+                "fin": "2019-03-31"
+            }
+        ]
+    }
+]

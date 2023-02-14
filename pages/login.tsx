@@ -24,7 +24,7 @@ function Copyright(props: any) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
 
-      Medical Gestion
+      R&R
       {' '}
       {new Date().getFullYear()}
       {'.'}
@@ -51,7 +51,6 @@ export default function SignInSide() {
 
     try {      
       // todo login with axios
-      
       if (user != '1234' || password != '1234') {
         setError(true);
         setErrorMessage('Usuario o contraseña incorrectos');

@@ -12,7 +12,10 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { parseCookies, setCookie } from 'nookies'
+import { parseCookies, setCookie } from 'nookies';
+import axios from "axios";
+import { useRouter } from 'next/router';
+import { useState } from "react";
 
 import banner from '../public/images/login-banner.jpg';
 
@@ -32,40 +35,40 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignInSide() {
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const router = useRouter();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const credentials = new FormData(event.currentTarget);
+    const user = credentials.get('user');
+    const password = credentials.get('password');
 
     // send data to server  
-    const url = process.env.NEXT_PUBLIC_API_URL + '/signin';
+    const url = process.env.NEXT_PUBLIC_API_URL + '/login';
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: credentials.get('email'),
-        password: credentials.get('password')
-      })
-    })
-
-    const data = await res.json();
-    if (data.token) {
-      // store jwt into cookies
-      setCookie(null, 'token', data.token, {
-        maxAge: 30 * 24 * 60 * 60,
-      });
-
-      // store user
-      setCookie(null, 'user',  JSON.stringify(data.user), {
-        maxAge: 30 * 24 * 60 * 60,
-      });
-      // redirect to home
+    try {      
+      // todo login with axios
       
-      window.location.href = '/';
+      if (user != '1234' || password != '1234') {
+        setError(true);
+        setErrorMessage('Usuario o contraseña incorrectos');
+        return;
+      }
+
+      // redirect to home page
+      router.push('/');
+    } catch (error) {
+      console.error(error);
     }
   };
+
+  const handleOnChange =(event: React.ChangeEvent<HTMLInputElement>) => {
+    setError(false);
+    setErrorMessage('');
+  }
 
   return (
     <>
@@ -103,27 +106,30 @@ export default function SignInSide() {
               <Typography component="h1" variant="h5">
                 Iniciar Sesión
               </Typography>
-              <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                 <TextField
                   margin="normal"
                   required
                   fullWidth
                   id="email"
-                  type={'email'}
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  type={'text'}
+                  label="Nombre de usuario"
+                  name="user"
                   autoFocus
+                  error={error}
+                  helperText={errorMessage}
+                  onChange={handleOnChange}
                 />
                 <TextField
                   margin="normal"
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Contraseña"
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  onChange={handleOnChange}
                 />
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}

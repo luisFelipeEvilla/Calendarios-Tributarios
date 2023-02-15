@@ -5,12 +5,8 @@ import Navigation from "./layouts/navigation";
 export default function Layout({ ...props }) {
 
     return (
-        <Box sx={{display: 'flex'}}>
-            <Box sx={{height: '100vh', minWidth: 220, backgroundColor: "primary.main"}}> 
-                <Navigation>
-                </Navigation>
-            </Box>
-
+        <Box sx={{ display: 'flex', height: '100vh'}}>
+            <Navigation/>
             <Box>
                 <Breadcrumbs aria-label="breadcrumb" sx={{ backgroundColor: 'primary.main', height: 45, color: 'white', paddingLeft: 2, display: 'flex', alignItems: 'center' }}>
                     <Link underline="hover" color="inherit" href="/">

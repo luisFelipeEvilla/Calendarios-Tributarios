@@ -1,89 +1,43 @@
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import Drawer from "@mui/material/Drawer";
 import HomeIcon from '@mui/icons-material/Home';
+import { Box, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import PeopleIcon from '@mui/icons-material/People';
-import DnsRoundedIcon from '@mui/icons-material/DnsRounded';
-import PermMediaOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActual';
-import PublicIcon from '@mui/icons-material/Public';
-import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
-import SettingsInputComponentIcon from '@mui/icons-material/SettingsInputComponent';
-import TimerIcon from '@mui/icons-material/Timer';
-import SettingsIcon from '@mui/icons-material/Settings';
-import PhonelinkSetupIcon from '@mui/icons-material/PhonelinkSetup';
-import Divider from '@mui/material/Divider';
-import Drawer, { DrawerProps } from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import { Box } from '@mui/material';
-import { CalendarToday } from '@mui/icons-material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import Avatar from "@mui/material/Avatar";
+import Image from 'next/image';
 
-export default function Navigation({ ...props }) {
-    const { ...other } = props;
-    const iconColor = "info";
-    const categories = [{
-        id: 'Clientes',
-        children: [
+const elements = [
+    { name: 'Home', path: '/', icon: <HomeIcon /> },
+    { name: 'Clientes', path: '/clientes', icon: <PeopleIcon /> },
+    { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> }
+]
+
+export default function Navigation() {
+    const getElements = () => (
+        <div>
             {
-                id: 'Listado',
-                icon: <PeopleIcon color={iconColor}/>,
-                active: false
+                elements.map((element, index) => (
+                    <ListItem key={index} disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                {element.icon}
+                            </ListItemIcon>
+                            <ListItemText primary={element.name} color='white' />
+                        </ListItemButton>
+                    </ListItem>
+                ))
             }
-        ],
-    },
-    {
-        id: 'Calendario Tributario',
-        children: [
-            { id: 'Crear', icon: <CalendarToday  color={iconColor} /> },
-        ],
-    },]
-
-    const item = {
-        py: '2px',
-        px: 3,
-        color: 'rgba(255, 255, 255, 0.8)',
-        '&:hover, &:focus': {
-            bgcolor: 'rgba(255, 255, 255, 0.08)',
-        },
-    };
-
-    const itemCategory = {
-        boxShadow: '0 -1px 0 rgb(255,255,255,0.1) inset',
-        py: 1.5,
-        px: 3,
-    };
-
+        </div>
+    )
     return (
-        <Drawer variant="permanent" {...other} sx={{ color: "white" }}>
-            <Box sx={{ backgroundColor: "primary.main", height: '100vh' }}> 
-                <List disablePadding sx={{}}>
-                    <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
-                        Paperbase
-                    </ListItem>
-                    <ListItem sx={{ ...item, ...itemCategory }}>
-                        <ListItemIcon>
-                            <HomeIcon color={iconColor}/>
-                        </ListItemIcon>
-                        <ListItemText>Project Overview</ListItemText>
-                    </ListItem>
-                    {categories.map(({ id, children }) => (
-                        <Box key={id} sx={{ }}>
-                            <ListItem sx={{ py: 2, px: 3 }}>
-                                <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
-                            </ListItem>
-                            {children.map(({ id: childId, icon, active }) => (
-                                <ListItem disablePadding key={childId}>
-                                    <ListItemButton selected={active} sx={item}>
-                                        <ListItemIcon>{icon}</ListItemIcon>
-                                        <ListItemText>{childId}</ListItemText>
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                            <Divider sx={{ mt: 2 }} />
-                        </Box>
-                    ))}
-                </List>
+        <Drawer variant="permanent" sx={{ width: 238, height: '100vh' }}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, marginBottom: 5}}>
+                <Avatar sx={{width: 120, height: 120}}>
+                    <Image src='/images/avatar.png' alt='avatar' width={120} height={120}></Image>
+                </Avatar>
+                <Typography sx={{marginTop: 3}}>Roberto Robles</Typography>
             </Box>
+            {getElements()}
         </Drawer>
     )
 }

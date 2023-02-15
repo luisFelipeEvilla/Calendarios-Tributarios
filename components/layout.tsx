@@ -5,9 +5,9 @@ import Navigation from "./layouts/navigation";
 export default function Layout({ ...props }) {
 
     return (
-        <Box sx={{ display: 'flex', height: '100vh'}}>
+        <Box sx={{ display: 'flex', height: '100vh', flexGrow: 1,}}>
             <Navigation/>
-            <Box>
+            <Box sx={{display: 'flex', flexDirection: 'column', flexGrow: 1}}>
                 <Breadcrumbs aria-label="breadcrumb" sx={{ backgroundColor: 'primary.main', height: 45, color: 'white', paddingLeft: 2, display: 'flex', alignItems: 'center' }}>
                     <Link underline="hover" color="inherit" href="/">
                         Home

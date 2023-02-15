@@ -6,7 +6,7 @@ import Searchicon from '@mui/icons-material/Search';
 
 export default function Table({ ...props }): ReactElement {
     const [filterData, setFilterData] = React.useState(props.data);
-    const [pageSize, setPageSize] = React.useState(7);
+    const [pageSize, setPageSize] = React.useState(10);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchQuery = event.target.value.toLowerCase();
@@ -62,9 +62,19 @@ export default function Table({ ...props }): ReactElement {
                         columns={columns}
                         pageSize={pageSize}
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                        rowsPerPageOptions={[7, 10, 20]}
+                        rowsPerPageOptions={[10, 25, 100]}
                         disableSelectionOnClick
                         components={{ Toolbar: GridToolbar }}
+                        initialState={{
+                            sorting: {
+                                sortModel: [
+                                    {
+                                        field: 'nombre',
+                                        sort: 'asc',
+                                    },
+                                ],
+                            }
+                        }}
                     />
                 </Box>
             </Box>

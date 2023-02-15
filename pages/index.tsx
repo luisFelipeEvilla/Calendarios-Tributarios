@@ -1,20 +1,20 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary, Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Table from '../components/layouts/table';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import styles from '../styles/Home.module.css'
 
 // import data
 import data from '../data.json';
+import Layout from '../components/layout';
 
 const Home: NextPage = () => {
   const accordionSummaryStyle = {
-    backgroundColor: '#394678',
+    backgroundColor: '#293437',
     color: 'white',
   }
 
-  const accordionStyle = { 
+  const accordionStyle = {
     marginTop: 0.2
   }
 
@@ -22,17 +22,26 @@ const Home: NextPage = () => {
     width: 1000,
     height: 500,
   }
-  
+
   return (
-    <>
+    <Layout>
       <Head>
         <title>Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box sx={{width: '100%'}}>
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{display: 'flex', width: '100%', justifyContent: 'center', marginTop: 10, marginBottom: 10}}>
+          <FormControl sx={{width: 100}}>
+            <InputLabel>Año</InputLabel>
+            <Select>
+              <MenuItem>2023</MenuItem>
+              <MenuItem>2024</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
         <Accordion sx={accordionStyle}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon sx={{color: 'white'}}/>}
             aria-controls="panel1a-content"
             id="panel1a-header"
             style={accordionSummaryStyle}
@@ -47,7 +56,7 @@ const Home: NextPage = () => {
         </Accordion>
         <Accordion sx={accordionStyle}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon sx={{color: 'white'}}/>}
             aria-controls="panel1a-content"
             id="panel1a-header"
             style={accordionSummaryStyle}
@@ -62,7 +71,7 @@ const Home: NextPage = () => {
         </Accordion>
         <Accordion sx={accordionStyle}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon sx={{color: 'white'}} />}
             aria-controls="panel1a-content"
             id="panel1a-header"
             style={accordionSummaryStyle}
@@ -76,7 +85,7 @@ const Home: NextPage = () => {
           </AccordionDetails>
         </Accordion>
       </Box>
-    </>
+    </Layout>
   )
 }
 

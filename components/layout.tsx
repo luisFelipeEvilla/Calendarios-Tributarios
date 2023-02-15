@@ -1,13 +1,14 @@
-import { Breadcrumbs, Link, Typography } from "@mui/material";
+import { Breadcrumbs, Button, Link, Typography, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 
 export default function Layout({ ...props }) {
+
     return (
         <Box sx={{ display: "flex" }}>
-            <Box sx={{ width: 400, height: '100vh', backgroundColor: '#293437' }}>
+            <Box sx={{ width: 400, height: '100vh', backgroundColor: 'primary.main'}}>
             </Box>
             <Box>
-                <Breadcrumbs aria-label="breadcrumb" sx={{backgroundColor: '#293437', height: 45, color: 'white', paddingLeft: 2, display: 'flex', alignItems: 'center'}}>
+                <Breadcrumbs aria-label="breadcrumb" sx={{backgroundColor: '#primary.main', height: 45, color: 'white', paddingLeft: 2, display: 'flex', alignItems: 'center'}}>
                     <Link underline="hover" color="inherit" href="/">
                         Home
                     </Link>

@@ -10,7 +10,7 @@ import Layout from '../components/layout';
 
 const Home: NextPage = () => {
   const accordionSummaryStyle = {
-    backgroundColor: '#293437',
+    backgroundColor: "primary.main",
     color: 'white',
   }
 
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         <title>Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: '100%'}}>
         <Box sx={{display: 'flex', width: '100%', justifyContent: 'center', marginTop: 10, marginBottom: 10}}>
           <FormControl sx={{width: 100}}>
             <InputLabel>Año</InputLabel>
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
             expandIcon={<ExpandMoreIcon sx={{color: 'white'}}/>}
             aria-controls="panel1a-content"
             id="panel1a-header"
-            style={accordionSummaryStyle}
+            sx={accordionSummaryStyle}
           >
             <Typography>Impuestos Nacionales</Typography>
           </AccordionSummary>
@@ -59,7 +59,7 @@ const Home: NextPage = () => {
             expandIcon={<ExpandMoreIcon sx={{color: 'white'}}/>}
             aria-controls="panel1a-content"
             id="panel1a-header"
-            style={accordionSummaryStyle}
+            sx={accordionSummaryStyle}
           >
             <Typography>Impuestos Departamentales</Typography>
           </AccordionSummary>
@@ -74,7 +74,7 @@ const Home: NextPage = () => {
             expandIcon={<ExpandMoreIcon sx={{color: 'white'}} />}
             aria-controls="panel1a-content"
             id="panel1a-header"
-            style={accordionSummaryStyle}
+            sx={accordionSummaryStyle}
           >
             <Typography>Impuestos Municipales</Typography>
           </AccordionSummary>

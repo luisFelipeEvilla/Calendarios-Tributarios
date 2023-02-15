@@ -19,7 +19,7 @@ export default function Table({ ...props }): ReactElement {
             headerName: 'Acciones', width: 200,
             renderCell: (params) => (
                 <Box>
-                    <Button variant="contained" color="primary" size="small" style={{ marginRight: 16 }}>
+                    <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
                         Editar
                     </Button>
                     <Button variant="contained" color="error" size="small">

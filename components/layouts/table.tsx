@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Button } from '@mui/material';
-import FormControl from '@mui/material/FormControl/FormControl';
+import { Box, Button, FormControl } from '@mui/material';
 import TextField from '@mui/material/TextField/TextField';
 import Searchicon from '@mui/icons-material/Search';
 
@@ -59,7 +58,7 @@ export default function Table({ ...props }): ReactElement {
             <Box sx={{ display: 'flex', minHeight: 600 }}>
                 <Box sx={{ flexGrow: 1 }}>
                     <DataGrid
-                        rows={filterData}
+                        rows={props.data}
                         columns={columns}
                         pageSize={pageSize}
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}

@@ -10,7 +10,12 @@ import data from '../data.json';
 
 const Home: NextPage = () => {
   const accordionSummaryStyle = {
-    backgroundColor: 'gray',
+    backgroundColor: '#394678',
+    color: 'white',
+  }
+
+  const accordionStyle = { 
+    marginTop: 0.2
   }
 
   const tableStyles = {
@@ -25,7 +30,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box sx={{width: '100%'}}>
-        <Accordion>
+        <Accordion sx={accordionStyle}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -40,7 +45,7 @@ const Home: NextPage = () => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion>
+        <Accordion sx={accordionStyle}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -55,7 +60,7 @@ const Home: NextPage = () => {
             </Box>
           </AccordionDetails>
         </Accordion>
-        <Accordion>
+        <Accordion sx={accordionStyle}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"

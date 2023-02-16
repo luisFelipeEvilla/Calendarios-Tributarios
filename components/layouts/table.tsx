@@ -18,17 +18,16 @@ export default function Table({ ...props }): ReactElement {
     };
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 70, headerAlign: 'center', align: 'center' },
-        { field: 'nombre', headerName: 'Nombre', width: 300, headerAlign: 'center', align: 'center' },
-        { field: 'frecuencia', headerName: 'Frecuencia', width: 200, headerAlign: 'center', align: 'center' },
+        { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
+        { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'frecuencia', headerName: 'Frecuencia',  flex: 1, headerAlign: 'center', align: 'center' },
         {
-            field: 'numero_cuotas', headerName: 'Número de cuotas', width: 200, headerAlign: 'center', align: 'center',
+            field: 'numero_cuotas', headerName: 'Número de cuotas',  flex: 1, headerAlign: 'center', align: 'center',
             valueGetter: (params: GridValueGetterParams) =>
                 `${params.row.cuotas.length}`,
         },
         {
-            field: 'acciones',
-            headerName: 'Acciones', width: 200,
+            field: 'acciones', headerName: 'Acciones',   flex: 1, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
                 <Box>
                     <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>

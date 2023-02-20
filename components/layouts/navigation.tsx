@@ -5,6 +5,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import Avatar from "@mui/material/Avatar";
 import Image from 'next/image';
+import { useRouter } from "next/dist/client/router";
 
 const elements = [
     { name: 'Home', path: '/', icon: <HomeIcon /> },
@@ -13,26 +14,38 @@ const elements = [
 ]
 
 export default function Navigation() {
+    const router = useRouter();
+
+    const handleNavigation = (path: string) => {
+        router.push(path)
+    }
+
     const getElements = () => (
         <div>
             {
                 elements.map((element, index) => (
                     <ListItem key={index} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
+                        <ListItemButton onClick={e => handleNavigation(element.path)}>
+                            <ListItemIcon sx={iconsStyle}>
                                 {element.icon}
                             </ListItemIcon>
-                            <ListItemText primary={element.name} color='white' />
+                            <ListItemText primary={element.name} sx={iconsStyle} />
                         </ListItemButton>
                     </ListItem>
                 ))
             }
         </div>
     )
+
+    const avatarStyle = {width: 120, height: 120};
+    const drawerStyle = {width: 238, height: '100vh'};
+    const drawerPaperStyle = {backgroundColor: 'primary.main', color: 'white'};
+    const iconsStyle = {color: 'white'};
+
     return (
-        <Drawer variant="permanent" sx={{ width: 238, height: '100vh' }}>
+        <Drawer PaperProps={{sx: drawerPaperStyle}} variant="permanent" sx={drawerStyle}>
             <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, marginBottom: 5}}>
-                <Avatar sx={{width: 120, height: 120}}>
+                <Avatar sx={avatarStyle}>
                     <Image src='/images/avatar.png' alt='avatar' width={120} height={120}></Image>
                 </Avatar>
                 <Typography sx={{marginTop: 3}}>Roberto Robles</Typography>

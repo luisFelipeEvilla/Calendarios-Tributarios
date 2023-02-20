@@ -93,10 +93,11 @@ const CustomEditor = ({ scheduler }: CustomEditorProps) => {
   );
 };
 
-function TaxesScheduler() {
+function TaxesScheduler({...props}) {
   return (
     <Scheduler
       {...config}
+      selectedDate={props.month}
       customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
       viewerExtraComponent={(fields, event) => {
         return (

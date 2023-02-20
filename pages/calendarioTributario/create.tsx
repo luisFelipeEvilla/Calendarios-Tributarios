@@ -5,6 +5,9 @@ import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Layout from "../../components/layout";
+import { Scheduler } from "@aldabil/react-scheduler";
+import { es as locale } from "date-fns/locale";
+import TaxesScheduler from "../../components/layouts/schedulers/taxesScheduler";
 
 export default function Create() {
     const avatarSize = { width: 120, height: 120 }
@@ -24,7 +27,6 @@ export default function Create() {
         { name: 'Trimestral', value: 4, frequency: 4 },
         { name: 'Bimestral', value: 5, frequency: 6 },
         { name: 'Mensual', value: 6, frequency: 12 },
-        { name: 'Quincenal', value: 7, frequency: 24 },
     ]
 
     const accordionSummaryStyle = {
@@ -35,10 +37,16 @@ export default function Create() {
     const getInstallments = () => {
         const components = [];
         const frequency = periodos.find((periodo) => periodo.value === period)?.frequency || 0;
+
+        // get january from current year
+        const initDate = new Date(new Date().getFullYear(), 0, 1);
+        console.log(initDate.getTime());
+        // end date is the las day of the month 12 / frecuency
+        const endDate = new Date(new Date().getFullYear(), 12 / frequency, 0);
+
         for (let i = 0; i < frequency; i++) {
             components.push(
-
-                <Accordion>
+                <Accordion sx={{ width: '100%' }}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon sx={{ color: 'white' }} />}
                         aria-controls="panel1a-content"
@@ -48,10 +56,16 @@ export default function Create() {
                         <Typography>Cuota No. {i + 1}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        holaa
+                        <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>
+                        <TaxesScheduler />
                     </AccordionDetails>
                 </Accordion>
             )
+
+            initDate.setMonth(initDate.getMonth() + 12/frequency);
+            endDate.setMonth(endDate.getMonth() + 12/frequency+1, 0);
+            // set endDate on the last day of the month
+            
         }
 
         return components;
@@ -59,15 +73,18 @@ export default function Create() {
     return (
         <Layout>
             <Box display={'flex'} alignItems='center' flexDirection={'column'}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Agregar Impuesto
-                </Typography>
-                <Avatar sx={avatarSize}>
-                    <AccountBalance sx={avatarIconSize}></AccountBalance>
-                </Avatar>
+                <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
+                    <Typography variant="h4" component="h1" marginBottom={8} >
+                        Agregar Impuesto
+                    </Typography>
+                    <Avatar sx={avatarSize}>
+                        <AccountBalance sx={avatarIconSize}></AccountBalance>
+                    </Avatar>
+                </Box>
 
-                <Box display={'flex'} alignItems='center' flexDirection={'column'}>
-                    <FormControl>
+
+                <Box display={'flex'} alignItems='center' flexDirection={'column'} width={300}>
+                    <FormControl fullWidth>
                         <TextField
                             margin="normal"
                             fullWidth
@@ -79,7 +96,7 @@ export default function Create() {
                             autoFocus
                         />
                     </FormControl>
-                    <FormControl sx={{ width: 160 }}>
+                    <FormControl fullWidth>
                         <InputLabel> Frecuencia</InputLabel>
                         <Select name='Periodicidad' value={period} fullWidth label='frecuencia' onChange={handlePeriodChange}>
                             {
@@ -92,7 +109,9 @@ export default function Create() {
                     </FormControl>
                 </Box>
 
-                {getInstallments()}
+                <Box width='100%' marginTop={10}>
+                    {getInstallments()}
+                </Box>
             </Box>
         </Layout>
 

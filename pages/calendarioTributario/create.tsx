@@ -22,10 +22,12 @@ export default function Create() {
     const handlePeriodChange = (event: SelectChangeEvent<unknown>) => {
         const periodsNumber = event.target.value as number;
         setPeriod(periodsNumber);
-
+        
+        const frequency = periodos.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
+        
         const newInstallments = [];
 
-        for (let i = 0; i < periodsNumber; i++) {
+        for (let i = 0; i < frequency; i++) {
             newInstallments.push([]);
         }
 
@@ -81,7 +83,7 @@ export default function Create() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>
-                        <Button variant="contained" color="success">Agregar</Button>
+                        <Button onClick={e => handleAddInstallment(i)} variant="contained" color="success">Agregar</Button>
                         <TableContainer component={Paper}>
                             <Table>
                                 <TableHead>

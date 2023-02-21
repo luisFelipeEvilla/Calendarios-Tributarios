@@ -24,7 +24,7 @@ export default function Navigation() {
         <div>
             {
                 elements.map((element, index) => (
-                    <ListItem key={index} disablePadding>
+                    <ListItem key={index} disablePadding sx={itemStyle}>
                         <ListItemButton onClick={e => handleNavigation(element.path)}>
                             <ListItemIcon sx={iconsStyle}>
                                 {element.icon}
@@ -37,10 +37,11 @@ export default function Navigation() {
         </div>
     )
 
-    const avatarStyle = {width: 120, height: 120};
+    const avatarStyle = {width: 120, height: 120, boxShadow: '4px 6px 26px -7px rgba(0,0,0,0.5);'};
     const drawerStyle = {width: 238, height: '100vh'};
-    const drawerPaperStyle = {backgroundColor: 'primary.main', color: 'white'};
-    const iconsStyle = {color: 'white'};
+    const drawerPaperStyle = {backgroundColor: 'primary.main', color: 'secondary.main'};
+    const iconsStyle = {color: 'secondary.main'};
+    const itemStyle = {'&:hover': {transform: 'scale(1.03)', backgroundColor: 'rgba(255,255,255,0.1)'}};
 
     return (
         <Drawer PaperProps={{sx: drawerPaperStyle}} variant="permanent" sx={drawerStyle}>

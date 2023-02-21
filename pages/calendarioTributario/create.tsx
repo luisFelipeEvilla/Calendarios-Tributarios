@@ -1,29 +1,47 @@
 import AccountBalance from "@mui/icons-material/AccountBalance";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, FormGroup, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
+import { DatePicker, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Layout from "../../components/layout";
 import TaxesScheduler from "../../components/layouts/schedulers/taxesScheduler";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 export default function Create() {
     const avatarSize = { width: 120, height: 120 }
     const avatarIconSize = { width: 80, height: 80 }
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
-    const [installments, setInstallments] = useState(0);
-
+    const [installments, setInstallments] = useState([[{ nit: 1, fecha: new Date() }, { nit: 2, fecha: new Date() }]]);
+    
     const router = useRouter();
 
     const handlePeriodChange = (event: SelectChangeEvent<unknown>) => {
-        setPeriod(event.target.value as number);
+        const periodsNumber = event.target.value as number;
+        setPeriod(periodsNumber);
+
+        const newInstallments = [];
+
+        for (let i = 0; i < periodsNumber; i++) {
+            newInstallments.push([]);
+        }
+
+        // @ts-ignore
+        setInstallments(newInstallments);
     }
 
     const handleSubmit = () => {
         //Todo implement save tax logic
         router.push('/calendarioTributario')
+    }
+
+    const handleAddInstallment = (index: number) => {
+        const newInstallments = [...installments];
+        newInstallments[index].push({ nit: 1, fecha: new Date() });
+        setInstallments(newInstallments);
     }
 
     const periodos = [
@@ -33,7 +51,7 @@ export default function Create() {
         { name: 'Trimestral', value: 4, frequency: 4 },
         { name: 'Bimestral', value: 5, frequency: 6 },
         { name: 'Mensual', value: 6, frequency: 12 },
-        { name: 'Personalizado', value: 7, frequency: 1}
+        { name: 'Personalizado', value: 7, frequency: 1 }
     ]
 
     const accordionSummaryStyle = {
@@ -49,6 +67,8 @@ export default function Create() {
         const endDate = new Date(new Date().getFullYear(), 12 / frequency, 0);
 
         for (let i = 0; i < frequency; i++) {
+            const installment = installments[i];
+
             components.push(
                 <Accordion sx={{ width: '100%' }} key={i}>
                     <AccordionSummary
@@ -61,13 +81,33 @@ export default function Create() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>
-                        <TaxesScheduler/>
+                        <Button variant="contained" color="success">Agregar</Button>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Digito/s de asignación</TableCell>
+                                        <TableCell>Fecha de presentación</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        installment.map((installment) => (
+                                            <TableRow>
+                                                <TableCell>{installment.nit}</TableCell>
+                                                <TableCell>{installment.fecha.toDateString()}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </AccordionDetails>
                 </Accordion>
             )
 
-            initDate.setMonth(initDate.getMonth() + 12/frequency);
-            endDate.setMonth(endDate.getMonth() + 12/frequency+1, 0);                        
+            initDate.setMonth(initDate.getMonth() + 12 / frequency);
+            endDate.setMonth(endDate.getMonth() + 12 / frequency + 1, 0);
         }
 
         return components;
@@ -111,12 +151,15 @@ export default function Create() {
                     </FormControl>
                 </Box>
 
-                <Box width='100%' marginTop={10}>
+                <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
+                    <Box width='80%' marginBottom={10}>
+                        <TaxesScheduler />
+                    </Box>
                     {getInstallments()}
                 </Box>
 
                 <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
-                            <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
+                    <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                 </Box>
             </Box>
         </Layout>

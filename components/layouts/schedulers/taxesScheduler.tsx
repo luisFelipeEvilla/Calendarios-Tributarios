@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { TextField, Button, DialogActions } from "@mui/material";
 import { Scheduler } from "@aldabil/react-scheduler";
 import type {
   ProcessedEvent,
   SchedulerHelpers
 } from "@aldabil/react-scheduler/types";
-import { es as locale} from "date-fns/locale";
+import { Button, DialogActions, TextField } from "@mui/material";
+import { es as locale } from "date-fns/locale";
+import { useState } from "react";
 
 interface CustomEditorProps {
   scheduler: SchedulerHelpers;
@@ -18,20 +18,11 @@ const config = {
 
 const CustomEditor = ({ scheduler }: CustomEditorProps) => {
   const event = scheduler.edited;
-
-  // Make your own form/state
-  const [state, setState] = useState({
-    number: event?.title || undefined
-  });
+  const [state, setState] = useState({number: event?.title || undefined});
   const [error, setError] = useState("");
 
   const handleChange = (value: string, name: string) => {
-    setState((prev) => {
-      return {
-        ...prev,
-        [name]: value
-      };
-    });
+    setState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
@@ -45,15 +36,7 @@ const CustomEditor = ({ scheduler }: CustomEditorProps) => {
     try {
       scheduler.loading(true);
 
-      /**Simulate remote data saving */
       const added_updated_event = (await new Promise((res) => {
-        /**
-         * Make sure the event have 4 mandatory fields
-         * event_id: string|number
-         * title: string
-         * start: Date|string
-         * end: Date|string
-         */
         setTimeout(() => {
           res({
             event_id: event?.event_id || Math.random(),
@@ -96,8 +79,7 @@ const CustomEditor = ({ scheduler }: CustomEditorProps) => {
 function TaxesScheduler({...props}) {
   return (
     <Scheduler
-      {...config}
-      selectedDate={props.month}
+      {...config}      
       customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
       viewerExtraComponent={(fields, event) => {
         return (

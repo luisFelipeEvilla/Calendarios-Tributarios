@@ -1,11 +1,11 @@
-import Drawer from "@mui/material/Drawer";
-import HomeIcon from '@mui/icons-material/Home';
-import { Box, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
-import PeopleIcon from '@mui/icons-material/People';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import HomeIcon from '@mui/icons-material/Home';
+import PeopleIcon from '@mui/icons-material/People';
+import { Box, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import Image from 'next/image';
+import Drawer from "@mui/material/Drawer";
 import { useRouter } from "next/dist/client/router";
+import Image from 'next/image';
 
 const elements = [
     { name: 'Home', path: '/', icon: <HomeIcon /> },

@@ -1,12 +1,12 @@
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import AccountBalance from "@mui/icons-material/AccountBalance";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Layout from "../../components/layout";
 import TaxesScheduler from "../../components/layouts/schedulers/taxesScheduler";
-import { useRouter } from "next/router";
 
 export default function Create() {
     const avatarSize = { width: 120, height: 120 }
@@ -61,7 +61,7 @@ export default function Create() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>
-                        <TaxesScheduler month={endDate}/>
+                        <TaxesScheduler/>
                     </AccordionDetails>
                 </Accordion>
             )
@@ -115,7 +115,7 @@ export default function Create() {
                     {getInstallments()}
                 </Box>
 
-                <Box display='flex' justifyContent='center' width='100%' marginTop={5}>
+                <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
                             <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                 </Box>
             </Box>

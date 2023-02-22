@@ -19,7 +19,7 @@ export default function Create() {
     const avatarIconSize = { width: 80, height: 80 }
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
-    const [feeds, setFeeds] = useState([[]]);
+    const [feeds, setFeeds] = useState<Feed[][]>([[]]);
     const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
 
     const { setEvents } = useScheduler();
@@ -105,7 +105,6 @@ export default function Create() {
 
         const initDate = new Date(new Date().getFullYear(), 0, 1);
         const endDate = new Date(new Date().getFullYear(), 12 / frequency, 0);
-
         const components = feeds.map((installment, index) => {
             const component = <Accordion sx={{ width: '100%' }} key={index}>
                 <AccordionSummary
@@ -127,7 +126,7 @@ export default function Create() {
                             </TableHead>
                             <TableBody>
                                 {
-                                    installment.map((installment) => (
+                                    installment.map((installment: Feed) => (
                                         <TableRow>
                                             <TableCell>{installment.nit}</TableCell>
                                             <TableCell>{installment.date.toDateString()}</TableCell>
@@ -141,7 +140,7 @@ export default function Create() {
             </Accordion>
 
             initDate.setMonth(initDate.getMonth() + 12 / frequency);
-            endDate.setMonth(endDate.getMonth() + 12 / frequency + 1, 0);
+            endDate.setMonth(endDate.getMonth() + 12/frequency + 1, 0);
 
             return component;
         })

@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import FeedForm from "../../components/layouts/taxes/feedForm";
 
+import styles from '../../styles/calendarioTributario/create.module.css';
+
 type Feed = { nit: number, date: Date }
 
 export default function Create() {
@@ -19,6 +21,8 @@ export default function Create() {
     const [period, setPeriod] = useState(1);
     const [feeds, setFeeds] = useState<Feed[][]>([[]]);
     const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
+    const [taxType, setTaxType] = useState(0);
+    const [location, setLocation] = useState(-1);
 
     const { setEvents } = useScheduler();
 
@@ -55,6 +59,12 @@ export default function Create() {
         { name: 'Bimestral', value: 5, frequency: 6 },
         { name: 'Mensual', value: 6, frequency: 12 },
         { name: 'Personalizado', value: 7, frequency: 1 }
+    ]
+
+    const taxTypes = [
+        { name: 'Nacional', value: 0 },
+        { name: 'Departamental', value: 1 },
+        { name: 'Municipal', value: 2 },
     ]
 
     // styles
@@ -138,7 +148,7 @@ export default function Create() {
             </Accordion>
 
             initDate.setMonth(initDate.getMonth() + 12 / frequency);
-            endDate.setMonth(endDate.getMonth() + 12/frequency + 1, 0);
+            endDate.setMonth(endDate.getMonth() + 12 / frequency + 1, 0);
 
             return component;
         })
@@ -146,9 +156,47 @@ export default function Create() {
         return components;
     }
 
+    const getLocationField = () => {
+        if (taxType === 0) return null;
+
+        const municipios = [
+            { name: 'Bogotá', value: 1 },
+            { name: 'Medellín', value: 2 },
+            { name: 'Cali', value: 3 },
+            { name: 'Barranquilla', value: 4 },
+            { name: 'Cartagena', value: 5 },
+            { name: 'Cúcuta', value: 6 },
+            { name: 'Bucaramanga', value: 7 },
+            { name: 'Pereira', value: 8 },
+        ]
+
+        const departamentos = [
+            { name: 'Antioquia', value: 1 },
+            { name: 'Atlántico', value: 2 },
+            { name: 'Bolívar', value: 3 },
+            { name: 'Boyacá', value: 4 },
+            { name: 'Caldas', value: 5 },
+            { name: 'Cauca', value: 6 },
+        ]
+
+        return (
+            <FormControl fullWidth>
+                <InputLabel id="location-label">Ubicación</InputLabel>
+                <Select value={location} onChange={e => setLocation(e.target.value as number)} required>
+                    <MenuItem value={-1}>Selecciona una ubicación</MenuItem>
+                    {taxType === 1 ?
+                        departamentos.map(departamento => <MenuItem value={departamento.value}>{departamento.name}</MenuItem>) 
+                    :
+                        municipios.map(municipio => <MenuItem value={municipio.value}>{municipio.name}</MenuItem>)
+                    }
+                </Select>
+            </FormControl>
+        )
+    }
+
     return (
         <Layout>
-            <Box display={'flex'} alignItems='center' flexDirection={'column'}>
+            <Box className={`${styles.container}`}>
                 <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
                     <Typography variant="h4" component="h1" marginBottom={8} >
                         Agregar Impuesto
@@ -159,11 +207,9 @@ export default function Create() {
                 </Box>
 
 
-                <Box display={'flex'} alignItems='center' flexDirection={'column'} width={300}>
+                <Box className={`${styles.container} ${styles.formContainer}`}>
                     <FormControl fullWidth>
                         <TextField
-                            margin="normal"
-                            fullWidth
                             id="name"
                             type={'text'}
                             label="Nombre"
@@ -183,11 +229,23 @@ export default function Create() {
                             }
                         </Select>
                     </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel>Tipo de impuesto</InputLabel>
+                        <Select name='Tipo de impuesto' value={taxType} fullWidth label='Tipo de impuesto' onChange={(e) => setTaxType(e.target.value as number)}>
+                            {
+                                taxTypes.map((taxType) => (
+                                    <MenuItem key={taxType.value} value={taxType.value}
+                                    >{taxType.name}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                    {getLocationField()}
                 </Box>
 
                 <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
                     <Box width='80%' marginBottom={10}>
-                        <Scheduler view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false}/>
+                        <Scheduler view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
                     </Box>
                     {getFeeds()}
                 </Box>

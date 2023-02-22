@@ -1,0 +1,14 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container .formContainer {
+    width: 350px;
+}
+
+.container .formContainer > * {
+    margin-bottom: 15px;
+    font-size: 30px;
+}

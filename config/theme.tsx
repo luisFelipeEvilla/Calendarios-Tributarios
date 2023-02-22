@@ -9,6 +9,20 @@ const theme = createTheme({
         main: '#f6fff8',
       },
     },
+    components: {
+      MuiTableCell: {
+        styleOverrides: {
+          
+          root: {
+            padding: '8px 16px',
+            fontSize: '1.2rem',
+            alignContent: 'center',
+            textAlign: 'center',
+            
+          }
+        },
+      },
+    }
   });
 
 export default theme;

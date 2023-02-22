@@ -56,7 +56,7 @@ export default function SignInSide() {
       }
 
       // redirect to home page
-      router.push('/');
+      router.push('/calendarioTributario');
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +70,7 @@ export default function SignInSide() {
   return (
     <>
       <Head>
-        <title>Medical Gestion</title>
+        <title>SGC</title>
       </Head>
       <ThemeProvider theme={theme}>
         <Grid container component="main" sx={{ height: '100vh' }}>

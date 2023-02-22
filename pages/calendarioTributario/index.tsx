@@ -17,7 +17,13 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box sx={{ width: '100%' }}>
-        <Accordeon title="Impuestos Nacionales" data={data} />
+        <Accordeon title="Impuestos Nacionales" data={data.nacionales} />
+      </Box>
+      <Box sx={{ width: '100%' }}>
+        <Accordeon title="Impuestos Departamentales" data={data.departamentales} />
+      </Box>
+      <Box sx={{ width: '100%' }}>
+        <Accordeon title="Impuestos Municipales" data={data.municipales} />
       </Box>
     </Layout>
   )

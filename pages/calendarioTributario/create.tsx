@@ -9,14 +9,15 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import FeedForm from "../../components/layouts/taxes/feedForm";
+import { es } from "date-fns/locale";
 
 import styles from '../../styles/calendarioTributario/create.module.css';
 
 type Feed = { nit: number, date: Date }
 
 export default function Create() {
-    const avatarSize = { width: 120, height: 120 }
-    const avatarIconSize = { width: 80, height: 80 }
+    const avatarSize = { width: 160, height: 160 }
+    const avatarIconSize = { width: 120, height: 120 }
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
     const [feeds, setFeeds] = useState<Feed[][]>([[]]);
@@ -122,11 +123,11 @@ export default function Create() {
                     <Typography>Cuota No. {index + 1}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>
+                    <p><b>Periodo:</b> {initDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</p>
                     <FeedForm index={index} handleAddFeed={handleAddFeed} />
                     <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
+                        <Table align="center">
+                            <TableHead >
                                 <TableRow>
                                     <TableCell>Digito/s de asignación</TableCell>
                                     <TableCell>Fecha de presentación</TableCell>
@@ -181,7 +182,7 @@ export default function Create() {
 
         return (
             <FormControl fullWidth>
-                <InputLabel id="location-label">Ubicación</InputLabel>
+                <InputLabel sx={{fontSize: 20}} id="location-label">Ubicación</InputLabel>
                 <Select value={location} onChange={e => setLocation(e.target.value as number)} required>
                     <MenuItem value={-1}>Selecciona una ubicación</MenuItem>
                     {taxType === 1 ?
@@ -219,7 +220,7 @@ export default function Create() {
                         />
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel> Frecuencia</InputLabel>
+                        <InputLabel sx={{fontSize: 20}}> Frecuencia</InputLabel>
                         <Select name='Periodicidad' value={period} fullWidth label='frecuencia' onChange={handlePeriodChange}>
                             {
                                 periodos.map((periodo) => (
@@ -230,7 +231,7 @@ export default function Create() {
                         </Select>
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel>Tipo de impuesto</InputLabel>
+                        <InputLabel sx={{fontSize: 20}} >Tipo de impuesto</InputLabel>
                         <Select name='Tipo de impuesto' value={taxType} fullWidth label='Tipo de impuesto' onChange={(e) => setTaxType(e.target.value as number)}>
                             {
                                 taxTypes.map((taxType) => (
@@ -245,7 +246,7 @@ export default function Create() {
 
                 <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
                     <Box width='80%' marginBottom={10}>
-                        <Scheduler view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
+                        <Scheduler  locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
                     </Box>
                     {getFeeds()}
                 </Box>

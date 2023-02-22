@@ -49,7 +49,10 @@ export default function Create() {
         const newFeed = { nit: feed.nit, date: feed.date['$d'] }
         const newFeeds = [...feeds];
         newFeeds[index].push(newFeed);
-       
+    
+        // organize feeds by date
+        newFeeds[index].sort((a, b) => a.date.getTime() - b.date.getTime());
+        
         setFeeds(newFeeds);        
     }
 

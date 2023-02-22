@@ -9,7 +9,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 export default function FeedForm({ ...props }) {
     const [modal, setModal] = useState(false);
-    const [nit, setNit] = useState(0);
+    const [nit, setNit] = useState<number>();
     const [date, setDate] = useState<Dayjs | null>(
         dayjs(new Date()),
     );
@@ -49,8 +49,8 @@ export default function FeedForm({ ...props }) {
                         Agregar Fecha de presentación
                     </Typography>
 
-                    <FormGroup>
-                        <FormControl>
+                    <Box component='form' onSubmit={handleSubmit}>
+                        <FormControl fullWidth>
                             <TextField
                                 id="nit"
                                 label="Digito/s de asignación"
@@ -59,9 +59,10 @@ export default function FeedForm({ ...props }) {
                                     shrink: true,
                                 }}
                                 onChange={(e) => setNit(parseInt(e.target.value))}
+                                required
                             />
                         </FormControl>
-                        <FormControl sx={{ marginTop: 3 }}>
+                        <FormControl sx={{ marginTop: 3 }} fullWidth>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DesktopDatePicker
                                     label="Fecha de presentación"
@@ -72,10 +73,10 @@ export default function FeedForm({ ...props }) {
                                 />
                             </LocalizationProvider>
                         </FormControl>
-                    </FormGroup>
-                    <Box display='flex' justifyContent='flex-end' marginTop={3}>
-                        <Button sx={{marginRight: 2}} onClick={e => setModal(false)} variant="contained" color="error">Cancelar</Button>
-                        <Button onClick={handleSubmit} variant="contained" color="success">Guardar</Button>
+                        <Box display='flex' justifyContent='flex-end' marginTop={3}>
+                            <Button sx={{ marginRight: 2 }} onClick={e => setModal(false)} variant="contained" color="error">Cancelar</Button>
+                            <Button type="submit" variant="contained" color="success">Guardar</Button>
+                        </Box>
                     </Box>
                 </Box>
             </Modal >

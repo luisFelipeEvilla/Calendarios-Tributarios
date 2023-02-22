@@ -1,25 +1,52 @@
+import { Scheduler } from "@aldabil/react-scheduler";
+import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import AccountBalance from "@mui/icons-material/AccountBalance";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import TaxesScheduler from "../../components/layouts/schedulers/taxesScheduler";
 import FeedForm from "../../components/layouts/taxes/feedForm";
+import { useScheduler } from "@aldabil/react-scheduler";
 
-type Feed = {nit: number, date: Date}
+type Feed = { nit: number, date: Date }
 
 export default function Create() {
     const avatarSize = { width: 120, height: 120 }
     const avatarIconSize = { width: 80, height: 80 }
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
-    const [feeds, setFeeds] = useState([[{ nit: 1, date: new Date() }, { nit: 2, date: new Date() }]]);
+    const [feeds, setFeeds] = useState([[]]);
+    const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
+
+    const { setEvents } = useScheduler();
 
     // hooks
     const router = useRouter();
+
+    useEffect(() => {
+        const events: ProcessedEvent[] = [];
+
+        feeds.forEach((feed, index) => {
+            feed.forEach((f: Feed, index) => {
+                events.push({
+                    event_id: index,
+                    title: `${f.nit}`,
+                    start: f.date,
+                    end: f.date,
+                    color: '#3f51b5',
+                    textColor: 'white',
+                    allDay: true,
+                })
+            })
+        })
+
+        setScheduledFeeds(events);
+        setEvents(events);
+    }, [feeds])
 
     // fake data
     const periodos = [
@@ -49,11 +76,11 @@ export default function Create() {
         const newFeed = { nit: feed.nit, date: feed.date['$d'] }
         const newFeeds = [...feeds];
         newFeeds[index].push(newFeed);
-    
+
         // organize feeds by date
         newFeeds[index].sort((a, b) => a.date.getTime() - b.date.getTime());
-        
-        setFeeds(newFeeds);        
+
+        setFeeds(newFeeds);
     }
 
     const handlePeriodChange = (event: SelectChangeEvent<unknown>) => {
@@ -88,8 +115,8 @@ export default function Create() {
                     <Typography>Cuota No. {index + 1}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>     
-                    <FeedForm index={index} handleAddFeed={handleAddFeed}/>               
+                    <p><b>Periodo:</b> {initDate.toDateString()} - {endDate.toDateString()}</p>
+                    <FeedForm index={index} handleAddFeed={handleAddFeed} />
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -163,7 +190,7 @@ export default function Create() {
 
                 <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
                     <Box width='80%' marginBottom={10}>
-                        <TaxesScheduler />
+                        <Scheduler view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false}/>
                     </Box>
                     {getFeeds()}
                 </Box>

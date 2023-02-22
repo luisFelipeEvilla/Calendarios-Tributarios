@@ -41,22 +41,37 @@ export default function SignInSide() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const credentials = new FormData(event.currentTarget);
-    const user = credentials.get('user');
+    const username = credentials.get('user');
     const password = credentials.get('password');
 
     // send data to server  
-    const url = process.env.NEXT_PUBLIC_API_URL + '/login';
+    const url = 'api/handleLogin';
 
     try {      
       // todo login with axios
-      if (user != '1234' || password != '1234') {
+
+      
+      const body = { username, password};
+      
+      const request = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      const response = await request.json();
+
+      if (response.status !== 200) {
         setError(true);
         setErrorMessage('Usuario o contraseña incorrectos');
         return;
       }
 
+      // save token in cookies
       // redirect to home page
-      router.push('/calendarioTributario');
+      // router.push('/calendarioTributario');
     } catch (error) {
       console.error(error);
     }

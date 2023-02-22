@@ -1,4 +1,4 @@
-import { Scheduler } from "@aldabil/react-scheduler";
+import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import AccountBalance from "@mui/icons-material/AccountBalance";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -8,9 +8,7 @@ import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
-import TaxesScheduler from "../../components/layouts/schedulers/taxesScheduler";
 import FeedForm from "../../components/layouts/taxes/feedForm";
-import { useScheduler } from "@aldabil/react-scheduler";
 
 type Feed = { nit: number, date: Date }
 

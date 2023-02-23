@@ -12,6 +12,7 @@ import FeedForm from "../../components/layouts/taxes/feedForm";
 import { es } from "date-fns/locale";
 
 import styles from '../../styles/calendarioTributario/create.module.css';
+import axios from "axios";
 
 type Feed = { nit: number, date: Date }
 
@@ -75,10 +76,24 @@ export default function Create() {
     }
 
     // functions
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         //Todo implement save tax logic
-        console.log(feeds);
         
+        const url = '/api/handleAddImpuesto';
+
+        const body = { 
+            name,
+            taxType,
+            feeds
+         }
+
+        try {
+            const request = await axios.post(url, body);
+            
+            console.log(request.data);
+        } catch (error) {
+            console.error(error);
+        }
         //router.push('/calendarioTributario')
     }
 

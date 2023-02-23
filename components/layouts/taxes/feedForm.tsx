@@ -59,6 +59,7 @@ export default function FeedForm({ ...props }) {
                                 }}
                                 onChange={(e) => setNit(parseInt(e.target.value))}
                                 required
+                                autoFocus={true}
                             />
                         </FormControl>
                         <FormControl sx={{ marginTop: 3 }} fullWidth>

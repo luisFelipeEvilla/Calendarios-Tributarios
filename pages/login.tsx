@@ -13,9 +13,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { setCookie } from "nookies";
 
 import banner from '../public/images/login-banner.jpg';
+import { AuthContext } from "../contexts/authContext";
 
 function Copyright(props: any) {
   return (
@@ -35,7 +37,8 @@ const theme = createTheme();
 export default function SignInSide() {
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-
+  const { login } = useContext(AuthContext);
+  
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -43,7 +46,7 @@ export default function SignInSide() {
     const credentials = new FormData(event.currentTarget);
     const username = credentials.get('user');
     const password = credentials.get('password');
-
+  
     // send data to server  
     const url = 'api/handleLogin';
 
@@ -62,16 +65,15 @@ export default function SignInSide() {
       })
 
       const response = await request.json();
-
       if (response.status !== 200) {
         setError(true);
         setErrorMessage('Usuario o contraseña incorrectos');
         return;
       }
 
-      // save token in cookies
-      // redirect to home page
-      // router.push('/calendarioTributario');
+      login(response.data.user, response.data.token);
+
+      router.push('/calendarioTributario');
     } catch (error) {
       console.error(error);
     }

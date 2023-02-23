@@ -6,6 +6,8 @@ import Avatar from "@mui/material/Avatar";
 import Drawer from "@mui/material/Drawer";
 import { useRouter } from "next/dist/client/router";
 import Image from 'next/image';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/authContext';
 
 const elements = [
     { name: 'Home', path: '/', icon: <HomeIcon /> },
@@ -13,7 +15,8 @@ const elements = [
     { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> }
 ]
 
-export default function Navigation() {
+export default function Navigation({...props}) {
+    const { user } = useContext(AuthContext);
     const router = useRouter();
 
     const handleNavigation = (path: string) => {
@@ -49,7 +52,7 @@ export default function Navigation() {
                 <Avatar sx={avatarStyle}>
                     <Image src='/images/avatar.png' alt='avatar' width={120} height={120}></Image>
                 </Avatar>
-                <Typography sx={{marginTop: 3}}>Roberto Robles</Typography>
+                <Typography sx={{marginTop: 3}}>{user.nombres} {user.apellidos}</Typography>
             </Box>
             {getElements()}
         </Drawer>

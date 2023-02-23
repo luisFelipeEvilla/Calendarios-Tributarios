@@ -84,7 +84,8 @@ export default function Create() {
         const body = { 
             name,
             taxType,
-            feeds
+            feeds,
+            location
          }
 
         try {

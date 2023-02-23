@@ -1,3 +1,4 @@
+import  Router from "next/router";
 import { parseCookies, setCookie } from "nookies";
 import { createContext, useEffect, useState } from "react";
 
@@ -11,14 +12,17 @@ export function AuthProvider({ children }: any) {
         // Comprueba si el usuario ya ha iniciado sesión
         const cookies = parseCookies();
 
-        const userData = JSON.parse(cookies.user);
-        const token = cookies.token;
+        try {
+            const userData = JSON.parse(cookies.user);
+            const token = cookies.token;
 
-        console.log(userData);
-        
-        if (userData && token) {
-            setUser(userData);
-            setToken(token);
+            if (userData && token) {
+                setUser(userData);
+                setToken(token);
+            }
+        } catch (error) {
+            console.error(error);
+            Router.push('/login');
         }
     }, []);
 

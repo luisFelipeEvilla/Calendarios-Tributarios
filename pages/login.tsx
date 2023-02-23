@@ -157,13 +157,6 @@ export default function SignInSide() {
                 >
                   Ingresar
                 </Button>
-                <Grid container>
-                  <Grid item>
-                    <Link href="/signup" variant="body2">
-                      {"¿Aún no tienes una cuenta? Registrate"}
-                    </Link>
-                  </Grid>
-                </Grid>
                 <Copyright sx={{ mt: 5 }} />
               </Box>
             </Box>

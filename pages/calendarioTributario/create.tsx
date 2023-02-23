@@ -77,7 +77,9 @@ export default function Create() {
     // functions
     const handleSubmit = () => {
         //Todo implement save tax logic
-        router.push('/calendarioTributario')
+        console.log(feeds);
+        
+        //router.push('/calendarioTributario')
     }
 
     const handleAddFeed = (index: number, feed: Feed) => {
@@ -89,6 +91,13 @@ export default function Create() {
         // organize feeds by date
         newFeeds[index].sort((a, b) => a.date.getTime() - b.date.getTime());
 
+        setFeeds(newFeeds);
+    }
+
+    const handleDeletFeed = (index: number, index1: number) => {
+        const newFeeds = [...feeds];
+        newFeeds[index].splice(index1,1);
+        
         setFeeds(newFeeds);
     }
 
@@ -131,14 +140,16 @@ export default function Create() {
                                 <TableRow>
                                     <TableCell>Digito/s de asignación</TableCell>
                                     <TableCell>Fecha de presentación</TableCell>
+                                    <TableCell>Acciones</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {
-                                    installment.map((installment: Feed) => (
+                                    installment.map((installment: Feed, index1: number) => (
                                         <TableRow>
                                             <TableCell>{installment.nit}</TableCell>
                                             <TableCell>{installment.date.toDateString()}</TableCell>
+                                            <TableCell><Button onClick={e => handleDeletFeed(index,index1)} variant="contained" color="error">Eliminar</Button></TableCell>
                                         </TableRow>
                                     ))
                                 }

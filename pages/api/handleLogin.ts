@@ -18,7 +18,7 @@ export default async function handler(
 
   const { username, password } = req.body
 
-  const url = 'http://localhost:8000/api/login/empleado';
+  const url = `${process.env.API_URL}/login/empleado`;
 
   const body = { username, password }
   

@@ -25,6 +25,7 @@ export default function Create({...props}) {
     const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
     const [taxType, setTaxType] = useState(0);
     const [location, setLocation] = useState(-1);
+    const [applyTo, setApplyTo] = useState(1);
 
     const { setEvents } = useScheduler();
     
@@ -69,6 +70,12 @@ export default function Create({...props}) {
         { name: 'Municipal', value: 2 },
     ]
 
+    const personsType = [
+        { name: 'Natural', value: 1},
+        { name: 'Juridica', value: 2},
+        { name: 'Grandes Contribuyentes', value: 3},
+    ]
+
     // styles
     const accordionSummaryStyle = {
         backgroundColor: "primary.main",
@@ -80,10 +87,11 @@ export default function Create({...props}) {
         //Todo implement save tax logic
         
         const url = '/api/handleAddImpuesto';
-        console.log(period);
         
+        if ( name.length === 0 || name === '') return alert('debe ingresar un nombre para el impuesto')
         const body = { 
             name,
+            applyTo: personsType[applyTo-1].name,
             period: periodos[period-1].name,
             taxType,
             feeds,
@@ -247,6 +255,17 @@ export default function Create({...props}) {
                             onChange={(e) => setName(e.target.value)}
                             autoFocus
                         />
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel sx={{fontSize: 20}} >Aplica a</InputLabel>
+                        <Select name='Aplica' value={applyTo} fullWidth label='Aplica a' onChange={(e) => setApplyTo(e.target.value as number)}>
+                            {
+                                personsType.map((taxType) => (
+                                    <MenuItem key={taxType.value} value={taxType.value}
+                                    >{taxType.name}</MenuItem>
+                                ))
+                            }
+                        </Select>
                     </FormControl>
                     <FormControl fullWidth>
                         <InputLabel sx={{fontSize: 20}}> Frecuencia</InputLabel>

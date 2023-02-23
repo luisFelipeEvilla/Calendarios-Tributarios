@@ -13,7 +13,10 @@ import axios from 'axios';
 
 
 const Home: NextPage = ({...props}: any) => {
-  console.log(props.taxes)
+  const nacionales = props.taxes.filter((tax) => tax.tipo === 0);
+  const departamentales = props.taxes.filter((tax) => tax.tipo === 1);
+  const municipales = props.taxes.filter((tax) => tax.tipo === 2);
+
   return (
       <Layout>
         <Head>
@@ -21,14 +24,23 @@ const Home: NextPage = ({...props}: any) => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Box sx={{ width: '100%' }}>
-          <Accordeon title="Impuestos Nacionales" data={props.taxes} />
+          <Accordeon title="Impuestos Nacionales" data={nacionales} />
+        </Box>
+        <Box sx={{ width: '100%' }}>
+          <Accordeon title="Impuestos Departamentales" data={departamentales} />
+        </Box>
+        <Box sx={{ width: '100%' }}>
+          <Accordeon title="Impuestos Municipales" data={municipales} />
         </Box>
       </Layout>
   )
 }
 
 export async function getServerSideProps(ctx: any) {
-  const url = 'http://localhost:8000/api/impuesto';
+  const url = `${process.env.API_URL}/impuesto`;
+
+  console.log(url);
+  
 
   let taxes = [];
   try {

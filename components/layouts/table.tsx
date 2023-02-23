@@ -23,6 +23,7 @@ export default function Table({ ...props }): ReactElement {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'persona', headerName: 'Aplica a', flex:1, headerAlign: 'center', align: 'center'},
         { field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center' },
         {
             field: 'numero_cuotas', headerName: 'Número de cuotas', flex: 1, headerAlign: 'center', align: 'center',

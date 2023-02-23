@@ -16,7 +16,7 @@ import axios from "axios";
 
 type Feed = { nit: number, date: Date }
 
-export default function Create() {
+export default function Create({...props}) {
     const avatarSize = { width: 160, height: 160 }
     const avatarIconSize = { width: 120, height: 120 }
     const [name, setName] = useState('');
@@ -27,7 +27,7 @@ export default function Create() {
     const [location, setLocation] = useState(-1);
 
     const { setEvents } = useScheduler();
-
+    
     // hooks
     const router = useRouter();
 
@@ -80,9 +80,11 @@ export default function Create() {
         //Todo implement save tax logic
         
         const url = '/api/handleAddImpuesto';
-
+        console.log(period);
+        
         const body = { 
             name,
+            period: periodos[period-1].name,
             taxType,
             feeds,
             location

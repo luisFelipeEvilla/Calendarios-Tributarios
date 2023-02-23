@@ -9,8 +9,11 @@ import data from '../../data.json';
 import Layout from '../../components/layout';
 import Accordeon from '../../components/layouts/accordion';
 import PrivateRoute from '../../components/protectedRoute';
+import axios from 'axios';
 
-const Home: NextPage = () => {
+
+const Home: NextPage = ({...props}: any) => {
+  console.log(props.taxes)
   return (
       <Layout>
         <Head>
@@ -18,16 +21,29 @@ const Home: NextPage = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Box sx={{ width: '100%' }}>
-          <Accordeon title="Impuestos Nacionales" data={data.nacionales} />
-        </Box>
-        <Box sx={{ width: '100%' }}>
-          <Accordeon title="Impuestos Departamentales" data={data.departamentales} />
-        </Box>
-        <Box sx={{ width: '100%' }}>
-          <Accordeon title="Impuestos Municipales" data={data.municipales} />
+          <Accordeon title="Impuestos Nacionales" data={props.taxes} />
         </Box>
       </Layout>
   )
+}
+
+export async function getServerSideProps(ctx: any) {
+  const url = 'http://localhost:8000/api/impuesto';
+
+  let taxes = [];
+  try {
+    const request = await axios.get(url);
+
+    taxes = request.data.data;
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+      props: {
+          taxes
+      }
+  }
 }
 
 export default Home

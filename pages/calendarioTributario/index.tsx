@@ -13,8 +13,11 @@ import axios from 'axios';
 
 
 const Home: NextPage = ({...props}: any) => {
+  // @ts-ignore
   const nacionales = props.taxes.filter((tax) => tax.tipo === 0);
+  // @ts-ignore
   const departamentales = props.taxes.filter((tax) => tax.tipo === 1);
+  // @ts-ignore
   const municipales = props.taxes.filter((tax) => tax.tipo === 2);
 
   return (

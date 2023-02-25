@@ -11,11 +11,6 @@ interface CustomEditorProps {
   scheduler: SchedulerHelpers;
 }
 
-const config = {
-    locale,
-    view: 'month'
-}
-
 const CustomEditor = ({ scheduler }: CustomEditorProps) => {
   const event = scheduler.edited;
   const [state, setState] = useState({number: event?.title || undefined});
@@ -27,7 +22,7 @@ const CustomEditor = ({ scheduler }: CustomEditorProps) => {
 
   const handleSubmit = async () => {
     // Your own validation
-    const digit = state.number;
+    const digit = state.number as unknown as number;
 
     if (digit === undefined || isNaN(+digit) ||  digit < 0) {
       return setError("Debe ingresar un número");
@@ -79,7 +74,8 @@ const CustomEditor = ({ scheduler }: CustomEditorProps) => {
 function TaxesScheduler({...props}) {
   return (
     <Scheduler
-      {...config}      
+      view="month"
+      locale={locale}      
       customEditor={(scheduler) => <CustomEditor scheduler={scheduler} />}
       viewerExtraComponent={(fields, event) => {
         return (

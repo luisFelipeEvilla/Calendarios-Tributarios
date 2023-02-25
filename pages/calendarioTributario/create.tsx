@@ -51,7 +51,7 @@ export default function Create({...props}) {
 
         setScheduledFeeds(events);
         setEvents(events);
-    }, [feeds])
+    }, [feeds, setEvents])
 
     // fake data
     const periodos = [
@@ -172,7 +172,7 @@ export default function Create({...props}) {
                             <TableBody>
                                 {
                                     installment.map((installment: Feed, index1: number) => (
-                                        <TableRow>
+                                        <TableRow key={index1}>
                                             <TableCell>{installment.nit}</TableCell>
                                             <TableCell>{installment.date.toDateString()}</TableCell>
                                             <TableCell><Button onClick={e => handleDeletFeed(index,index1)} variant="contained" color="error">Eliminar</Button></TableCell>
@@ -223,9 +223,9 @@ export default function Create({...props}) {
                 <Select value={location} onChange={e => setLocation(e.target.value as number)} required>
                     <MenuItem value={-1}>Selecciona una ubicación</MenuItem>
                     {taxType === 1 ?
-                        departamentos.map(departamento => <MenuItem value={departamento.value}>{departamento.name}</MenuItem>) 
+                        departamentos.map((departamento,index) => <MenuItem value={departamento.value} key={index}>{departamento.name}</MenuItem>) 
                     :
-                        municipios.map(municipio => <MenuItem value={municipio.value}>{municipio.name}</MenuItem>)
+                        municipios.map((municipio, index) => <MenuItem value={municipio.value} key={index}>{municipio.name}</MenuItem>)
                     }
                 </Select>
             </FormControl>

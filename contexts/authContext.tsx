@@ -24,7 +24,7 @@ export function AuthProvider({ children }: any) {
             console.error(error);
             Router.push('/login');
         }
-    }, [user]);
+    }, []);
 
     const login = (user: any, token: string) => {
         setUser(user);

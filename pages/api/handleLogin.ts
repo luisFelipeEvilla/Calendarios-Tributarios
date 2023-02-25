@@ -28,8 +28,8 @@ export default async function handler(
     const response = request.data;
 
     res.status(200).json(response);
-  } catch (error) {
-    console.log(error);
+  } catch (error) {    
+    console.error(error);
     return res.status(500).json({ message: 'Error en el servidor' });
   }
 

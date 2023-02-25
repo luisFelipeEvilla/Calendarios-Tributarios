@@ -42,9 +42,6 @@ const Home: NextPage = ({...props}: any) => {
 export async function getServerSideProps(ctx: any) {
   const url = `${process.env.API_URL}/impuesto`;
 
-  console.log(url);
-  
-
   let taxes = [];
   try {
     const request = await axios.get(url);

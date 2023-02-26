@@ -16,6 +16,8 @@ import axios from "axios";
 
 type Feed = { nit: number, date: Date }
 
+import {periods, personTypes, taxTypes} from '../../config';
+
 export default function Create({...props}) {
     const avatarSize = { width: 160, height: 160 }
     const avatarIconSize = { width: 120, height: 120 }
@@ -23,7 +25,7 @@ export default function Create({...props}) {
     const [period, setPeriod] = useState(1);
     const [feeds, setFeeds] = useState<Feed[][]>([[]]);
     const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
-    const [taxType, setTaxType] = useState(0);
+    const [taxType, setTaxType] = useState(1);
     const [location, setLocation] = useState(-1);
     const [applyTo, setApplyTo] = useState(1);
 
@@ -53,28 +55,7 @@ export default function Create({...props}) {
         setEvents(events);
     }, [feeds, setEvents])
 
-    // fake data
-    const periodos = [
-        { name: 'Anual', value: 1, frequency: 1 },
-        { name: 'Semestral', value: 2, frequency: 2 },
-        { name: 'Cuatrimestral', value: 3, frequency: 3 },
-        { name: 'Trimestral', value: 4, frequency: 4 },
-        { name: 'Bimestral', value: 5, frequency: 6 },
-        { name: 'Mensual', value: 6, frequency: 12 },
-        { name: 'Personalizado', value: 7, frequency: 1 }
-    ]
 
-    const taxTypes = [
-        { name: 'Nacional', value: 0 },
-        { name: 'Departamental', value: 1 },
-        { name: 'Municipal', value: 2 },
-    ]
-
-    const personsType = [
-        { name: 'Natural', value: 1},
-        { name: 'Juridica', value: 2},
-        { name: 'Grandes Contribuyentes', value: 3},
-    ]
 
     // styles
     const accordionSummaryStyle = {
@@ -91,8 +72,8 @@ export default function Create({...props}) {
         if ( name.length === 0 || name === '') return alert('debe ingresar un nombre para el impuesto')
         const body = { 
             name,
-            applyTo: personsType[applyTo-1].name,
-            period: periodos[period-1].name,
+            applyTo: personTypes[applyTo-1].name,
+            period: periods[period-1].name,
             taxType,
             feeds,
             location
@@ -100,12 +81,12 @@ export default function Create({...props}) {
 
         try {
             const request = await axios.post(url, body);
-            
-            console.log(request.data);
+            console.log(request);
+            router.push('/calendarioTributario');
         } catch (error) {
             console.error(error);
         }
-        //router.push('/calendarioTributario')
+        
     }
 
     const handleAddFeed = (index: number, feed: Feed) => {
@@ -131,7 +112,7 @@ export default function Create({...props}) {
         const periodsNumber = event.target.value as number;
         setPeriod(periodsNumber);
 
-        const frequency = periodos.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
+        const frequency = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
 
         const newFeeds = [];
 
@@ -145,7 +126,7 @@ export default function Create({...props}) {
 
 
     const getFeeds = () => {
-        const frequency = periodos.find((periodo) => periodo.value === period)?.frequency || 0;
+        const frequency = periods.find((periodo) => periodo.value === period)?.frequency || 0;
 
         const initDate = new Date(new Date().getFullYear(), 0, 1);
         const endDate = new Date(new Date().getFullYear(), 12 / frequency, 0);
@@ -195,7 +176,7 @@ export default function Create({...props}) {
     }
 
     const getLocationField = () => {
-        if (taxType === 0) return null;
+        if (taxType === 1) return null;
 
         const municipios = [
             { name: 'Bogotá', value: 1 },
@@ -260,7 +241,7 @@ export default function Create({...props}) {
                         <InputLabel sx={{fontSize: 20}} >Aplica a</InputLabel>
                         <Select name='Aplica' value={applyTo} fullWidth label='Aplica a' onChange={(e) => setApplyTo(e.target.value as number)}>
                             {
-                                personsType.map((taxType) => (
+                                personTypes.map((taxType) => (
                                     <MenuItem key={taxType.value} value={taxType.value}
                                     >{taxType.name}</MenuItem>
                                 ))
@@ -271,7 +252,7 @@ export default function Create({...props}) {
                         <InputLabel sx={{fontSize: 20}}> Frecuencia</InputLabel>
                         <Select name='Periodicidad' value={period} fullWidth label='frecuencia' onChange={handlePeriodChange}>
                             {
-                                periodos.map((periodo) => (
+                                periods.map((periodo) => (
                                     <MenuItem key={periodo.value} value={periodo.value}
                                     >{periodo.name}</MenuItem>
                                 ))

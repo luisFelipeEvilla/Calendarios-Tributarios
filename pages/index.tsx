@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 
 // import data
-import data from '../data.json';
+import data from '../config';
 
 // components
 import Layout from '../components/layout';

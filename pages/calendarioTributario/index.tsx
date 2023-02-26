@@ -2,23 +2,19 @@ import { Box } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-// import data
-import data from '../../data.json';
-
 // components
 import Layout from '../../components/layout';
 import Accordeon from '../../components/layouts/accordion';
-import PrivateRoute from '../../components/protectedRoute';
 import axios from 'axios';
 
 
 const Home: NextPage = ({...props}: any) => {
   // @ts-ignore
-  const nacionales = props.taxes.filter((tax) => tax.tipo === 0);
+  const nacionales = props.taxes.filter((tax) => tax.tipo == 1);
   // @ts-ignore
-  const departamentales = props.taxes.filter((tax) => tax.tipo === 1);
+  const departamentales = props.taxes.filter((tax) => tax.tipo == 2);
   // @ts-ignore
-  const municipales = props.taxes.filter((tax) => tax.tipo === 2);
+  const municipales = props.taxes.filter((tax) => tax.tipo == 3);
 
   return (
       <Layout>

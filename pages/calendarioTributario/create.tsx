@@ -15,10 +15,13 @@ import styles from '../../styles/calendarioTributario/create.module.css';
 import axios from "axios";
 
 type Feed = { nit: number, date: Date }
+type Municipio = { codigo_departamento: number, codigo_municipio: number, municipio: string }
+type Departamento = { codigo_departamento: number, departamento: string, municipios: Municipio[] }
 
-import {periods, personTypes, taxTypes} from '../../config';
+type propsType = { departamentos: Departamento[] }
+import { periods, personTypes, taxTypes } from '../../config';
 
-export default function Create({...props}) {
+export default function Create({ ...props }: propsType) {
     const avatarSize = { width: 160, height: 160 }
     const avatarIconSize = { width: 120, height: 120 }
     const [name, setName] = useState('');
@@ -26,11 +29,13 @@ export default function Create({...props}) {
     const [feeds, setFeeds] = useState<Feed[][]>([[]]);
     const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
     const [taxType, setTaxType] = useState(1);
-    const [location, setLocation] = useState(-1);
+    const [departamento, setDepartamento] = useState(0);
+    const [municipio, setMunicipio] = useState(0);
     const [applyTo, setApplyTo] = useState(1);
 
+    const [municipios, setMunicipios] = useState<Municipio[] | []>([]);
+
     const { setEvents } = useScheduler();
-    
     // hooks
     const router = useRouter();
 
@@ -66,18 +71,18 @@ export default function Create({...props}) {
     // functions
     const handleSubmit = async () => {
         //Todo implement save tax logic
-        
+
         const url = '/api/handleAddImpuesto';
-        
-        if ( name.length === 0 || name === '') return alert('debe ingresar un nombre para el impuesto')
-        const body = { 
+
+        if (name.length === 0 || name === '') return alert('debe ingresar un nombre para el impuesto')
+        const body = {
             name,
-            applyTo: personTypes[applyTo-1].name,
-            period: periods[period-1].name,
+            applyTo: personTypes[applyTo - 1].name,
+            period: periods[period - 1].name,
             taxType,
             feeds,
             location
-         }
+        }
 
         try {
             const request = await axios.post(url, body);
@@ -86,7 +91,7 @@ export default function Create({...props}) {
         } catch (error) {
             console.error(error);
         }
-        
+
     }
 
     const handleAddFeed = (index: number, feed: Feed) => {
@@ -103,8 +108,8 @@ export default function Create({...props}) {
 
     const handleDeletFeed = (index: number, index1: number) => {
         const newFeeds = [...feeds];
-        newFeeds[index].splice(index1,1);
-        
+        newFeeds[index].splice(index1, 1);
+
         setFeeds(newFeeds);
     }
 
@@ -122,6 +127,20 @@ export default function Create({...props}) {
 
         // @ts-ignore
         setFeeds(newFeeds);
+    }
+
+    const handledDepartamentoChange = (event: SelectChangeEvent<unknown>) => {
+        const departamentoCode = event.target.value as number;
+        setDepartamento(departamentoCode);
+        const municipios = props.departamentos.find(departamento => departamento.codigo_departamento === departamentoCode)?.municipios || [];
+        setMunicipios(municipios);
+    }
+
+    const handleTaxTypeChange = (event: SelectChangeEvent<unknown>) => {
+        const taxType = event.target.value as number;
+        setTaxType(taxType);
+        setDepartamento(0);
+        setMunicipio(0);
     }
 
 
@@ -156,7 +175,7 @@ export default function Create({...props}) {
                                         <TableRow key={index1}>
                                             <TableCell>{installment.nit}</TableCell>
                                             <TableCell>{installment.date.toDateString()}</TableCell>
-                                            <TableCell><Button onClick={e => handleDeletFeed(index,index1)} variant="contained" color="error">Eliminar</Button></TableCell>
+                                            <TableCell><Button onClick={e => handleDeletFeed(index, index1)} variant="contained" color="error">Eliminar</Button></TableCell>
                                         </TableRow>
                                     ))
                                 }
@@ -173,44 +192,6 @@ export default function Create({...props}) {
         })
 
         return components;
-    }
-
-    const getLocationField = () => {
-        if (taxType === 1) return null;
-
-        const municipios = [
-            { name: 'Bogotá', value: 1 },
-            { name: 'Medellín', value: 2 },
-            { name: 'Cali', value: 3 },
-            { name: 'Barranquilla', value: 4 },
-            { name: 'Cartagena', value: 5 },
-            { name: 'Cúcuta', value: 6 },
-            { name: 'Bucaramanga', value: 7 },
-            { name: 'Pereira', value: 8 },
-        ]
-
-        const departamentos = [
-            { name: 'Antioquia', value: 1 },
-            { name: 'Atlántico', value: 2 },
-            { name: 'Bolívar', value: 3 },
-            { name: 'Boyacá', value: 4 },
-            { name: 'Caldas', value: 5 },
-            { name: 'Cauca', value: 6 },
-        ]
-
-        return (
-            <FormControl fullWidth>
-                <InputLabel sx={{fontSize: 20}} id="location-label">Ubicación</InputLabel>
-                <Select value={location} onChange={e => setLocation(e.target.value as number)} required>
-                    <MenuItem value={-1}>Selecciona una ubicación</MenuItem>
-                    {taxType === 1 ?
-                        departamentos.map((departamento,index) => <MenuItem value={departamento.value} key={index}>{departamento.name}</MenuItem>) 
-                    :
-                        municipios.map((municipio, index) => <MenuItem value={municipio.value} key={index}>{municipio.name}</MenuItem>)
-                    }
-                </Select>
-            </FormControl>
-        )
     }
 
     return (
@@ -238,8 +219,8 @@ export default function Create({...props}) {
                         />
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel sx={{fontSize: 20}} >Aplica a</InputLabel>
-                        <Select name='Aplica' value={applyTo} fullWidth label='Aplica a' onChange={(e) => setApplyTo(e.target.value as number)}>
+                        <InputLabel sx={{ fontSize: 20 }} >Aplica a</InputLabel>
+                        <Select name='Aplica' value={applyTo} fullWidth label='Aplica a' onChange={handleTaxTypeChange}>
                             {
                                 personTypes.map((taxType) => (
                                     <MenuItem key={taxType.value} value={taxType.value}
@@ -249,7 +230,7 @@ export default function Create({...props}) {
                         </Select>
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel sx={{fontSize: 20}}> Frecuencia</InputLabel>
+                        <InputLabel sx={{ fontSize: 20 }}> Frecuencia</InputLabel>
                         <Select name='Periodicidad' value={period} fullWidth label='frecuencia' onChange={handlePeriodChange}>
                             {
                                 periods.map((periodo) => (
@@ -260,7 +241,7 @@ export default function Create({...props}) {
                         </Select>
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel sx={{fontSize: 20}} >Tipo de impuesto</InputLabel>
+                        <InputLabel sx={{ fontSize: 20 }} >Tipo de impuesto</InputLabel>
                         <Select name='Tipo de impuesto' value={taxType} fullWidth label='Tipo de impuesto' onChange={(e) => setTaxType(e.target.value as number)}>
                             {
                                 taxTypes.map((taxType) => (
@@ -270,12 +251,35 @@ export default function Create({...props}) {
                             }
                         </Select>
                     </FormControl>
-                    {getLocationField()}
+                    {
+                        taxType != 1 ?
+                            <FormControl fullWidth>
+                                <InputLabel sx={{ fontSize: 20 }} id="departamento-label">Ubicación</InputLabel>
+                                <Select value={departamento} onChange={handledDepartamentoChange} required>
+                                    <MenuItem value={0}>Selecciona un departamento</MenuItem>
+                                    {
+                                        props.departamentos.map((departamento, index) => <MenuItem value={departamento.codigo_departamento} key={index}>{departamento.departamento}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl> : null
+                    }
+                    {
+                        taxType === 3 ?
+                            <FormControl fullWidth>
+                                <InputLabel sx={{ fontSize: 20 }} id="municipio-label">Municipio</InputLabel>
+                                <Select value={municipio} onChange={e => setMunicipio(e.target.value as number)} required>
+                                    <MenuItem value={0}>Selecciona un municipio</MenuItem>
+                                    {
+                                        municipios.map((municipio, index) => <MenuItem value={municipio.codigo_municipio} key={index}>{municipio.municipio}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl> : null
+                    }
                 </Box>
 
                 <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
                     <Box width='80%' marginBottom={10}>
-                        <Scheduler  locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
+                        <Scheduler locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
                     </Box>
                     {getFeeds()}
                 </Box>
@@ -287,4 +291,23 @@ export default function Create({...props}) {
         </Layout>
 
     )
+}
+
+export async function getServerSideProps(context: any) {
+    let departamentos: Departamento[] = [];
+    try {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/departamentos`;
+
+        const response = await axios.get(url);
+
+        departamentos = response.data.data;
+    } catch (error) {
+
+    }
+
+    return {
+        props: {
+            departamentos
+        }
+    }
 }

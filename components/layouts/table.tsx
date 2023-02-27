@@ -34,9 +34,9 @@ export default function Table({ ...props }): ReactElement {
             field: 'acciones', headerName: 'Acciones', flex: 1, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
                 <Box>
-                    <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
+                    {/* <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
                         Editar
-                    </Button>
+                    </Button> */}
                     <Button variant="contained" color="error" size="small">
                         Eliminar
                     </Button>

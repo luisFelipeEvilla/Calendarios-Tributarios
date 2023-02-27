@@ -1,24 +1,50 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
 import { Box, Button } from '@mui/material';
 import SearchBar from './searchbar';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-export default function Table({ ...props }): ReactElement {
-    const [filterData, setFilterData] = React.useState(props.data);
-    const [pageSize, setPageSize] = React.useState(10);
+type Tax = { id: number};
+type PropsType = { data: Tax[]}
+
+export default function Table({ ...props }: PropsType): ReactElement {
+    const [data, setData ] = useState<Tax[]>(props.data)
+    const [filterData, setFilterData] = useState(props.data);
+    const [pageSize, setPageSize] = useState(10);
 
     const router = useRouter();
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchQuery = event.target.value.toLowerCase();
-        const filteredData = props.data.filter((value: any) => {
+        const filteredData = data.filter((value: any) => {
             return value.nombre.toLowerCase().includes(searchQuery);
         });
 
         setFilterData(filteredData);
     };
+
+    const handleDelete = async (id: number) => {
+        const url  = `api/tax/${id}`;
+
+        try {
+            const request = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            // delete entry from data array
+            const newData = data.filter((tax) => tax.id != id);
+            setData(newData);
+            const newFilterData = filterData.filter((tax) => tax.id != id);
+            setFilterData(newFilterData);
+        } catch (error) {
+            alert(error);
+            console.error(error)
+        }
+    };
+
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
@@ -37,7 +63,7 @@ export default function Table({ ...props }): ReactElement {
                     {/* <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
                         Editar
                     </Button> */}
-                    <Button variant="contained" color="error" size="small">
+                    <Button variant="contained" color="error" size="small" onClick={e => handleDelete(params.row.id)}>
                         Eliminar
                     </Button>
                 </Box>

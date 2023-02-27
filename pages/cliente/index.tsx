@@ -1,9 +1,10 @@
-import { Avatar, Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardActions, CardContent, CardMedia, List, ListItemText, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import PeopleIcon from '@mui/icons-material/People';
 import SearchBar from "../../components/layouts/searchbar";
+import Link from "next/link";
 type Client = { id: number, nit: string, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string };
 
 export default function Clientes() {
@@ -35,7 +36,7 @@ export default function Clientes() {
             <Box className="container" flexWrap={"wrap"} justifyContent={'center'} alignItems='center' >
                 {
                     filteredClients.map((client, index) => (
-                        <Card  key={index} sx={{ width: 400, margin: 5, height: 400, '&:hover': {transform: 'scale(1.03)'}}}>
+                        <Card key={index} sx={{ width: 400, margin: 5, height: 400, '&:hover': { transform: 'scale(1.03)' } }}>
                             <CardMedia>
                                 <Box sx={{ width: '100%', height: 180, backgroundColor: 'grey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Avatar sx={{ height: 120, width: 120 }} >
@@ -43,7 +44,7 @@ export default function Clientes() {
                                     </Avatar>
                                 </Box>
                             </CardMedia>
-                            <CardContent>
+                            <CardContent sx={{ height: 170 }}>
                                 <Typography sx={{
                                     display: '-webkit-box',
                                     overflow: 'clip',
@@ -53,17 +54,11 @@ export default function Clientes() {
                                 <Typography variant="body2"><b>NIT: </b>{client.nit}</Typography>
                                 <Typography variant="body2"><b>Página web: </b>{client.pagina_web}</Typography>
                                 <Typography variant="body2"><b>Representante Legal: </b>{client.nombre_representante_legal}</Typography>
-                                <Typography variant="body2"><b>Emails: </b>
-                                    <ul>
-                                        {
-                                            client.emails.split(',').map((email, index) => (
-                                                <li key={index}>{email}</li>
-                                            ))
-                                        }
-                                    </ul>
-                                </Typography>
-
+                                <Typography variant="body2" sx={{ marginBotton: 0 }}><b>Email: </b> {client.emails.split(',')[0]}</Typography>
                             </CardContent>
+                            <CardActions sx={{display: 'flex', justifyContent: 'center'}}>
+                                <Button variant="contained" size='medium' color='info'><Link href={`/cliente/${client.id}`} style={{textDecoration: 'none', color: 'white'}}> Detalles </Link></Button>
+                            </CardActions>
 
                         </Card>
                     ))

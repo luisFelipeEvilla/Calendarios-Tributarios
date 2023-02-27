@@ -15,6 +15,7 @@ export default function Clientes() {
         const getClients = async () => {
             const response = await axios.get('api/client');
             setClients(response.data);
+            setFilteredClients(response.data);
             setLoading(false);
         }
         getClients();
@@ -34,7 +35,7 @@ export default function Clientes() {
             <Box className="container" flexWrap={"wrap"} justifyContent={'center'} alignItems='center' >
                 {
                     filteredClients.map((client, index) => (
-                        <Card  key={index} sx={{ width: 400, margin: 5, height: 400 }}>
+                        <Card  key={index} sx={{ width: 400, margin: 5, height: 400, '&:hover': {transform: 'scale(1.03)'}}}>
                             <CardMedia>
                                 <Box sx={{ width: '100%', height: 180, backgroundColor: 'grey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Avatar sx={{ height: 120, width: 120 }} >
@@ -48,7 +49,7 @@ export default function Clientes() {
                                     overflow: 'clip',
                                     WebkitBoxOrient: 'vertical',
                                     WebkitLineClamp: 2,
-                                }} variant="h5">{client.nombre_empresa}</Typography>
+                                }} color='Highlight' variant="h5">{client.nombre_empresa}</Typography>
                                 <Typography variant="body2"><b>NIT: </b>{client.nit}</Typography>
                                 <Typography variant="body2"><b>Página web: </b>{client.pagina_web}</Typography>
                                 <Typography variant="body2"><b>Representante Legal: </b>{client.nombre_representante_legal}</Typography>

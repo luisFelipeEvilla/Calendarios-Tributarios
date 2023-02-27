@@ -221,7 +221,7 @@ export default function Create({ ...props }: propsType) {
                     </FormControl>
                     <FormControl fullWidth>
                         <InputLabel sx={{ fontSize: 20 }} >Aplica a</InputLabel>
-                        <Select name='Aplica' value={applyTo} fullWidth label='Aplica a' onChange={handleTaxTypeChange}>
+                        <Select name='Aplica' value={applyTo} fullWidth label='Aplica a' onChange={e => setApplyTo(e.target.value as number)}>
                             {
                                 personTypes.map((taxType) => (
                                     <MenuItem key={taxType.value} value={taxType.value}
@@ -243,7 +243,7 @@ export default function Create({ ...props }: propsType) {
                     </FormControl>
                     <FormControl fullWidth>
                         <InputLabel sx={{ fontSize: 20 }} >Tipo de impuesto</InputLabel>
-                        <Select name='Tipo de impuesto' value={taxType} fullWidth label='Tipo de impuesto' onChange={(e) => setTaxType(e.target.value as number)}>
+                        <Select name='Tipo de impuesto' value={taxType} fullWidth label='Tipo de impuesto' onChange={handleTaxTypeChange}>
                             {
                                 taxTypes.map((taxType) => (
                                     <MenuItem key={taxType.value} value={taxType.value}

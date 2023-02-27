@@ -11,7 +11,7 @@ import { AuthContext } from '../../contexts/authContext';
 
 const elements = [
     // { name: 'Home', path: '/', icon: <HomeIcon /> },
-    { name: 'Clientes', path: '/clientes', icon: <PeopleIcon /> },
+    { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
     { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> }
 ]
 

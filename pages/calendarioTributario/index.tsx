@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -8,7 +8,7 @@ import Accordeon from '../../components/layouts/accordion';
 import axios from 'axios';
 
 
-const Home: NextPage = ({...props}: any) => {
+const Home: NextPage = ({ ...props }: any) => {
   // @ts-ignore
   const nacionales = props.taxes.filter((tax) => tax.tipo == 1);
   // @ts-ignore
@@ -17,11 +17,16 @@ const Home: NextPage = ({...props}: any) => {
   const municipales = props.taxes.filter((tax) => tax.tipo == 3);
 
   return (
-      <Layout>
-        <Head>
-          <title>Home</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+    <Layout>
+      <Head>
+        <title>Home</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Box sx={{ width: '100%', textAlign: 'center', marginTop: 6 }}>
+        <Box marginBottom={8}>
+          <Typography variant="h2" component="h1" gutterBottom> Calendario Tributario </Typography>
+          <Typography variant='body1'>Aqui podras Encontrar todar la información relacionada a los calendarios tributarios</Typography>
+        </Box>
         <Box sx={{ width: '100%' }}>
           <Accordeon title="Impuestos Nacionales" data={nacionales} />
         </Box>
@@ -31,7 +36,8 @@ const Home: NextPage = ({...props}: any) => {
         <Box sx={{ width: '100%' }}>
           <Accordeon title="Impuestos Municipales" data={municipales} />
         </Box>
-      </Layout>
+      </Box>
+    </Layout>
   )
 }
 
@@ -48,9 +54,9 @@ export async function getServerSideProps(ctx: any) {
   }
 
   return {
-      props: {
-          taxes
-      }
+    props: {
+      taxes
+    }
   }
 }
 

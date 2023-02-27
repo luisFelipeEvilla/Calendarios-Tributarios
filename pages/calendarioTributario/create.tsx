@@ -87,9 +87,9 @@ export default function Create({ ...props }: propsType) {
 
         try {
             const request = await axios.post(url, body, { headers: { 'Content-Type': 'application/json' } });
-            console.log(request.data.message);
-            router.push('/calendarioTributario');
+            window.location.href = '/calendarioTributario';
         } catch (error) {
+            alert(error);
             console.error(error);
         }
 

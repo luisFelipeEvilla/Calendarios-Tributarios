@@ -20,6 +20,7 @@ type Departamento = { codigo_departamento: number, departamento: string, municip
 
 type propsType = { departamentos: Departamento[] }
 import { periods, personTypes, taxTypes } from '../../config';
+import Head from "next/head";
 
 export default function Create({ ...props }: propsType) {
     const avatarSize = { width: 160, height: 160 }
@@ -197,6 +198,9 @@ export default function Create({ ...props }: propsType) {
 
     return (
         <Layout>
+            <Head>
+                <title>Agregar impuesto</title>
+            </Head>
             <Box className={`${styles.container}`}>
                 <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
                     <Typography variant="h4" component="h1" marginBottom={8} >

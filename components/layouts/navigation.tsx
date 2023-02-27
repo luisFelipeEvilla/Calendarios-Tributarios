@@ -20,7 +20,7 @@ export default function Navigation({...props}) {
     const router = useRouter();
 
     const handleNavigation = (path: string) => {
-        router.push(path)
+        window.location.href = path;
     }
 
     const getElements = () => (

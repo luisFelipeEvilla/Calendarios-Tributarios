@@ -1,9 +1,8 @@
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
 // import data
-import data from '../config';
 
 // components
 import Layout from '../components/layout';
@@ -17,7 +16,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box sx={{ width: '100%' }}>
-        <Accordeon title="Impuestos Nacionales" data={data} />
+        <Typography variant='h2'>Bienvenido a SGC</Typography>
       </Box>
     </Layout>
   )

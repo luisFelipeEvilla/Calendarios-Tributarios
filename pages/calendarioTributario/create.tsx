@@ -80,13 +80,14 @@ export default function Create({ ...props }: propsType) {
             applyTo: personTypes[applyTo - 1].name,
             period: periods[period - 1].name,
             taxType,
-            feeds,
-            location
+            departamento,
+            municipio,
+            feeds
         }
 
         try {
-            const request = await axios.post(url, body);
-            console.log(request);
+            const request = await axios.post(url, body, { headers: { 'Content-Type': 'application/json' } });
+            console.log(request.data.message);
             router.push('/calendarioTributario');
         } catch (error) {
             console.error(error);
@@ -254,8 +255,8 @@ export default function Create({ ...props }: propsType) {
                     {
                         taxType != 1 ?
                             <FormControl fullWidth>
-                                <InputLabel sx={{ fontSize: 20 }} id="departamento-label">Ubicación</InputLabel>
-                                <Select value={departamento} onChange={handledDepartamentoChange} required>
+                                <InputLabel sx={{ fontSize: 20 }}>Ubicación</InputLabel>
+                                <Select name="departamento" value={departamento} onChange={handledDepartamentoChange} required>
                                     <MenuItem value={0}>Selecciona un departamento</MenuItem>
                                     {
                                         props.departamentos.map((departamento, index) => <MenuItem value={departamento.codigo_departamento} key={index}>{departamento.departamento}</MenuItem>)
@@ -266,8 +267,8 @@ export default function Create({ ...props }: propsType) {
                     {
                         taxType === 3 ?
                             <FormControl fullWidth>
-                                <InputLabel sx={{ fontSize: 20 }} id="municipio-label">Municipio</InputLabel>
-                                <Select value={municipio} onChange={e => setMunicipio(e.target.value as number)} required>
+                                <InputLabel sx={{ fontSize: 20 }}>Municipio</InputLabel>
+                                <Select name="municipio" value={municipio} onChange={e => setMunicipio(e.target.value as number)} required>
                                     <MenuItem value={0}>Selecciona un municipio</MenuItem>
                                     {
                                         municipios.map((municipio, index) => <MenuItem value={municipio.codigo_municipio} key={index}>{municipio.municipio}</MenuItem>)

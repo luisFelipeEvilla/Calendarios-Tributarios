@@ -1,5 +1,5 @@
 
-import { Avatar, Box, Button, Chip, FormControl, Grid, Input, InputLabel, MenuItem, Paper, Select, Table, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Modal, Paper, Select, Table, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -10,6 +10,7 @@ import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { es } from "date-fns/locale";
 import TableBody from "@mui/material/TableBody/TableBody";
+import MessageModal from "../../components/messageModal";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string };
@@ -19,6 +20,9 @@ export default function Client() {
     const [taxes, setTaxes] = useState([]);
     const [clientTaxes, setClientTaxes] = useState<any[]>([]);
     const [scheduledTax, setScheduledTax] = useState<ProcessedEvent[] | undefined>();
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalMeessage, setModalMessage] = useState<string>('');
+    const [error, setError] = useState<boolean>(false);
     // get id from url
     const router = useRouter();
 
@@ -63,7 +67,7 @@ export default function Client() {
 
     const handleClientTaxChange = (newClientTaxes: any[]) => {
         setClientTaxes(newClientTaxes);
-       const events: ProcessedEvent[] = [];
+        const events: ProcessedEvent[] = [];
 
         newClientTaxes.forEach((tax, index) => {
             tax.cuotas.forEach((cuota: any) => {
@@ -109,11 +113,20 @@ export default function Client() {
         });
 
         handleClientTaxChange(newClientTaxes);
+
+        setModalOpen(true);
+        setModalMessage('Impuesto agregado correctamente');
+        setError(false);
     }
 
     const handleDeleteTax = (taxId: number) => {
         const newClientTaxes = clientTaxes.filter((tax) => tax.id !== taxId);
         handleClientTaxChange(newClientTaxes);
+
+        setModalOpen(true);
+        setModalMessage('Impuesto eliminado correctamente');
+        setError(true);
+
     }
 
     return (
@@ -124,6 +137,7 @@ export default function Client() {
             {
                 loading ? <h1>Cargando...</h1> :
                     <Box className="container" justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={5}>
+                        <MessageModal  modalOpen={modalOpen} setModalOpen={setModalOpen} title={modalMeessage} error={error} />
                         <Avatar sx={{ height: 200, width: 200, marginBottom: 5 }}>
                             <PeopleIcon sx={{ height: 140, width: 140 }} />
                         </Avatar>
@@ -175,7 +189,7 @@ export default function Client() {
                                 <Button type='submit' color='success' variant='contained'>Agregar</Button>
                             </Box>
 
-                            <Box sx={{marginBottom: 5, width: 800}}>
+                            <Box sx={{ marginBottom: 5, width: 800 }}>
                                 <Table component={Paper}>
                                     <TableHead>
                                         <TableRow>
@@ -216,3 +230,4 @@ function formInput(label: string, value: any, setValue: SetStateAction<any>) {
         </FormControl>
     )
 }
+

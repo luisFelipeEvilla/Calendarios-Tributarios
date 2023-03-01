@@ -50,7 +50,7 @@ export default function Navigation({...props}) {
         <Drawer PaperProps={{sx: drawerPaperStyle}} variant="permanent" sx={drawerStyle}>
             <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, marginBottom: 5}}>
                 <Avatar sx={avatarStyle}>
-                    <Image src='/images/avatar.png' alt='avatar' width={120} height={120}></Image>
+                    <Image src='/images/logo.png'  alt='avatar' width={120} height={120}></Image>
                 </Avatar>
                 <Typography sx={{marginTop: 3}}>{user.nombres} {user.apellidos}</Typography>
             </Box>

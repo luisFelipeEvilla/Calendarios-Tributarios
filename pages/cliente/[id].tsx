@@ -1,4 +1,5 @@
-import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+
+import { Avatar, Box, Button, Chip, FormControl, Grid, Input, InputLabel, MenuItem, Select, Table, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -8,6 +9,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { es } from "date-fns/locale";
+import TableBody from "@mui/material/TableBody/TableBody";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string };
@@ -16,7 +18,7 @@ export default function Client() {
     const [client, setClient] = useState<Client>({} as Client);
     const [taxes, setTaxes] = useState([]);
     const [clientTaxes, setClientTaxes] = useState<any[]>([]);
-    const [ scheduledTax, setScheduledTax ] = useState<ProcessedEvent[] | undefined>();
+    const [scheduledTax, setScheduledTax] = useState<ProcessedEvent[] | undefined>();
     // get id from url
     const router = useRouter();
 
@@ -64,11 +66,11 @@ export default function Client() {
 
         const taxId = parseInt(e.target[0].value);
         const tax = taxes.find((tax: any) => tax.id === taxId) || {} as any;
-        
+
         const cuotas = tax.cuotas.map((cuota: any) => {
-            const fechaPresentacion = cuota.fechas.filter((fecha : any) => {
+            const fechaPresentacion = cuota.fechas.filter((fecha: any) => {
                 const nit = client.nit.toString();
-                if (fecha.nit == nit.charAt(nit.length -1)) {
+                if (fecha.nit == nit.charAt(nit.length - 1)) {
                     return fecha;
                 }
             })
@@ -97,13 +99,18 @@ export default function Client() {
                     title: tax.nombre,
                     start: startDate,
                     end: startDate,
-                    color:  '#3f51b5',
+                    color: '#3f51b5',
                     textColor: '#fff',
                     allDay: true,
                 })
             });
         })
         setEvents(events);
+    }
+
+    const handleDeleteTax = (taxId: number) => {
+        const newClientTaxes = clientTaxes.filter((tax) => tax.id !== taxId);
+        setClientTaxes(newClientTaxes);
     }
 
     return (
@@ -150,7 +157,7 @@ export default function Client() {
                             <Box width={800} marginTop={5} marginBottom={5}>
                                 <Scheduler events={scheduledTax || []} locale={es} view="month"></Scheduler>
                             </Box>
-                            <Box component='form' onSubmit={handleAddTax} sx={{display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>
+                            <Box component='form' onSubmit={handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>
                                 <FormControl sx={{ width: 200 }}>
                                     <InputLabel>Agregar Impuesto</InputLabel>
                                     <Select label='Agregar Impuesto' >
@@ -163,6 +170,33 @@ export default function Client() {
                                     </Select>
                                 </FormControl>
                                 <Button type='submit' color='success' variant='contained'>Agregar</Button>
+                            </Box>
+
+                            <Box>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Impuesto</TableCell>
+                                            <TableCell>Cuotas</TableCell>
+                                            <TableCell>Acciones</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {
+                                            clientTaxes.map((tax: any) => {
+                                                return (
+                                                    <TableRow>
+                                                        <TableCell>{tax.nombre}</TableCell>
+                                                        <TableCell> {tax.cuotas.length}</TableCell>
+                                                        <TableCell>
+                                                            <Button color='error' variant='contained' onClick={e => handleDeleteTax(tax.id)}>Eliminar</Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })
+                                        }
+                                    </TableBody>
+                                </Table>
                             </Box>
                         </Box>
                     </Box>

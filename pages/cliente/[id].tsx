@@ -90,6 +90,16 @@ export default function Client() {
     const handleAddTax = (e: any) => {
         e.preventDefault();
 
+        // find it tax has been added
+        const taxOnclient = clientTaxes.find((tax) => tax.id === parseInt(e.target[0].value));
+
+        if (taxOnclient) {
+            setModalOpen(true);
+            setModalMessage('El impuesto ya ha sido agregado');
+            setError(true);
+            return;
+        }
+
         const taxId = parseInt(e.target[0].value);
         const tax = taxes.find((tax: any) => tax.id === taxId) || {} as any;
 

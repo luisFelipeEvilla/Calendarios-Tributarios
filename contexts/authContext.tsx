@@ -43,8 +43,25 @@ export function AuthProvider({ children }: any) {
         });
     }
 
+    const logout = () => {
+        setUser(null);
+        setToken(null);
+
+        // remove token from cookies
+        setCookie(null, 'token', '', {
+            maxAge: -1,
+            path: '/'
+        });
+
+        // remove user from cookies
+        setCookie(null, 'user', '', {
+            maxAge: -1,
+            path: '/',
+        });
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

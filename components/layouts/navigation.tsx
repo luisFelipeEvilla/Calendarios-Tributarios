@@ -8,15 +8,15 @@ import { useRouter } from "next/dist/client/router";
 import Image from 'next/image';
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/authContext';
-
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 const elements = [
     // { name: 'Home', path: '/', icon: <HomeIcon /> },
     { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
-    { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> }
+    { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
 ]
 
-export default function Navigation({...props}) {
-    const { user } = useContext(AuthContext);
+export default function Navigation({ ...props }) {
+    const { user, logout } = useContext(AuthContext);
     const router = useRouter();
 
     const handleNavigation = (path: string) => {
@@ -40,21 +40,34 @@ export default function Navigation({...props}) {
         </div>
     )
 
-    const avatarStyle = {width: 120, height: 120, boxShadow: '4px 6px 26px -7px rgba(0,0,0,0.5);'};
-    const drawerStyle = {width: 238, height: '100vh'};
-    const drawerPaperStyle = {backgroundColor: 'primary.main', color: 'secondary.main'};
-    const iconsStyle = {color: 'secondary.main'};
-    const itemStyle = {'&:hover': {transform: 'scale(1.03)', backgroundColor: 'rgba(255,255,255,0.1)'}};
+    const handleLogout = () => {
+        logout();
+        window.location.href = '/login';
+    }
+    
+    const avatarStyle = { width: 120, height: 120, boxShadow: '4px 6px 26px -7px rgba(0,0,0,0.5);' };
+    const drawerStyle = { width: 238, height: '100vh' };
+    const drawerPaperStyle = { backgroundColor: 'primary.main', color: 'secondary.main' };
+    const iconsStyle = { color: 'secondary.main' };
+    const itemStyle = { '&:hover': { transform: 'scale(1.03)', backgroundColor: 'rgba(255,255,255,0.1)' } };
 
     return (
-        <Drawer PaperProps={{sx: drawerPaperStyle}} variant="permanent" sx={drawerStyle}>
-            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, marginBottom: 5}}>
+        <Drawer PaperProps={{ sx: drawerPaperStyle }} variant="permanent" sx={drawerStyle}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
                 <Avatar sx={avatarStyle}>
-                    <Image src='/images/logo.png'  alt='avatar' width={120} height={120}></Image>
+                    <Image src='/images/logo.png' alt='avatar' width={120} height={120}></Image>
                 </Avatar>
-                <Typography sx={{marginTop: 3}}>{user.nombres} {user.apellidos}</Typography>
+                <Typography sx={{ marginTop: 3 }}>{user.nombres} {user.apellidos}</Typography>
             </Box>
             {getElements()}
+            <ListItem disablePadding sx={itemStyle}>
+                <ListItemButton onClick={e => handleLogout()}>
+                    <ListItemIcon sx={iconsStyle}>
+                        <ExitToAppIcon />
+                    </ListItemIcon>
+                    <ListItemText primary='Cerrar Sesión' sx={iconsStyle} />
+                </ListItemButton>
+            </ListItem>
         </Drawer>
     )
 }

@@ -11,6 +11,7 @@ import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { es } from "date-fns/locale";
 import TableBody from "@mui/material/TableBody/TableBody";
 import MessageModal from "../../components/messageModal";
+import Spinner from "../../components/layouts/spinner";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string };
@@ -145,7 +146,7 @@ export default function Client() {
                 <title>Editar cliente</title>
             </Head>
             {
-                loading ? <h1>Cargando...</h1> :
+                loading ? <Spinner/> :
                     <Box className="container" justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={5}>
                         <MessageModal  modalOpen={modalOpen} setModalOpen={setModalOpen} title={modalMeessage} error={error} />
                         <Avatar sx={{ height: 200, width: 200, marginBottom: 5 }}>

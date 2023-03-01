@@ -6,6 +6,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import SearchBar from "../../components/layouts/searchbar";
 import Link from "next/link";
 import Image from "next/image";
+import Spinner from "../../components/layouts/spinner";
 type Client = { id: number, nit: string, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string };
 
 export default function Clientes() {
@@ -43,7 +44,7 @@ export default function Clientes() {
                                     {/* <Avatar sx={{ height: 120, width: 120 }} >
                                         {<PeopleIcon sx={{ height: 80, width: 80 }}></PeopleIcon>}
                                     </Avatar> */}
-                                    <img style={{width: 400, height: 180, objectFit:'cover'}} src="http://www.elinformador.com.co/images/stories/sociales/2011/11-noviembre/27rapimercar01.jpg" alt='logo' />
+                                    <img style={{ width: 400, height: 180, objectFit: 'cover' }} src="http://www.elinformador.com.co/images/stories/sociales/2011/11-noviembre/27rapimercar01.jpg" alt='logo' />
 
                                 </Box>
                             </CardMedia>
@@ -78,13 +79,15 @@ export default function Clientes() {
                 <Typography variant='body1'>Aqui podras realizar todas las gestiones relacionadas con los clientes </Typography>
             </Box>
 
-            <Box className="container" flexWrap={"wrap"} justifyContent={'center'} alignItems='center' flexDirection={'column'}>
-                <SearchBar handleSearch={handleSearch} />
-                {
-                    loading ? <Typography variant="h4">Cargando...</Typography> :
-                        getClientsCards()
-                }
-            </Box>
+            {
+                loading ?
+                    <Spinner/> :
+                    <Box className="container" flexWrap={"wrap"} justifyContent={'center'} alignItems='center' flexDirection={'column'}>
+                        <SearchBar handleSearch={handleSearch} />
+                      { getClientsCards()}
+                    </Box>
+            }
+
         </Layout>
     )
 }

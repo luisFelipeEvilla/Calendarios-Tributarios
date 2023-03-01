@@ -44,6 +44,28 @@ export default function Client() {
         getClient();
     }, [])
 
+    const handleClientTaxChange = (newClientTaxes: any[]) => {
+        setClientTaxes(newClientTaxes);
+       const events: ProcessedEvent[] = [];
+
+        newClientTaxes.forEach((tax, index) => {
+            tax.cuotas.forEach((cuota: any) => {
+                const startDate = new Date(cuota.fecha);
+                startDate.setDate(startDate.getDate() + 1);
+                events.push({
+                    event_id: index,
+                    title: tax.nombre,
+                    start: startDate,
+                    end: startDate,
+                    color: '#3f51b5',
+                    textColor: '#fff',
+                    allDay: true,
+                })
+            });
+        })
+        setEvents(events);
+    }
+
     const handleNitChange = (e: any) => {
         const nit = parseInt(e.target.value);
         setClient({ ...client, nit });
@@ -86,31 +108,13 @@ export default function Client() {
             cuotas
         });
 
-        setClientTaxes(newClientTaxes);
-
-        const events: ProcessedEvent[] = [];
-
-        newClientTaxes.forEach((tax, index) => {
-            tax.cuotas.forEach((cuota: any) => {
-                const startDate = new Date(cuota.fecha);
-                startDate.setDate(startDate.getDate() + 1);
-                events.push({
-                    event_id: index,
-                    title: tax.nombre,
-                    start: startDate,
-                    end: startDate,
-                    color: '#3f51b5',
-                    textColor: '#fff',
-                    allDay: true,
-                })
-            });
-        })
-        setEvents(events);
+        handleClientTaxChange(newClientTaxes);
     }
 
     const handleDeleteTax = (taxId: number) => {
         const newClientTaxes = clientTaxes.filter((tax) => tax.id !== taxId);
-        setClientTaxes(newClientTaxes);
+        console.log(newClientTaxes);
+        handleClientTaxChange(newClientTaxes);
     }
 
     return (

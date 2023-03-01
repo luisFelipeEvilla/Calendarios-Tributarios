@@ -1,5 +1,5 @@
 
-import { Avatar, Box, Button, Chip, FormControl, Grid, Input, InputLabel, MenuItem, Select, Table, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Avatar, Box, Button, Chip, FormControl, Grid, Input, InputLabel, MenuItem, Paper, Select, Table, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -44,6 +44,23 @@ export default function Client() {
         getClient();
     }, [])
 
+    const handleNitChange = (e: any) => {
+        const nit = parseInt(e.target.value);
+        setClient({ ...client, nit });
+    }
+
+    const handleNombreEmpresaChange = (e: any) => {
+        setClient({ ...client, nombre_empresa: e.target.value });
+    }
+
+    const handlePaginaWebChange = (e: any) => {
+        setClient({ ...client, pagina_web: e.target.value });
+    }
+
+    const handlePrefijoEmpresaChange = (e: any) => {
+        setClient({ ...client, prefijo_empresa: e.target.value });
+    }
+
     const handleClientTaxChange = (newClientTaxes: any[]) => {
         setClientTaxes(newClientTaxes);
        const events: ProcessedEvent[] = [];
@@ -64,23 +81,6 @@ export default function Client() {
             });
         })
         setEvents(events);
-    }
-
-    const handleNitChange = (e: any) => {
-        const nit = parseInt(e.target.value);
-        setClient({ ...client, nit });
-    }
-
-    const handleNombreEmpresaChange = (e: any) => {
-        setClient({ ...client, nombre_empresa: e.target.value });
-    }
-
-    const handlePaginaWebChange = (e: any) => {
-        setClient({ ...client, pagina_web: e.target.value });
-    }
-
-    const handlePrefijoEmpresaChange = (e: any) => {
-        setClient({ ...client, prefijo_empresa: e.target.value });
     }
 
     const handleAddTax = (e: any) => {
@@ -113,7 +113,6 @@ export default function Client() {
 
     const handleDeleteTax = (taxId: number) => {
         const newClientTaxes = clientTaxes.filter((tax) => tax.id !== taxId);
-        console.log(newClientTaxes);
         handleClientTaxChange(newClientTaxes);
     }
 
@@ -176,8 +175,8 @@ export default function Client() {
                                 <Button type='submit' color='success' variant='contained'>Agregar</Button>
                             </Box>
 
-                            <Box>
-                                <Table>
+                            <Box sx={{marginBottom: 5, width: 800}}>
+                                <Table component={Paper}>
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Impuesto</TableCell>
@@ -205,7 +204,6 @@ export default function Client() {
                         </Box>
                     </Box>
             }
-
         </Layout>
     )
 }

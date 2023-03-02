@@ -3,6 +3,8 @@ import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x
 import { Box, Button } from '@mui/material';
 import SearchBar from './searchbar';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { NodeNextRequest } from 'next/dist/server/base-http/node';
 
 type Tax = { id: number};
 type PropsType = { data: Tax[]}
@@ -60,9 +62,9 @@ export default function Table({ ...props }: PropsType): ReactElement {
             field: 'acciones', headerName: 'Acciones', flex: 1, headerAlign: 'center', align: 'center',
             renderCell: (params) => (
                 <Box>
-                    {/* <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
-                        Editar
-                    </Button> */}
+                    <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
+                        <Link href={`/calendarioTributario/${params.row.id}`} style={{textDecoration: 'none', color:'white'}}>Editar</Link>
+                    </Button>
                     <Button variant="contained" color="error" size="small" onClick={e => handleDelete(params.row.id)}>
                         Eliminar
                     </Button>

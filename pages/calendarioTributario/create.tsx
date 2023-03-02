@@ -5,22 +5,19 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
+import { es } from "date-fns/locale";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import FeedForm from "../../components/layouts/taxes/feedForm";
-import { es } from "date-fns/locale";
 
-import styles from '../../styles/calendarioTributario/create.module.css';
 import axios from "axios";
-
-type Feed = { nit: number, date: Date }
-type Municipio = { codigo_departamento: number, codigo_municipio: number, municipio: string }
-type Departamento = { codigo_departamento: number, departamento: string, municipios: Municipio[] }
-
-type propsType = { departamentos: Departamento[] }
-import { periods, personTypes, taxTypes } from '../../config';
 import Head from "next/head";
+import { periods, personTypes, taxTypes } from '../../config';
+import styles from '../../styles/calendarioTributario/create.module.css';
+
+import { Departamento, Feed, Municipio } from "../../types";
+type propsType = { departamentos: Departamento[] }
 
 export default function Create({ ...props }: propsType) {
     const avatarSize = { width: 160, height: 160 }

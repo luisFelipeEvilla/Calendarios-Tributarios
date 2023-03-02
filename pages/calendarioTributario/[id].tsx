@@ -17,6 +17,7 @@ import { es } from "date-fns/locale";
 import FeedsTable from "../../components/taxes/feedsTable";
 import { periods } from "../../config";
 import { Dayjs } from "dayjs";
+import TaxScheduler from "../../components/taxes/taxScheduler";
 
 export default function CalendarioTributario() {
     const [name, setName] = useState('');
@@ -127,10 +128,7 @@ export default function CalendarioTributario() {
                     municipios={municipios} setMunicipios={setMunicipios}
                 />
 
-                <Box width='80%' marginBottom={10}>
-                    <Scheduler locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
-                </Box>
-
+                <TaxScheduler feeds={feeds}/>
                 <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} setFeeds={setFeeds} />
             </Box>
 

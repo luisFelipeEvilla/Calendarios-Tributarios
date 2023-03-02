@@ -116,7 +116,7 @@ export default function CalendarioTributario() {
 
     const handleDeletFeed = (index: number, index1: number) => {
         const newFeeds = [...feeds];
-        newFeeds[index].splice(index1, 1);
+        newFeeds[index].fechas.splice(index1, 1);
 
         setFeeds(newFeeds);
     }

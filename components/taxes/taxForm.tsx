@@ -23,15 +23,15 @@ export default function ({ ...props }: PropsType) {
         props.setPeriod(periodsNumber);
 
         const frequency = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
-
+        
         const newFeeds = [];
 
         for (let i = 0; i < frequency; i++) {
-            newFeeds.push([]);
+            newFeeds.push({fechas: []});
         }
 
         // @ts-ignore
-        setFeeds(newFeeds);
+        props.setFeeds(newFeeds);
     }
 
     const handledDepartamentoChange = (event: SelectChangeEvent<unknown>) => {

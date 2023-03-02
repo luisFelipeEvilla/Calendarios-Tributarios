@@ -23,7 +23,7 @@ export default function Create({ ...props }: propsType) {
     // hooks
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
-    const [feeds, setFeeds] = useState<Feed[][]>([[]]);
+    const [feeds, setFeeds] = useState<Feed[]>([]);
     const [taxType, setTaxType] = useState(1);
     const [departamento, setDepartamento] = useState(0);
     const [municipio, setMunicipio] = useState(0);
@@ -37,23 +37,23 @@ export default function Create({ ...props }: propsType) {
     const [municipios, setMunicipios] = useState<Municipio[] | []>([]);
 
     useEffect(() => {
-        const events: ProcessedEvent[] = [];
-        feeds.forEach((feed, index) => {
-            feed.forEach((f: Feed, index) => {
-                events.push({
-                    event_id: index,
-                    title: `${f.nit}`,
-                    start: f.date,
-                    end: f.date,
-                    color: '#3f51b5',
-                    textColor: 'white',
-                    allDay: true,
-                })
-            })
-        })
+        // const events: ProcessedEvent[] = [];
+        // feeds.forEach((feed, index) => {
+        //     feed.forEach((f: Feed, index) => {
+        //         events.push({
+        //             event_id: index,
+        //             title: `${f.nit}`,
+        //             start: f.date,
+        //             end: f.date,
+        //             color: '#3f51b5',
+        //             textColor: 'white',
+        //             allDay: true,
+        //         })
+        //     })
+        // })
 
-        setScheduledFeeds(events);
-        setEvents(events);
+        // setScheduledFeeds(events);
+        // setEvents(events);
     }, [feeds])
 
 

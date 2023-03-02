@@ -100,27 +100,6 @@ export default function CalendarioTributario() {
 
     }
 
-    const handleAddFeed = (index: number, fecha: {nit: number, date: Dayjs}) => {
-        const nit = fecha.nit;
-        const date = new Date(fecha.date.toDate());
-
-        const newFeed = { nit, fecha: date }
-        const newFeeds = [...feeds];
-        //@ts-ignore
-        newFeeds[index].fechas.push(newFeed);
-        // organize feeds by date
-        newFeeds[index].fechas.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
-
-        setFeeds(newFeeds);
-    }
-
-    const handleDeletFeed = (index: number, index1: number) => {
-        const newFeeds = [...feeds];
-        newFeeds[index].fechas.splice(index1, 1);
-
-        setFeeds(newFeeds);
-    }
-
     return (
         <Layout>
             <Head>
@@ -152,7 +131,7 @@ export default function CalendarioTributario() {
                     <Scheduler locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
                 </Box>
 
-                <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} handleAddFeed={handleAddFeed} handleDeletFeed={handleDeletFeed}  />
+                <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} setFeeds={setFeeds} />
             </Box>
 
 

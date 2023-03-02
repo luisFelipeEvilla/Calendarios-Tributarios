@@ -7,9 +7,9 @@ import { Dayjs } from "dayjs";
 
 type Period = { name: string, value: number, frequency: number };
 type PropsType = {
-    periods: Period[], periodSelected: number, feeds: Feed[], frequency: number,
-    handleAddFeed: (index: number, fecha: {nit: number, date: Dayjs}) => void,
-    handleDeletFeed: (index: number, index1: number) => void
+    periods: Period[], periodSelected: number, 
+    frequency: number,
+    feeds: Feed[], setFeeds: (feeds: any) => void
 }
 
 export default function FeedsTable({ ...props }: PropsType) {
@@ -25,6 +25,27 @@ export default function FeedsTable({ ...props }: PropsType) {
         backgroundColor: "primary.main",
         color: 'white',
     }
+
+    const handleAddFeed = (index: number, fecha: {nit: number, date: Dayjs}) => {
+        const nit = fecha.nit;
+        const date = new Date(fecha.date.toDate());
+
+        const newFeed = { nit, fecha: date }
+        const newFeeds = [...props.feeds];
+        //@ts-ignore
+        newFeeds[index].fechas.push(newFeed);
+        // organize feeds by date
+        newFeeds[index].fechas.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
+
+        props.setFeeds(newFeeds);
+    }
+
+    const handleDeletFeed = (index: number, index1: number) => {
+        const newFeeds = [...props.feeds];
+        newFeeds[index].fechas.splice(index1, 1);
+
+        props.setFeeds(newFeeds);
+    }
     
     return (
         <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
@@ -39,7 +60,7 @@ export default function FeedsTable({ ...props }: PropsType) {
                         </AccordionSummary>
                         <AccordionDetails>
                             <p><b>Periodo:</b> {initDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</p>
-                            <FeedForm index={index} handleAddFeed={props.handleAddFeed} />
+                            <FeedForm index={index} handleAddFeed={handleAddFeed} />
                             <TableContainer component={Paper}>
                                 <Table align="center">
                                     <TableHead >
@@ -55,7 +76,7 @@ export default function FeedsTable({ ...props }: PropsType) {
                                         <TableRow key={index1}>
                                             <TableCell>{fecha.nit}</TableCell>
                                             <TableCell>{fecha.fecha.toDateString()}</TableCell>
-                                            <TableCell><Button onClick={e => props.handleDeletFeed(index, index1)} variant="contained" color="error">Eliminar</Button></TableCell>
+                                            <TableCell><Button onClick={e => handleDeletFeed(index, index1)} variant="contained" color="error">Eliminar</Button></TableCell>
                                         </TableRow>
                                     ))
                                 }

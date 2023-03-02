@@ -61,10 +61,6 @@ export default function Create({ ...props }: propsType) {
     // styles
     const avatarSize = 160
     const avatarIconSize = 120
-    const accordionSummaryStyle = {
-        backgroundColor: "primary.main",
-        color: 'white',
-    }
 
     // functions
     const handleSubmit = async () => {

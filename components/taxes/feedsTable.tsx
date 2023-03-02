@@ -3,11 +3,12 @@ import { Cuota, Feed } from "../../types";
 import FeedForm from "./feedForm";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from "react";
+import { Dayjs } from "dayjs";
 
 type Period = { name: string, value: number, frequency: number };
 type PropsType = {
     periods: Period[], periodSelected: number, feeds: Feed[], frequency: number,
-    handleAddFeed: (index: number, feed: Feed) => void,
+    handleAddFeed: (index: number, fecha: {nit: number, date: Dayjs}) => void,
     handleDeletFeed: (index: number, index1: number) => void
 }
 
@@ -25,7 +26,6 @@ export default function FeedsTable({ ...props }: PropsType) {
         color: 'white',
     }
     
-    console.log(props.feeds);
     return (
         <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
             {

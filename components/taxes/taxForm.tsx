@@ -11,7 +11,7 @@ type PropsType = {
     taxType: number, setTaxType: (taxType: number) => void,
     departamento: number, setDepartamento: (departamento: number) => void,
     municipio: number, setMunicipio: (municipio: number) => void,
-    feeds: Feed[][], setFeeds: (feeds: Feed[][]) => void,
+    feeds: Feed[], setFeeds: (feeds: Feed[]) => void,
     departamentos: Departamento[], 
     municipios: Municipio[], setMunicipios: (municipios: Municipio[]) => void
 }

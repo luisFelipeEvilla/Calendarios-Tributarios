@@ -6,10 +6,9 @@ import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, Button, Inp
 import FormControl from "@mui/material/FormControl";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import { es } from "date-fns/locale";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
-import FeedForm from "../../components/layouts/taxes/feedForm";
+import FeedForm from "../../components/taxes/feedForm";
 
 import axios from "axios";
 import Head from "next/head";
@@ -17,29 +16,28 @@ import { periods, personTypes, taxTypes } from '../../config';
 import styles from '../../styles/calendarioTributario/create.module.css';
 
 import { Departamento, Feed, Municipio } from "../../types";
+import FeedsTable from "../../components/taxes/feedsTable";
 type propsType = { departamentos: Departamento[] }
 
 export default function Create({ ...props }: propsType) {
-    const avatarSize = { width: 160, height: 160 }
-    const avatarIconSize = { width: 120, height: 120 }
+    // hooks
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
     const [feeds, setFeeds] = useState<Feed[][]>([[]]);
-    const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
     const [taxType, setTaxType] = useState(1);
     const [departamento, setDepartamento] = useState(0);
     const [municipio, setMunicipio] = useState(0);
     const [applyTo, setApplyTo] = useState(1);
-
-    const [municipios, setMunicipios] = useState<Municipio[] | []>([]);
-
     const { setEvents } = useScheduler();
-    // hooks
-    const router = useRouter();
+
+    //events for scheduler
+    const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
+
+    // info from api to forms
+    const [municipios, setMunicipios] = useState<Municipio[] | []>([]);
 
     useEffect(() => {
         const events: ProcessedEvent[] = [];
-
         feeds.forEach((feed, index) => {
             feed.forEach((f: Feed, index) => {
                 events.push({
@@ -56,11 +54,13 @@ export default function Create({ ...props }: propsType) {
 
         setScheduledFeeds(events);
         setEvents(events);
-    }, [feeds, setEvents])
+    }, [feeds])
 
 
 
     // styles
+    const avatarSize = 160
+    const avatarIconSize = 120
     const accordionSummaryStyle = {
         backgroundColor: "primary.main",
         color: 'white',
@@ -142,57 +142,6 @@ export default function Create({ ...props }: propsType) {
         setMunicipio(0);
     }
 
-
-    const getFeeds = () => {
-        const frequency = periods.find((periodo) => periodo.value === period)?.frequency || 0;
-
-        const initDate = new Date(new Date().getFullYear(), 0, 1);
-        const endDate = new Date(new Date().getFullYear(), 12 / frequency, 0);
-        const components = feeds.map((installment, index) => {
-            const component = <Accordion sx={{ width: '100%' }} key={index}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon sx={{ color: 'white' }} />}
-                    sx={accordionSummaryStyle}
-                >
-                    <Typography>Cuota No. {index + 1}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <p><b>Periodo:</b> {initDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</p>
-                    <FeedForm index={index} handleAddFeed={handleAddFeed} />
-                    <TableContainer component={Paper}>
-                        <Table align="center">
-                            <TableHead >
-                                <TableRow>
-                                    <TableCell>Digito/s de asignación</TableCell>
-                                    <TableCell>Fecha de presentación</TableCell>
-                                    <TableCell>Acciones</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    installment.map((installment: Feed, index1: number) => (
-                                        <TableRow key={index1}>
-                                            <TableCell>{installment.nit}</TableCell>
-                                            <TableCell>{installment.date.toDateString()}</TableCell>
-                                            <TableCell><Button onClick={e => handleDeletFeed(index, index1)} variant="contained" color="error">Eliminar</Button></TableCell>
-                                        </TableRow>
-                                    ))
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </AccordionDetails>
-            </Accordion>
-
-            initDate.setMonth(initDate.getMonth() + 12 / frequency);
-            endDate.setMonth(endDate.getMonth() + 12 / frequency + 1, 0);
-
-            return component;
-        })
-
-        return components;
-    }
-
     return (
         <Layout>
             <Head>
@@ -203,8 +152,8 @@ export default function Create({ ...props }: propsType) {
                     <Typography variant="h4" component="h1" marginBottom={8} >
                         Agregar Impuesto
                     </Typography>
-                    <Avatar sx={avatarSize}>
-                        <AccountBalance sx={avatarIconSize}></AccountBalance>
+                    <Avatar sx={{width: avatarSize, height: avatarSize}}>
+                        <AccountBalance sx={{width: avatarIconSize, height: avatarIconSize}}></AccountBalance>
                     </Avatar>
                 </Box>
 
@@ -279,13 +228,12 @@ export default function Create({ ...props }: propsType) {
                     }
                 </Box>
 
-                <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
+             
                     <Box width='80%' marginBottom={10}>
                         <Scheduler locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
                     </Box>
-                    {getFeeds()}
-                </Box>
 
+                    <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} handleAddFeed={handleAddFeed} handleDeletFeed={handleDeletFeed}  />
                 <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
                     <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                 </Box>

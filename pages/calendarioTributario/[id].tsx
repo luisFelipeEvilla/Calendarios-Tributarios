@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import TaxForm from "../../components/taxes/taxForm";
-import { Feed, Municipio } from "../../types";
+import { Fecha, Feed, Municipio } from "../../types";
 
 import { Departamento } from "../../types";
 
@@ -14,6 +14,9 @@ import styles from '../../styles/calendarioTributario/create.module.css';
 import { AccountBalance } from "@mui/icons-material";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { es } from "date-fns/locale";
+import FeedsTable from "../../components/taxes/feedsTable";
+import { periods } from "../../config";
+import { Dayjs } from "dayjs";
 
 export default function CalendarioTributario() {
     const [name, setName] = useState('');
@@ -53,7 +56,16 @@ export default function CalendarioTributario() {
         const tax = response.data.data;
         setName(tax.nombre);
         setPeriod(tax.frecuencia);
-        setFeeds(tax.cuotas);
+
+        const newFeeds = tax.cuotas.map((feed: Feed) => {
+            feed.fechas = feed.fechas.map((fecha: any) => {
+                fecha.fecha = new Date(fecha.fecha);
+                return fecha;
+            })
+            return feed;
+        }) 
+        setFeeds(newFeeds);
+
         setTaxType(tax.tipo);
         setDepartamento(tax.departamento);
         setMunicipio(tax.municipio);
@@ -88,6 +100,27 @@ export default function CalendarioTributario() {
 
     }
 
+    const handleAddFeed = (index: number, fecha: {nit: number, date: Dayjs}) => {
+        const nit = fecha.nit;
+        const date = new Date(fecha.date.toDate());
+
+        const newFeed = { nit, fecha: date }
+        const newFeeds = [...feeds];
+        //@ts-ignore
+        newFeeds[index].fechas.push(newFeed);
+        // organize feeds by date
+        newFeeds[index].fechas.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
+
+        setFeeds(newFeeds);
+    }
+
+    const handleDeletFeed = (index: number, index1: number) => {
+        const newFeeds = [...feeds];
+        newFeeds[index].splice(index1, 1);
+
+        setFeeds(newFeeds);
+    }
+
     return (
         <Layout>
             <Head>
@@ -118,6 +151,8 @@ export default function CalendarioTributario() {
                 <Box width='80%' marginBottom={10}>
                     <Scheduler locale={es} view='month' events={scheduledFeeds || []} editable={false} deletable={false} draggable={false} />
                 </Box>
+
+                <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} handleAddFeed={handleAddFeed} handleDeletFeed={handleDeletFeed}  />
             </Box>
 
 

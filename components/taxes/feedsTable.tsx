@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 type Period = { name: string, value: number, frequency: number };
 type PropsType = {
-    periods: Period[], periodSelected: number, feeds: Feed[][], frequency: number,
+    periods: Period[], periodSelected: number, feeds: Feed[], frequency: number,
     handleAddFeed: (index: number, feed: Feed) => void,
     handleDeletFeed: (index: number, index1: number) => void
 }
@@ -24,11 +24,12 @@ export default function FeedsTable({ ...props }: PropsType) {
         backgroundColor: "primary.main",
         color: 'white',
     }
-
+    
+    console.log(props.feeds);
     return (
         <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
             {
-                props.feeds.map((tax, index) => {
+                props.feeds.map((feed, index) => {
                     const component = <Accordion sx={{ width: '100%' }} key={index}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon sx={{ color: 'white' }} />}
@@ -50,10 +51,10 @@ export default function FeedsTable({ ...props }: PropsType) {
                                     </TableHead>
                                     <TableBody>
                                 {
-                                    tax.map((feed: Feed, index1: number) => (
+                                    feed.fechas.map((fecha, index1: number) => (
                                         <TableRow key={index1}>
-                                            <TableCell>{feed.nit}</TableCell>
-                                            <TableCell>{feed.date.toDateString()}</TableCell>
+                                            <TableCell>{fecha.nit}</TableCell>
+                                            <TableCell>{fecha.fecha.toDateString()}</TableCell>
                                             <TableCell><Button onClick={e => props.handleDeletFeed(index, index1)} variant="contained" color="error">Eliminar</Button></TableCell>
                                         </TableRow>
                                     ))

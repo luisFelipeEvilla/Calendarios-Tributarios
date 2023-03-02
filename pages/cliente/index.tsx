@@ -7,6 +7,7 @@ import SearchBar from "../../components/layouts/searchbar";
 import Link from "next/link";
 import Image from "next/image";
 import Spinner from "../../components/layouts/spinner";
+import Head from "next/head";
 type Client = { id: number, nit: string, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string };
 
 export default function Clientes() {
@@ -73,6 +74,9 @@ export default function Clientes() {
 
     return (
         <Layout>
+            <Head>
+                <title>Clientes</title>
+            </Head>
             <Box className="container" flexDirection={"column"} justifyContent={'center'} textAlign={'center'}>
                 <Typography variant="h2">Clientes</Typography>
                 <Typography variant="h6">Bienvenido al modulo de clientes</Typography>

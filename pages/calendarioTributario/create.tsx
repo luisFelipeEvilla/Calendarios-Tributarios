@@ -17,7 +17,7 @@ type propsType = { departamentos: Departamento[] }
 export default function Create({ ...props }: propsType) {
     // hooks
     const [name, setName] = useState('');
-    const [period, setPeriod] = useState(1);
+    const [period, setPeriod] = useState(0);
     const [feeds, setFeeds] = useState<Feed[]>([]);
     const [taxType, setTaxType] = useState(1);
     const [departamento, setDepartamento] = useState(0);

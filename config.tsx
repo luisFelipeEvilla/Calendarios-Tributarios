@@ -12,6 +12,7 @@ export const personTypes = [
 ]
 
 export const periods = [
+    { name: "Selecciona una opción", value: 0, frequency: 1 },
     { name: "Anual", value: 1, frequency: 1 },
     { name: "Semestral", value: 2, frequency: 2 },
     { name: "Cuatrimestral", value: 3, frequency: 3 },

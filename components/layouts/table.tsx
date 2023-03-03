@@ -5,7 +5,7 @@ import SearchBar from './searchbar';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { NodeNextRequest } from 'next/dist/server/base-http/node';
-import { personTypes } from '../../config';
+import { periods, personTypes } from '../../config';
 
 type Tax = { id: number};
 type PropsType = { data: Tax[]}
@@ -54,7 +54,9 @@ export default function Table({ ...props }: PropsType): ReactElement {
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
         { field: 'persona', headerName: 'Aplica a', flex:1, headerAlign: 'center', align: 'center',
         valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name},
-        { field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
+        valueGetter: (params: GridValueGetterParams) => periods.find((type) => type.value == params.row.frecuencia)?.name
+        },
         {
             field: 'numero_cuotas', headerName: 'Número de cuotas', flex: 1, headerAlign: 'center', align: 'center',
             valueGetter: (params: GridValueGetterParams) =>

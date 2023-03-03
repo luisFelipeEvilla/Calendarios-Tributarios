@@ -57,7 +57,6 @@ const Home: NextPage = ({ ...props }: any) => {
     <Layout>
       <Head>
         <title>Calendario Tributario</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box sx={{ width: '100%', textAlign: 'center', marginTop: 6 }}>
         <Box marginBottom={8}>

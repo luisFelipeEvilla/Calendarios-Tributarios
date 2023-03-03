@@ -13,7 +13,6 @@ const Home: NextPage = () => {
     <Layout>
       <Head>
         <title>Home</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box sx={{ width: '100%' }}>
         <Typography variant='h2'>Bienvenido a SGC</Typography>

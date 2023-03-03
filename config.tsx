@@ -5,8 +5,9 @@ export const taxTypes = [
 ];
 
 export const personTypes = [
-    { name: "Natural", value: 1 },
-    { name: "Juridica", value: 2 },
+    { name: "Todos", value: 0 },
+    { name: "Persona Natural", value: 1 },
+    { name: "Persona Juridica", value: 2 },
     { name: "Grandes Contribuyentes", value: 3 }
 ]
 

@@ -13,10 +13,8 @@ import { Departamento } from "../../types";
 import styles from '../../styles/calendarioTributario/create.module.css';
 import { AccountBalance } from "@mui/icons-material";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
-import { es } from "date-fns/locale";
 import FeedsTable from "../../components/taxes/feedsTable";
 import { periods } from "../../config";
-import { Dayjs } from "dayjs";
 import TaxScheduler from "../../components/taxes/taxScheduler";
 
 export default function CalendarioTributario() {
@@ -26,7 +24,7 @@ export default function CalendarioTributario() {
     const [taxType, setTaxType] = useState(1);
     const [departamento, setDepartamento] = useState(0);
     const [municipio, setMunicipio] = useState(0);
-    const [applyTo, setApplyTo] = useState(1);
+    const [applyTo, setApplyTo] = useState(0);
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
     const [municipios, setMunicipios] = useState<Municipio[]>([]);
     const { setEvents } = useScheduler();

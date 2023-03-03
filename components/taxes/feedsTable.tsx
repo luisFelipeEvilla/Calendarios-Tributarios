@@ -59,7 +59,6 @@ export default function FeedsTable({ ...props }: PropsType) {
                             <Typography>Cuota No. {index + 1}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <p><b>Periodo:</b> {initDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</p>
                             <FeedForm index={index} handleAddFeed={handleAddFeed} />
                             <TableContainer component={Paper}>
                                 <Table align="center">
@@ -86,11 +85,6 @@ export default function FeedsTable({ ...props }: PropsType) {
                         </AccordionDetails>
 
                     </Accordion>
-
-
-                    initDate.setMonth(initDate.getMonth() + 12 / props.frequency);
-                    endDate.setMonth(endDate.getMonth() + 12 / props.frequency + 1, 0);
-
                     return component;
                 })
             }

@@ -35,7 +35,7 @@ export default function FeedForm({ ...props }) {
     };
 
     return (
-        <Box>
+        <Box marginTop={2} marginBottom={3}>
             <Button onClick={e => setModal(true)} variant="contained" color="success">Agregar</Button>
             <Modal
                 open={modal}

@@ -4,14 +4,14 @@ import { Box, Button } from '@mui/material';
 import SearchBar from './searchbar';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { NodeNextRequest } from 'next/dist/server/base-http/node';
 import { periods, personTypes } from '../../config';
+import { Departamento, Municipio } from '../../types';
 
-type Tax = { id: number};
-type PropsType = { data: Tax[]}
+type Tax = { id: number };
+type PropsType = { data: Tax[], isDepartamental?: boolean, isMunicipal?: boolean, departamentos: Departamento[], municipios: Municipio[] }
 
 export default function Table({ ...props }: PropsType): ReactElement {
-    const [data, setData ] = useState<Tax[]>(props.data)
+    const [data, setData] = useState<Tax[]>(props.data)
     const [filterData, setFilterData] = useState(props.data);
     const [pageSize, setPageSize] = useState(10);
 
@@ -27,7 +27,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
     };
 
     const handleDelete = async (id: number) => {
-        const url  = `api/tax/${id}`;
+        const url = `api/tax/${id}`;
 
         try {
             const request = await fetch(url, {
@@ -52,10 +52,13 @@ export default function Table({ ...props }: PropsType): ReactElement {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
-        { field: 'persona', headerName: 'Aplica a', flex:1, headerAlign: 'center', align: 'center',
-        valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name},
-        { field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
-        valueGetter: (params: GridValueGetterParams) => periods.find((type) => type.value == params.row.frecuencia)?.name
+        {
+            field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name
+        },
+        {
+            field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => periods.find((type) => type.value == params.row.frecuencia)?.name
         },
         {
             field: 'numero_cuotas', headerName: 'Número de cuotas', flex: 1, headerAlign: 'center', align: 'center',
@@ -67,7 +70,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
             renderCell: (params) => (
                 <Box>
                     <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
-                        <Link href={`/calendarioTributario/${params.row.id}`} style={{textDecoration: 'none', color:'white'}}>Editar</Link>
+                        <Link href={`/calendarioTributario/${params.row.id}`} style={{ textDecoration: 'none', color: 'white' }}>Editar</Link>
                     </Button>
                     <Button variant="contained" color="error" size="small" onClick={e => handleDelete(params.row.id)}>
                         Eliminar
@@ -77,14 +80,87 @@ export default function Table({ ...props }: PropsType): ReactElement {
         }
     ];
 
+    const departamentalColumns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
+        { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
+        {
+            field: 'departamento', headerName: 'Departamento', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => props.departamentos.find((departamento) => departamento.codigo_departamento == params.row.departamento)?.departamento
+        },
+        {
+            field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name
+        },
+        {
+            field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => periods.find((type) => type.value == params.row.frecuencia)?.name
+        },
+        {
+            field: 'numero_cuotas', headerName: 'Número de cuotas', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) =>
+                `${params.row.cuotas.length}`,
+        },
+        {
+            field: 'acciones', headerName: 'Acciones', flex: 1, headerAlign: 'center', align: 'center',
+            renderCell: (params) => (
+                <Box>
+                    <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
+                        <Link href={`/calendarioTributario/${params.row.id}`} style={{ textDecoration: 'none', color: 'white' }}>Editar</Link>
+                    </Button>
+                    <Button variant="contained" color="error" size="small" onClick={e => handleDelete(params.row.id)}>
+                        Eliminar
+                    </Button>
+                </Box>
+            ),
+        }
+    ];
+
+    const municipalColumns: GridColDef[] = [
+        { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
+        { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
+        {
+            field: 'departamento', headerName: 'Departamento', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => props.departamentos.find((departamento) => departamento.codigo_departamento == params.row.departamento)?.departamento
+        },
+        {
+            field: 'municipio', headerName: 'Municipio', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => props.municipios.find((municipio) => municipio.codigo_municipio == params.row.municipio)?.municipio
+        },
+        {
+            field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name
+        },
+        {
+            field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) => periods.find((type) => type.value == params.row.frecuencia)?.name
+        },
+        {
+            field: 'numero_cuotas', headerName: 'Número de cuotas', flex: 1, headerAlign: 'center', align: 'center',
+            valueGetter: (params: GridValueGetterParams) =>
+                `${params.row.cuotas.length}`,
+        },
+        {
+            field: 'acciones', headerName: 'Acciones', flex: 1, headerAlign: 'center', align: 'center',
+            renderCell: (params) => (
+                <Box>
+                    <Button variant="contained" color="info" size="small" style={{ marginRight: 16 }}>
+                        <Link href={`/calendarioTributario/${params.row.id}`} style={{ textDecoration: 'none', color: 'white' }}>Editar</Link>
+                    </Button>
+                    <Button variant="contained" color="error" size="small" onClick={e => handleDelete(params.row.id)}>
+                        Eliminar
+                    </Button>
+                </Box>
+            ),
+        }
+    ];
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <SearchBar handleSearch={handleSearch} />
                 <Button variant='contained' color='success' size='small' sx={{ width: 100, height: 40, marginRight: 10, marginTop: 3 }}
-                    onClick={() =>  router.push('/calendarioTributario/create')}
-                > 
+                    onClick={() => router.push('/calendarioTributario/create')}
+                >
                     Agregar
                 </Button>
             </Box>
@@ -92,7 +168,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
                 <Box sx={{ flexGrow: 1 }}>
                     <DataGrid
                         rows={filterData}
-                        columns={columns}
+                        columns={props.isDepartamental ? departamentalColumns : props.isMunicipal ? municipalColumns : columns}
                         pageSize={pageSize}
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         rowsPerPageOptions={[10, 25, 100]}

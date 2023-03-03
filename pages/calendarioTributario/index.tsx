@@ -8,12 +8,15 @@ import Accordeon from '../../components/layouts/accordion';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Spinner from '../../components/layouts/spinner';
+import { Departamento, Municipio } from '../../types';
 
 
 const Home: NextPage = ({ ...props }: any) => {
   const [nacionales, setNacionales] = useState([]);
   const [departamentales, setDepartamentales] = useState([]);
   const [municipales, setMunicipales] = useState([]);
+  const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+  const [municipios, setMuicipios] = useState<Municipio[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +38,15 @@ const Home: NextPage = ({ ...props }: any) => {
       // @ts-ignore
       setMunicipales(taxes.filter((tax) => tax.tipo == 3));
 
+      const departamentosUrl = `${process.env.NEXT_PUBLIC_API_URL}/departamentos`;
+      const departamentosRequest = await axios.get(departamentosUrl);
+
+      setDepartamentos(departamentosRequest.data.data);
+      
+      const municipiosUrl = `${process.env.NEXT_PUBLIC_API_URL}/municipios`;
+      const municipiosRequest = await axios.get(municipiosUrl);
+
+      setMuicipios(municipiosRequest.data.data);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -59,10 +71,10 @@ const Home: NextPage = ({ ...props }: any) => {
                 <Accordeon title="Impuestos Nacionales" data={nacionales} />
               </Box>
               <Box sx={{ width: '100%' }}>
-                <Accordeon title="Impuestos Departamentales" data={departamentales} />
+                <Accordeon title="Impuestos Departamentales" data={departamentales} isDepartamental={true} departamentos={departamentos} />
               </Box>
               <Box sx={{ width: '100%' }}>
-                <Accordeon title="Impuestos Municipales" data={municipales} />
+                <Accordeon title="Impuestos Municipales" data={municipales} isMunicipal={true} departamentos={departamentos} municipios={municipios}/>
               </Box>
             </div>
         }

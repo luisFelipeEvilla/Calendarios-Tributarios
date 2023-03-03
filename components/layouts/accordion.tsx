@@ -25,7 +25,7 @@ export default function Accordeon({ ...props }) {
                 <Typography>{props.title}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                    <Table data={props.data} />
+                    <Table data={props.data}  isDepartamental={props.isDepartamental} isMunicipal={props.isMunicipal} departamentos={props.departamentos}  municipios={props.municipios}/>
             </AccordionDetails>
         </Accordion>
     )

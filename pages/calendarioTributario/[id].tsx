@@ -27,6 +27,8 @@ export default function CalendarioTributario() {
     const [applyTo, setApplyTo] = useState(0);
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
     const [municipios, setMunicipios] = useState<Municipio[]>([]);
+    const [numeroDigitos, setNumeroDigitos] = useState(1);
+
     const { setEvents } = useScheduler();
 
     const router = useRouter();
@@ -69,7 +71,7 @@ export default function CalendarioTributario() {
         setDepartamento(tax.departamento);
         setMunicipio(tax.municipio);
         setApplyTo(tax.persona);
-
+        setNumeroDigitos(tax.numero_digitos);
         const departamentos = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/departamentos`);
 
         setDepartamentos(departamentos.data.data);
@@ -122,6 +124,7 @@ export default function CalendarioTributario() {
                     departamento={departamento} setDepartamento={setDepartamento}
                     municipio={municipio} setMunicipio={setMunicipio}
                     feeds={feeds} setFeeds={setFeeds}
+                    numeroDigitos={numeroDigitos} setNumeroDigitos={setNumeroDigitos}
                     departamentos={departamentos}
                     municipios={municipios} setMunicipios={setMunicipios}
                 />

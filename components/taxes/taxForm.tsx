@@ -1,4 +1,4 @@
-import { Box, FormControl, TextField, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Box, FormControl, TextField, InputLabel, Select, MenuItem, SelectChangeEvent, Input } from "@mui/material";
 import { personTypes, periods, taxTypes } from "../../config";
 
 import styles from '../../styles/calendarioTributario/create.module.css';
@@ -12,6 +12,7 @@ type PropsType = {
     departamento: number, setDepartamento: (departamento: number) => void,
     municipio: number, setMunicipio: (municipio: number) => void,
     feeds: Feed[], setFeeds: (feeds: Feed[]) => void,
+    numeroDigitos: number, setNumeroDigitos: (numeroDigitos: number) => void,
     departamentos: Departamento[], 
     municipios: Municipio[], setMunicipios: (municipios: Municipio[]) => void
 }
@@ -46,7 +47,7 @@ export default function ({ ...props }: PropsType) {
         props.setTaxType(taxType);
         props.setDepartamento(0);
         props.setMunicipio(0);
-    }  
+    }
 
     return (
         <Box className={`${styles.container} ${styles.formContainer}`}>
@@ -71,6 +72,15 @@ export default function ({ ...props }: PropsType) {
                         ))
                     }
                 </Select>
+            </FormControl>
+            <FormControl fullWidth>
+                <TextField 
+                    type='number'
+                    name='Numero Digitos' 
+                    label='Número de digitos'
+                    value={props.numeroDigitos} 
+                    fullWidth 
+                    onChange={e => props.setNumeroDigitos(parseInt(e.target.value))}/>
             </FormControl>
             <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }}> Frecuencia</InputLabel>

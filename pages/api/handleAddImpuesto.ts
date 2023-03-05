@@ -2,10 +2,10 @@ import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { name, applyTo, period, taxType, feeds, departamento, municipio } = req.body;
+    const { ...impuesto } = req.body;
 
     const url = `${process.env.API_URL}/impuesto`;
-    const body = { name, applyTo, period, taxType, feeds, departamento, municipio }    
+    const body = impuesto     
 
     // todo add x-csrf-token header to the request
     const headers = { 'X-CSRF-TOKEN': '3glwR2O4PSDGxvbB4X1lv9sdZO5BE7QjAo1o7SpX'}

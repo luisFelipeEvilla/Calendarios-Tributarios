@@ -1,4 +1,5 @@
 import { Box, FormControl, TextField, InputLabel, Select, MenuItem, SelectChangeEvent, Input } from "@mui/material";
+import { ChangeEventHandler } from "react";
 import { personTypes, periods, taxTypes } from "../../config";
 
 import styles from '../../styles/calendarioTributario/create.module.css';
@@ -13,6 +14,7 @@ type PropsType = {
     municipio: number, setMunicipio: (municipio: number) => void,
     feeds: Feed[], setFeeds: (feeds: Feed[]) => void,
     numeroDigitos: number, setNumeroDigitos: (numeroDigitos: number) => void,
+    numeroCuotas: number, setNumeroCuotas: (numeroCuotas: number) => void,
     departamentos: Departamento[], 
     municipios: Municipio[], setMunicipios: (municipios: Municipio[]) => void
 }
@@ -24,10 +26,26 @@ export default function ({ ...props }: PropsType) {
         props.setPeriod(periodsNumber);
 
         const frequency = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
-        
+        props.setNumeroCuotas(frequency);
+
         const newFeeds = [];
 
         for (let i = 0; i < frequency; i++) {
+            newFeeds.push({fechas: []});
+        }
+
+        // @ts-ignore
+        props.setFeeds(newFeeds);
+    }
+
+    const handleNumeroCuotasChange = (event: any) => {
+        const numeroCuotas = event.target.value as number;
+        console.log(numeroCuotas)
+        props.setNumeroCuotas(numeroCuotas);
+
+        const newFeeds = [];
+
+        for (let i = 0; i < numeroCuotas; i++) {
             newFeeds.push({fechas: []});
         }
 
@@ -93,6 +111,18 @@ export default function ({ ...props }: PropsType) {
                     }
                 </Select>
             </FormControl>
+            {
+                props.period == 7 ?
+                    <FormControl fullWidth>
+                        <TextField 
+                            type='number'
+                            name='Numero Digitos' 
+                            label='Número de Cuotas'
+                            value={props.numeroCuotas} 
+                            fullWidth 
+                            onChange={handleNumeroCuotasChange}/>
+                    </FormControl> : null
+            }
             <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }} >Tipo de impuesto</InputLabel>
                 <Select name='Tipo de impuesto' value={props.taxType} fullWidth label='Tipo de impuesto' onChange={handleTaxTypeChange}>

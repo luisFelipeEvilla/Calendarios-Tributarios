@@ -24,6 +24,7 @@ export default function Create({ ...props }: propsType) {
     const [municipio, setMunicipio] = useState(0);
     const [applyTo, setApplyTo] = useState(0);
     const [numeroDigitos, setNumeroDigitos] = useState(1);
+    const [numeroCuotas, setNumeroCuotas] = useState(0);
 
     // info from api to forms
     const [municipios, setMunicipios] = useState<Municipio[] | []>([]);
@@ -84,6 +85,7 @@ export default function Create({ ...props }: propsType) {
                     municipio={municipio} setMunicipio={setMunicipio}
                     feeds={feeds} setFeeds={setFeeds}
                     numeroDigitos={numeroDigitos} setNumeroDigitos={setNumeroDigitos}
+                    numeroCuotas={numeroCuotas} setNumeroCuotas={setNumeroCuotas}
                     departamentos={props.departamentos}
                     municipios={municipios} setMunicipios={setMunicipios}
                 />

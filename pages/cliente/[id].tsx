@@ -104,10 +104,15 @@ export default function Client() {
         const taxId = parseInt(e.target[0].value);
         const tax = taxes.find((tax: any) => tax.id === taxId) || {} as any;
 
+        console.log(tax);
+    
         const cuotas = tax.cuotas.map((cuota: any) => {
             const fechaPresentacion = cuota.fechas.filter((fecha: any) => {
                 const nit = client.nit.toString();
-                if (fecha.nit == nit.charAt(nit.length - 1)) {
+                const digitosDeAsignacion = tax.numero_digitos;
+                
+                // get charts from the index digitosDeAsignacion to the end
+                if (fecha.nit == nit.slice(nit.length - digitosDeAsignacion)) {
                     return fecha;
                 }
             })

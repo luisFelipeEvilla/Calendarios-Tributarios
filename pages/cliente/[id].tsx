@@ -14,11 +14,12 @@ import MessageModal from "../../components/messageModal";
 import Spinner from "../../components/layouts/spinner";
 
 
-type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string };
+type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };
 export default function Client() {
     const [loading, setLoading] = useState<boolean>(true);
     const [client, setClient] = useState<Client>({} as Client);
     const [taxes, setTaxes] = useState([]);
+    const [filteredTaxes, setFilteredTaxes] = useState<any[]>([]);
     const [clientTaxes, setClientTaxes] = useState<any[]>([]);
     const [scheduledTax, setScheduledTax] = useState<ProcessedEvent[] | undefined>();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -37,7 +38,6 @@ export default function Client() {
             try {
                 const response = await axios.get(url);
                 setClient(response.data);
-
                 const taxes = await axios.get('/api/tax');
                 setTaxes(taxes.data);
                 setLoading(false);
@@ -48,6 +48,12 @@ export default function Client() {
 
         getClient();
     }, [])
+
+    useEffect(() => {
+        console.log(taxes)
+        const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
+        setFilteredTaxes(filtered);
+    }, [taxes, client.tipo_persona])
 
     const handleNitChange = (e: any) => {
         const nit = parseInt(e.target.value);
@@ -88,7 +94,7 @@ export default function Client() {
         setEvents(events);
     }
 
-    const handleAddTax = (e: any) => {
+    const handleAddTax = async (e: any) => {
         e.preventDefault();
 
         // find it tax has been added
@@ -104,14 +110,12 @@ export default function Client() {
         const taxId = parseInt(e.target[0].value);
         const tax = taxes.find((tax: any) => tax.id === taxId) || {} as any;
 
-        console.log(tax);
     
         const cuotas = tax.cuotas.map((cuota: any) => {
             const fechaPresentacion = cuota.fechas.filter((fecha: any) => {
                 const nit = client.nit.toString();
                 const digitosDeAsignacion = tax.numero_digitos;
                 
-                // get charts from the index digitosDeAsignacion to the end
                 if (fecha.nit == nit.slice(nit.length - digitosDeAsignacion)) {
                     return fecha;
                 }
@@ -145,6 +149,13 @@ export default function Client() {
 
     }
 
+    const handleTipoPersonaChange = (e: any) => {
+        console.log(e.target.value)
+        setClient({ ...client, tipo_persona:  e.target.value});
+        console.log(client)
+    }
+
+
     return (
         <Layout>
             <Head>
@@ -174,10 +185,11 @@ export default function Client() {
                                     <Typography variant='h4'>Información Tributaria</Typography>
                                     <FormControl sx={{ width: 300, marginTop: 3 }}>
                                         <InputLabel htmlFor="nit">Tipo de Persona</InputLabel>
-                                        <Select name="Tipo de persona" label="Tipo de persona">
+                                        <Select value={client.tipo_persona} onChange={handleTipoPersonaChange}  name="Tipo de persona" label="Tipo de persona">
+                                            <MenuItem value={0}>Seleccione un tipo de persona</MenuItem>
                                             <MenuItem value={1}>Persona Natural</MenuItem>
                                             <MenuItem value={2}>Persona Jurídica</MenuItem>
-                                            <MenuItem value={2}>Gran Contribuyente</MenuItem>
+                                            <MenuItem value={3}>Gran Contribuyente</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Box>
@@ -195,7 +207,7 @@ export default function Client() {
                                     <InputLabel>Agregar Impuesto</InputLabel>
                                     <Select label='Agregar Impuesto' >
                                         {
-                                            taxes.map((tax: any) => {
+                                            filteredTaxes.map((tax: any) => {
                                                 return <MenuItem value={tax.id}>{tax.nombre}
                                                 </MenuItem>
                                             })

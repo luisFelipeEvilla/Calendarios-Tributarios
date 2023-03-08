@@ -9,4 +9,4 @@ export type fechas_presentacion = { id: number, fecha: Date, cuota: number };
 export type cuota = Prisma.cuotasGetPayload<{ include: { fechas_presentacion: true } }>
 
 // type nuevoImpuesto with relatuionship
-export type nuevoImpuesto = Prisma.nuevo_impuestoGetPayload<{ include: { departamento: true, municipio: true, persona: true, tipo: true, frecuencia: true, cuotas: { include: { fechas_presentacion: true}} } }>
+export type nuevoImpuesto = Prisma.nuevo_impuestoGetPayload<{ include: { departamento: true, municipio: true, cuotas: { include: { fechas_presentacion: true}} } }>

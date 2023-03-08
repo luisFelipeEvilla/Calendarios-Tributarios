@@ -17,7 +17,8 @@ export default function FeedForm({ ...props }) {
         setDate(newDate);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
         props.handleAddFeed(props.index, { nit, date: date })
         setModal(false);
     }
@@ -48,7 +49,7 @@ export default function FeedForm({ ...props }) {
                         Agregar Fecha de presentación
                     </Typography>
 
-                    <Box component='form' onSubmit={handleSubmit}>
+                    <Box component='form' onSubmit={e => handleSubmit(e)}>
                         <FormControl fullWidth>
                             <TextField
                                 id="nit"

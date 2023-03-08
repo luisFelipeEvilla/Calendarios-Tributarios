@@ -1,70 +1,81 @@
-import { Box, FormControl, TextField, InputLabel, Select, MenuItem, SelectChangeEvent, Input } from "@mui/material";
-import { ChangeEventHandler } from "react";
+import { Box, FormControl, TextField, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { personTypes, periods, taxTypes } from "../../config";
-
 import styles from '../../styles/calendarioTributario/create.module.css';
-import { Departamento, Feed, Municipio } from "../../types";
+import { Departamento, Municipio, nuevoImpuesto } from "../../types";
 
 type PropsType = {
-    name: string, setName: (number: any) => void,
-    applyTo: number, setApplyTo: (applyTo: any) => void,
-    period: number, setPeriod: (period: number) => void,
-    taxType: number, setTaxType: (taxType: number) => void,
-    departamento: number, setDepartamento: (departamento: number) => void,
-    municipio: number, setMunicipio: (municipio: number) => void,
-    feeds: Feed[], setFeeds: (feeds: Feed[]) => void,
-    numeroDigitos: number, setNumeroDigitos: (numeroDigitos: number) => void,
-    numeroCuotas: number, setNumeroCuotas: (numeroCuotas: number) => void,
-    departamentos: Departamento[], 
-    municipios: Municipio[], setMunicipios: (municipios: Municipio[]) => void
+    impuesto: nuevoImpuesto,
+    setImpuesto: (impuesto: nuevoImpuesto) => void,
+    departamentos: Departamento[],
+    setDepartamentos: (departamentos: Departamento[]) => void,
+    municipios: Municipio[],
+    setMunicipios: (municipios: Municipio[]) => void
 }
 
 
 export default function ({ ...props }: PropsType) {
+    const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+    const [municipios, setMunicipios] = useState<Municipio[]>([]);
+
+    useEffect(() => {
+        const fetchDepartamentos = async () => {
+            const departamentos = await axios.get(`/api/departamento`);
+            setDepartamentos(departamentos.data);
+        }
+
+        const fetchMunicipios = async () => {
+            const municipios = await axios.get(`/api/municipio`);
+            setMunicipios(municipios.data);
+        }
+
+        fetchDepartamentos();
+        fetchMunicipios();
+    },[])
+
     const handlePeriodChange = (event: SelectChangeEvent<unknown>) => {
         const periodsNumber = event.target.value as number;
-        props.setPeriod(periodsNumber);
-
+        //props.setPeriod(periodsNumber);
+    
         const frequency = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
-        props.setNumeroCuotas(frequency);
-
-        const newFeeds = [];
+        props.setImpuesto({ ...props.impuesto, frecuencia: frequency  });
+        const cuotas = [];
 
         for (let i = 0; i < frequency; i++) {
-            newFeeds.push({fechas: []});
+            cuotas.push({fechas_presentacion: []});
         }
 
         // @ts-ignore
-        props.setFeeds(newFeeds);
+        props.setImpuesto({ ...props.impuesto, cuotas });
     }
 
     const handleNumeroCuotasChange = (event: any) => {
         const numeroCuotas = event.target.value as number;
-        console.log(numeroCuotas)
-        props.setNumeroCuotas(numeroCuotas);
+        // console.log(numeroCuotas)
+        // props.setNumeroCuotas(numeroCuotas);
 
-        const newFeeds = [];
+        const cuotas = [];
 
         for (let i = 0; i < numeroCuotas; i++) {
-            newFeeds.push({fechas: []});
+            cuotas.push({fechas: []});
         }
 
         // @ts-ignore
-        props.setFeeds(newFeeds);
+        props.setImpuesto({ ...props.impuesto, cuotas });
     }
 
     const handledDepartamentoChange = (event: SelectChangeEvent<unknown>) => {
         const departamentoCode = event.target.value as number;
-        props.setDepartamento(departamentoCode);
-        const municipios = props.departamentos.find(departamento => departamento.codigo_departamento === departamentoCode)?.municipios || [];
-        props.setMunicipios(municipios);
+        // @ts-ignore
+        props.setImpuesto({ ...props.impuesto, departamento: departamentoCode });
+        const nuevosMunicipios = municipios.filter(municipio => municipio.codigo_departamento === departamentoCode)
+        setMunicipios(nuevosMunicipios);
     }
 
     const handleTaxTypeChange = (event: SelectChangeEvent<unknown>) => {
         const taxType = event.target.value as number;
-        props.setTaxType(taxType);
-        props.setDepartamento(0);
-        props.setMunicipio(0);
+        props.setImpuesto({ ...props.impuesto, tipo: taxType });
     }
 
     return (
@@ -75,14 +86,14 @@ export default function ({ ...props }: PropsType) {
                     type={'text'}
                     label="Nombre"
                     name="name"
-                    value={props.name}
-                    onChange={(e) => props.setName(e.target.value)}
+                    value={props.impuesto.nombre}
+                    onChange={(e) => props.setImpuesto({ ...props.impuesto, nombre: e.target.value })}
                     autoFocus
                 />
             </FormControl>
             <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }} >Aplica a</InputLabel>
-                <Select name='Aplica' value={props.applyTo} fullWidth label='Aplica a' onChange={e => props.setApplyTo(e.target.value as number)}>
+                <Select name='Aplica' value={props.impuesto.persona} fullWidth label='Aplica a' onChange={e => props.setImpuesto({ ...props.impuesto, persona: e.target.value as number})}>
                     {
                         personTypes.map((taxType) => (
                             <MenuItem key={taxType.value} value={taxType.value}
@@ -96,13 +107,13 @@ export default function ({ ...props }: PropsType) {
                     type='number'
                     name='Numero Digitos' 
                     label='Número de digitos'
-                    value={props.numeroDigitos} 
+                    value={props.impuesto.numero_digitos} 
                     fullWidth 
-                    onChange={e => props.setNumeroDigitos(parseInt(e.target.value))}/>
+                    onChange={e => props.setImpuesto({ ...props.impuesto, numero_digitos: parseInt(e.target.value)})}/>
             </FormControl>
             <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }}> Frecuencia</InputLabel>
-                <Select name='Periodicidad' value={props.period} fullWidth label='frecuencia' onChange={handlePeriodChange}>
+                <Select name='Periodicidad' value={props.impuesto.frecuencia} fullWidth label='frecuencia' onChange={handlePeriodChange}>
                     {
                         periods.map((periodo) => (
                             <MenuItem key={periodo.value} value={periodo.value}
@@ -112,20 +123,20 @@ export default function ({ ...props }: PropsType) {
                 </Select>
             </FormControl>
             {
-                props.period == 7 ?
+                props.impuesto.frecuencia == 7 ?
                     <FormControl fullWidth>
                         <TextField 
                             type='number'
                             name='Numero Digitos' 
                             label='Número de Cuotas'
-                            value={props.numeroCuotas} 
+                            value={props.impuesto.cuotas.length} 
                             fullWidth 
                             onChange={handleNumeroCuotasChange}/>
                     </FormControl> : null
             }
             <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }} >Tipo de impuesto</InputLabel>
-                <Select name='Tipo de impuesto' value={props.taxType} fullWidth label='Tipo de impuesto' onChange={handleTaxTypeChange}>
+                <Select name='Tipo de impuesto' value={props.impuesto.tipo} fullWidth label='Tipo de impuesto' onChange={handleTaxTypeChange}>
                     {
                         taxTypes.map((taxType) => (
                             <MenuItem key={taxType.value} value={taxType.value}
@@ -135,25 +146,25 @@ export default function ({ ...props }: PropsType) {
                 </Select>
             </FormControl>
             {
-                props.taxType != 1 ?
+                props.impuesto.tipo != 1 ?
                     <FormControl fullWidth>
                         <InputLabel sx={{ fontSize: 20 }}>Ubicación</InputLabel>
-                        <Select name="departamento" value={props.departamento} onChange={handledDepartamentoChange} required>
+                        <Select name="departamento" value={props.impuesto.departamento} onChange={handledDepartamentoChange} required>
                             <MenuItem value={0}>Selecciona un departamento</MenuItem>
                             {
-                                props.departamentos.map((departamento, index) => <MenuItem value={departamento.codigo_departamento} key={index}>{departamento.departamento}</MenuItem>)
+                                departamentos.map((departamento, index) => <MenuItem value={departamento.codigo_departamento} key={index}>{departamento.departamento}</MenuItem>)
                             }
                         </Select>
                     </FormControl> : null
             }
             {
-                props.taxType === 3 ?
+                props.impuesto.tipo === 3 ?
                     <FormControl fullWidth>
                         <InputLabel sx={{ fontSize: 20 }}>Municipio</InputLabel>
-                        <Select name="municipio" value={props.municipio} onChange={e => props.setMunicipio(e.target.value as number)} required>
+                        <Select name="municipio" value={props.impuesto.municipio} onChange={e => props.setImpuesto({ ...props.impuesto, municipio: e.target.value as never})} required>
                             <MenuItem value={0}>Selecciona un municipio</MenuItem>
                             {
-                                props.municipios.map((municipio, index) => <MenuItem value={municipio.codigo_municipio} key={index}>{municipio.municipio}</MenuItem>)
+                                municipios.map((municipio, index) => <MenuItem value={municipio.codigo_municipio} key={index}>{municipio.municipio}</MenuItem>)
                             }
                         </Select>
                     </FormControl> : null

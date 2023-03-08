@@ -1,5 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { Cuota, Feed } from "../../types";
+import { cuota } from "../../types";
 import FeedForm from "./feedForm";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from "react";
@@ -9,13 +9,11 @@ type Period = { name: string, value: number, frequency: number };
 type PropsType = {
     periods: Period[], periodSelected: number, 
     frequency: number,
-    feeds: Feed[], setFeeds: (feeds: any) => void
+    cuotas: cuota[], setFeeds: (feeds: any) => void
 }
 
 export default function FeedsTable({ ...props }: PropsType) {
     const [frequency, setFrequency] = useState(props.periods[props.periodSelected].frequency);
-    const initDate = new Date(new Date().getFullYear(), 0, 1);
-    const endDate = new Date(new Date().getFullYear(), 12 / props.frequency || 0, 0);
 
     useEffect(() => {
         setFrequency(props.periods[props.periodSelected].frequency);
@@ -30,18 +28,18 @@ export default function FeedsTable({ ...props }: PropsType) {
         const nit = fecha.nit;
         const date = new Date(fecha.date.toDate());
 
-        const newFeed = { nit, fecha: date }
-        const newFeeds = [...props.feeds];
+        const newCuota = { nit, fecha: date }
+        const newCuotas = [...props.cuotas];
         //@ts-ignore
-        newFeeds[index].fechas_presentacion.push(newFeed);
+        newCuotas[index].fechas_presentacion.push(newCuota);
         // organize feeds by date
-        newFeeds[index].fechas_presentacion.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
+        newCuotas[index].fechas_presentacion.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
 
-        props.setFeeds(newFeeds);
+        props.setFeeds(newCuotas);
     }
 
     const handleDeletFeed = (index: number, index1: number) => {
-        const newFeeds = [...props.feeds];
+        const newFeeds = [...props.cuotas];
         newFeeds[index].fechas_presentacion.splice(index1, 1);
 
         props.setFeeds(newFeeds);
@@ -50,7 +48,7 @@ export default function FeedsTable({ ...props }: PropsType) {
     return (
         <Box width='100%' marginTop={10} display='flex' flexDirection={'column'} alignItems='center' >
             {
-                props.feeds.map((feed, index) => {
+                props.cuotas.map((cuota, index) => {
                     const component = <Accordion sx={{ width: '100%' }} key={index}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon sx={{ color: 'white' }} />}
@@ -71,7 +69,7 @@ export default function FeedsTable({ ...props }: PropsType) {
                                     </TableHead>
                                     <TableBody>
                                 {
-                                    feed.fechas_presentacion.map((fecha, index1: number) => (
+                                    cuota.fechas_presentacion.map((fecha, index1: number) => (
                                         <TableRow key={index1}>
                                             <TableCell>{fecha.nit}</TableCell>
                                             <TableCell>{fecha.fecha.toDateString()}</TableCell>

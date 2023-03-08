@@ -18,11 +18,16 @@ import { periods } from "../../config";
 import TaxScheduler from "../../components/taxes/taxScheduler";
 import Spinner from "../../components/layouts/spinner";
 import { fechas_presentacion } from "@prisma/client";
+import MessageModal from "../../components/messageModal";
 
 export default function CalendarioTributario() {
     const [impuesto, setImpuesto] = useState<nuevoImpuesto>({ cuotas: [] } as unknown as nuevoImpuesto);
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
     const [municipios, setMunicipios] = useState<Municipio[]>([]);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
+    const [error, setError] = useState(false);
 
     const { setEvents } = useScheduler();
 
@@ -58,9 +63,6 @@ export default function CalendarioTributario() {
             return cuota;
         })
         setImpuesto(tax);
-        
-        const departamentos = await axios.get(`/api/departamento`);
-        setDepartamentos(departamentos.data);
 
         setLoading(false);
     }
@@ -90,8 +92,17 @@ export default function CalendarioTributario() {
 
         const data = impuesto;
 
-        const response = await axios.put(url, data)
-        console.log(response);
+        try {
+            const response = await axios.put(url, data)
+            setError(false);
+            setModalTitle("Impuesto actualizado correctamente");
+            setModalOpen(true);
+        } catch (error) {
+            console.error(error);
+            setError(true);
+            setModalTitle("Error al actualizar el impuesto");
+            setModalOpen(true);
+        }
     }
 
     return (
@@ -101,6 +112,7 @@ export default function CalendarioTributario() {
             </Head>
             {loading ? <Spinner /> :
                 <Box className={`${styles.container}`}>
+                    <MessageModal modalOpen={modalOpen} setModalOpen={setModalOpen} error={error} title={modalTitle}/>
                     <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
                         <Typography variant="h4" component="h1" marginBottom={8} >
                             Editar Impuesto
@@ -113,14 +125,11 @@ export default function CalendarioTributario() {
                     <TaxForm
                         impuesto={impuesto}
                         setImpuesto={setImpuesto}
-                        departamentos={departamentos}
-                        setDepartamentos={setDepartamentos}
-                        municipios={municipios} setMunicipios={setMunicipios}
                     />
 
                     <TaxScheduler feeds={impuesto.cuotas} />
 
-                    {/* <FeedsTable periods={periods} periodSelected={period} cuotas={cuotas} frequency={0} setFeeds={setCuotas} /> */}
+                    <FeedsTable cuotas={impuesto.cuotas} setCuotas={(cuotas) => setImpuesto({...impuesto, cuotas}) }  />
                     <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
                         <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                     </Box>

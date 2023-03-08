@@ -8,16 +8,13 @@ import { Departamento, Municipio, nuevoImpuesto } from "../../types";
 type PropsType = {
     impuesto: nuevoImpuesto,
     setImpuesto: (impuesto: nuevoImpuesto) => void,
-    departamentos: Departamento[],
-    setDepartamentos: (departamentos: Departamento[]) => void,
-    municipios: Municipio[],
-    setMunicipios: (municipios: Municipio[]) => void
 }
 
 
 export default function ({ ...props }: PropsType) {
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
     const [municipios, setMunicipios] = useState<Municipio[]>([]);
+    const [periodo, setPeriodo] = useState<number>(0);
 
     useEffect(() => {
         const fetchDepartamentos = async () => {
@@ -32,12 +29,14 @@ export default function ({ ...props }: PropsType) {
 
         fetchDepartamentos();
         fetchMunicipios();
+
+        periods.find(periodo => periodo.value === props.impuesto.frecuencia)?.frequency && setPeriodo(props.impuesto.frecuencia);
     },[])
 
     const handlePeriodChange = (event: SelectChangeEvent<unknown>) => {
         const periodsNumber = event.target.value as number;
-        //props.setPeriod(periodsNumber);
-    
+        setPeriodo(periodsNumber);
+
         const frequency = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
         props.setImpuesto({ ...props.impuesto, frecuencia: frequency  });
         const cuotas = [];
@@ -113,7 +112,7 @@ export default function ({ ...props }: PropsType) {
             </FormControl>
             <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }}> Frecuencia</InputLabel>
-                <Select name='Periodicidad' value={props.impuesto.frecuencia} fullWidth label='frecuencia' onChange={handlePeriodChange}>
+                <Select name='Periodicidad' value={periodo} fullWidth label='frecuencia' onChange={handlePeriodChange}>
                     {
                         periods.map((periodo) => (
                             <MenuItem key={periodo.value} value={periodo.value}

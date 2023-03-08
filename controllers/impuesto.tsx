@@ -35,7 +35,6 @@ export async function getImpuesto(id: number) {
 }
 
 export async function updateImpuesto(impuesto: nuevoImpuesto) {
-    console.log(impuesto);
     const updatedImpuesto = await prisma.nuevo_impuesto.update({
         where: {
             id: impuesto.id
@@ -49,27 +48,37 @@ export async function updateImpuesto(impuesto: nuevoImpuesto) {
             tipo: impuesto.tipo,
             frecuencia: impuesto.frecuencia,
             cuotas: {
-                deleteMany: {},
-                createMany: {
-                    data: impuesto.cuotas.map(cuota => { 
-                        return {
-                            number: cuota.number,
-                            tax: impuesto.id,
-                            fechas_presentacion: {
-                                createMany: {
-                                    data: cuota.fechas_presentacion.map(fecha_presentacion => {
-                                        return {
-                                            fecha: fecha_presentacion.fecha
-                                        }
-                                    })
-                                }
-                            }
-                        }
-                    }) 
+                deleteMany: {
+                    tax: impuesto.id
                 }
             }
         }
     })
+
+    // update fechas_presentacion
+    impuesto.cuotas.forEach(async (cuota, index) => {
+        const result = await prisma.cuotas.create({
+            data: {
+                number: index,
+                nuevo_impuesto: {
+                    connect: {
+                        id: updatedImpuesto.id
+                    }
+                },
+                fechas_presentacion: {
+                    createMany: {
+                        data: cuota.fechas_presentacion.map(fecha => {
+                            return {
+                                fecha: fecha.fecha,
+                                nit: fecha.nit
+                            }
+                        })
+                    }
+                }
+            }
+        })
+    }
+    )
 
     return updatedImpuesto;
 }

@@ -7,18 +7,10 @@ import { Dayjs } from "dayjs";
 
 type Period = { name: string, value: number, frequency: number };
 type PropsType = {
-    periods: Period[], periodSelected: number, 
-    frequency: number,
-    cuotas: cuota[], setFeeds: (feeds: any) => void
+    cuotas: cuota[], setCuotas: (feeds: any) => void
 }
 
 export default function FeedsTable({ ...props }: PropsType) {
-    const [frequency, setFrequency] = useState(props.periods[props.periodSelected].frequency);
-
-    useEffect(() => {
-        setFrequency(props.periods[props.periodSelected].frequency);
-    }, [props.periodSelected]);
-
     const accordionSummaryStyle = {
         backgroundColor: "primary.main",
         color: 'white',
@@ -35,14 +27,14 @@ export default function FeedsTable({ ...props }: PropsType) {
         // organize feeds by date
         newCuotas[index].fechas_presentacion.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
 
-        props.setFeeds(newCuotas);
+        props.setCuotas(newCuotas);
     }
 
     const handleDeletFeed = (index: number, index1: number) => {
         const newFeeds = [...props.cuotas];
         newFeeds[index].fechas_presentacion.splice(index1, 1);
 
-        props.setFeeds(newFeeds);
+        props.setCuotas(newFeeds);
     }
     
     return (

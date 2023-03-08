@@ -2,9 +2,9 @@ import { Avatar, Box, Button, Modal, Typography } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 
-type PropsType = { modalOpen: boolean, setModalOpen: (value: boolean) => void, title: string, message: string }
+type PropsType = { modalOpen: boolean, setModalOpen: (value: boolean) => void, title: string, error: boolean}
 
-export default function MessageModal({ ...props }) {
+export default function MessageModal({ ...props }: PropsType) {
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',

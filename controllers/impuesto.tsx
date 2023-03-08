@@ -73,6 +73,15 @@ export async function createImpuesto(impuesto: nuevoImpuesto) {
     return newImpuesto;
 }
 
+export async function deleteImpuesto(id: number) {
+    const deletedImpuesto = await prisma.nuevo_impuesto.delete({
+        where: {
+            id: id
+        }
+    });
+
+    return deletedImpuesto;
+}
 export async function updateImpuesto(impuesto: nuevoImpuesto) {
     const updatedImpuesto = await prisma.nuevo_impuesto.update({
         where: {

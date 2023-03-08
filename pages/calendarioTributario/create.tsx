@@ -12,6 +12,7 @@ import { Departamento, Municipio, nuevoImpuesto } from "../../types";
 import FeedsTable from "../../components/taxes/feedsTable";
 import TaxForm from "../../components/taxes/taxForm";
 import TaxScheduler from "../../components/taxes/taxScheduler";
+import MessageModal from "../../components/messageModal";
 type propsType = { departamentos: Departamento[] }
 
 export default function Create({ ...props }: propsType) {
@@ -25,6 +26,10 @@ export default function Create({ ...props }: propsType) {
         cuotas: [] 
     } as unknown as  nuevoImpuesto);
 
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalTitle, setModalTitle] = useState<string>('');
+    const [error, setError] = useState<boolean>(false);
+
     // styles
     const avatarSize = 160
     const avatarIconSize = 120
@@ -37,11 +42,15 @@ export default function Create({ ...props }: propsType) {
         const url = '/api/tax';
 
         try {
-            console.log(impuesto)
-           // const request = await axios.post(url, impuesto);
-
-           // window.location.href = '/calendarioTributario';
+           const request = await axios.post(url, impuesto);
+            setModalOpen(true);
+            setModalTitle('Impuesto agregado con éxito');
+            setError(false);
+           window.location.href = '/calendarioTributario';
         } catch (error) {
+            setModalOpen(true);
+            setModalTitle('Error al agregar el impuesto');
+            setError(true);
             alert(error);
             console.error(error);
         }
@@ -54,6 +63,7 @@ export default function Create({ ...props }: propsType) {
                 <title>Agregar impuesto</title>
             </Head>
             <Box className={`${styles.container}`}>
+                <MessageModal  error={error} modalOpen={modalOpen} setModalOpen={setModalOpen} title={modalTitle}/>
                 <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
                     <Typography variant="h4" component="h1" marginBottom={8} >
                         Agregar Impuesto

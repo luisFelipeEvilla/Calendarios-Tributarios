@@ -33,16 +33,16 @@ export default function FeedsTable({ ...props }: PropsType) {
         const newFeed = { nit, fecha: date }
         const newFeeds = [...props.feeds];
         //@ts-ignore
-        newFeeds[index].fechas.push(newFeed);
+        newFeeds[index].fechas_presentacion.push(newFeed);
         // organize feeds by date
-        newFeeds[index].fechas.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
+        newFeeds[index].fechas_presentacion.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
 
         props.setFeeds(newFeeds);
     }
 
     const handleDeletFeed = (index: number, index1: number) => {
         const newFeeds = [...props.feeds];
-        newFeeds[index].fechas.splice(index1, 1);
+        newFeeds[index].fechas_presentacion.splice(index1, 1);
 
         props.setFeeds(newFeeds);
     }
@@ -71,7 +71,7 @@ export default function FeedsTable({ ...props }: PropsType) {
                                     </TableHead>
                                     <TableBody>
                                 {
-                                    feed.fechas.map((fecha, index1: number) => (
+                                    feed.fechas_presentacion.map((fecha, index1: number) => (
                                         <TableRow key={index1}>
                                             <TableCell>{fecha.nit}</TableCell>
                                             <TableCell>{fecha.fecha.toDateString()}</TableCell>

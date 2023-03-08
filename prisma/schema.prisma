@@ -444,6 +444,16 @@ model controlinterno_informesfinales {
   @@index([id_cliente], map: "controlinterno_informesfinales_id_cliente_foreign")
 }
 
+model cuotas {
+  id                  Int                   @id @default(autoincrement()) @db.UnsignedInt
+  number              Int
+  tax                 Int                   @db.UnsignedInt
+  nuevo_impuesto      nuevo_impuesto        @relation(fields: [tax], references: [id], onDelete: Cascade, map: "impuesto_cuota")
+  fechas_presentacion fechas_presentacion[]
+
+  @@index([tax], map: "impuesto_cuota")
+}
+
 model depamo {
   id                 Int                @id @default(autoincrement()) @db.UnsignedInt
   depreciacion       String             @default(dbgenerated("(0)")) @db.VarChar(16)
@@ -637,16 +647,6 @@ model fecha_cliente {
   fecha_presentacion DateTime @db.Date
   fecha_pago         DateTime @db.Date
   cliente            Int
-}
-
-model fecha_presentacion {
-  id                                    Int      @id @default(autoincrement()) @db.UnsignedInt
-  cuota                                 Int      @db.UnsignedInt
-  nit                                   Int
-  fecha                                 DateTime @db.Date
-  cuota_fecha_presentacion_cuotaTocuota cuotas   @relation("fecha_presentacion_cuotaTocuota", fields: [cuota], references: [id], onDelete: Cascade, map: "cuota")
-
-  @@index([cuota], map: "cuota")
 }
 
 model funcionarios_en_nuevos_informes {
@@ -1551,12 +1551,12 @@ model variables_macroeconomicas {
   @@index([id_valoracion], map: "variables_macroeconomicas_id_valoracion_foreign")
 }
 
-model cuotas {
-  id                                                 Int                  @id @default(autoincrement()) @db.UnsignedInt
-  number                                             Int
-  tax                                                Int                  @db.UnsignedInt
-  nuevo_impuesto                                     nuevo_impuesto       @relation(fields: [tax], references: [id], onDelete: Cascade, map: "tax")
-  fecha_presentacion_fecha_presentacion_cuotaTocuota fecha_presentacion[] @relation("fecha_presentacion_cuotaTocuota")
+model fechas_presentacion {
+  id       Int      @id @default(autoincrement()) @db.UnsignedInt
+  id_cuota Int      @db.UnsignedInt
+  nit      Int
+  fecha    DateTime @db.Date
+  cuotas   cuotas   @relation(fields: [id_cuota], references: [id], onDelete: Cascade, map: "cuota")
 
-  @@index([tax], map: "tax")
+  @@index([id_cuota], map: "cuota")
 }

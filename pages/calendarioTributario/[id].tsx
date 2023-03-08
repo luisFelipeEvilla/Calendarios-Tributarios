@@ -51,21 +51,22 @@ export default function CalendarioTributario() {
     }, [feeds])
 
     const fetchData = async () => {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/impuesto/${router.query.id}`;
+        const url = `/api/tax/${router.query.id}`;
 
         const response = await axios.get(url);
 
-        const tax = response.data.data;
+        const tax = response.data;
         setName(tax.nombre);
         setPeriod(tax.frecuencia);
 
         const newFeeds = tax.cuotas.map((feed: Feed) => {
-            feed.fechas = feed.fechas.map((fecha: any) => {
+            feed.fechas_presentacion = feed.fechas_presentacion.map((fecha: any) => {
                 fecha.fecha = new Date(fecha.fecha);
                 return fecha;
             })
             return feed;
         }) 
+
         setFeeds(newFeeds);
 
         setTaxType(tax.tipo);
@@ -74,9 +75,9 @@ export default function CalendarioTributario() {
         setApplyTo(tax.persona);
         setNumeroDigitos(tax.numero_digitos);
         setNumeroCuotas(newFeeds.length);
-        const departamentos = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/departamentos`);
+        const departamentos = await axios.get(`/api/departamento`);
 
-        setDepartamentos(departamentos.data.data);
+        setDepartamentos(departamentos.data);
 
         setLoading(false);
     }
@@ -84,7 +85,7 @@ export default function CalendarioTributario() {
     const updateSchedule = () => {
         const events: ProcessedEvent[] = [];
         feeds.forEach((feed, index) => {
-            feed.fechas.forEach((fecha) => {
+            feed.fechas_presentacion.forEach((fecha) => {
                 if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
                 events.push({
                     event_id: index,

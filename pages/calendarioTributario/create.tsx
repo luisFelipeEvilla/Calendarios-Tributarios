@@ -38,9 +38,9 @@ export default function Create({ ...props }: propsType) {
 
         try {
             console.log(impuesto)
-            const request = await axios.post(url, impuesto);
+           // const request = await axios.post(url, impuesto);
 
-            window.location.href = '/calendarioTributario';
+           // window.location.href = '/calendarioTributario';
         } catch (error) {
             alert(error);
             console.error(error);

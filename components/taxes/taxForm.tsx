@@ -29,7 +29,8 @@ export default function ({ ...props }: PropsType) {
 
         fetchDepartamentos();
         fetchMunicipios();
-
+        
+        console.log(props.impuesto.frecuencia)
         periods.find(periodo => periodo.value === props.impuesto.frecuencia)?.frequency && setPeriodo(props.impuesto.frecuencia);
     },[])
 
@@ -37,16 +38,16 @@ export default function ({ ...props }: PropsType) {
         const periodsNumber = event.target.value as number;
         setPeriodo(periodsNumber);
 
-        const frequency = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
-        props.setImpuesto({ ...props.impuesto, frecuencia: frequency  });
+        const frecuencia = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
+    
         const cuotas = [];
 
-        for (let i = 0; i < frequency; i++) {
+        for (let i = 0; i < frecuencia; i++) {
             cuotas.push({fechas_presentacion: []});
         }
 
         // @ts-ignore
-        props.setImpuesto({ ...props.impuesto, cuotas });
+        props.setImpuesto({ ...props.impuesto, frecuencia, cuotas });
     }
 
     const handleNumeroCuotasChange = (event: any) => {

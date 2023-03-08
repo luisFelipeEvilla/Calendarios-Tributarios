@@ -8,7 +8,7 @@ import Head from "next/head";
 import { periods, personTypes } from '../../config';
 import styles from '../../styles/calendarioTributario/create.module.css';
 
-import { Departamento, Feed, Municipio } from "../../types";
+import { Departamento, Municipio, nuevoImpuesto } from "../../types";
 import FeedsTable from "../../components/taxes/feedsTable";
 import TaxForm from "../../components/taxes/taxForm";
 import TaxScheduler from "../../components/taxes/taxScheduler";
@@ -16,43 +16,30 @@ type propsType = { departamentos: Departamento[] }
 
 export default function Create({ ...props }: propsType) {
     // hooks
-    const [name, setName] = useState('');
-    const [period, setPeriod] = useState(0);
-    const [feeds, setFeeds] = useState<Feed[]>([]);
-    const [taxType, setTaxType] = useState(1);
-    const [departamento, setDepartamento] = useState(0);
-    const [municipio, setMunicipio] = useState(0);
-    const [applyTo, setApplyTo] = useState(0);
-    const [numeroDigitos, setNumeroDigitos] = useState(1);
-    const [numeroCuotas, setNumeroCuotas] = useState(0);
-
-    // info from api to forms
-    const [municipios, setMunicipios] = useState<Municipio[] | []>([]);
+    const [impuesto, setImpuesto] = useState<nuevoImpuesto>({
+        tipo: 1,
+        nombre: '',
+        frecuencia: 0,
+        persona: 1,
+        numero_digitos: 1,
+        cuotas: [] 
+    } as unknown as  nuevoImpuesto);
 
     // styles
     const avatarSize = 160
     const avatarIconSize = 120
+    
 
     // functions
     const handleSubmit = async () => {
-        //Todo implement save tax logic
+        if (impuesto.nombre.length === 0) return alert('debe ingresar un nombre para el impuesto')
 
-        const url = '/api/handleAddImpuesto';
-
-        if (name.length === 0 || name === '') return alert('debe ingresar un nombre para el impuesto')
-        const body = {
-            name,
-            applyTo: applyTo,
-            period: period,
-            taxType,
-            departamento,
-            municipio,
-            feeds,
-            numeroDigitos
-        }
+        const url = '/api/tax';
 
         try {
-            const request = await axios.post(url, body, { headers: { 'Content-Type': 'application/json' } });
+            console.log(impuesto)
+            const request = await axios.post(url, impuesto);
+
             window.location.href = '/calendarioTributario';
         } catch (error) {
             alert(error);
@@ -77,22 +64,13 @@ export default function Create({ ...props }: propsType) {
                 </Box>
 
                 <TaxForm
-                    name={name} setName={setName}
-                    applyTo={applyTo} setApplyTo={setApplyTo}
-                    period={period} setPeriod={setPeriod}
-                    taxType={taxType} setTaxType={setTaxType}
-                    departamento={departamento} setDepartamento={setDepartamento}
-                    municipio={municipio} setMunicipio={setMunicipio}
-                    feeds={feeds} setFeeds={setFeeds}
-                    numeroDigitos={numeroDigitos} setNumeroDigitos={setNumeroDigitos}
-                    numeroCuotas={numeroCuotas} setNumeroCuotas={setNumeroCuotas}
-                    departamentos={props.departamentos}
-                    municipios={municipios} setMunicipios={setMunicipios}
+                    impuesto={impuesto}
+                    setImpuesto={setImpuesto}
                 />
 
-                <TaxScheduler feeds={feeds} />
+                <TaxScheduler feeds={impuesto.cuotas} />
 
-                <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} setFeeds={setFeeds} />
+                <FeedsTable cuotas={impuesto.cuotas} setCuotas={(cuotas) => setImpuesto({ ...impuesto, cuotas})} />
                 <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
                     <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                 </Box>
@@ -100,23 +78,4 @@ export default function Create({ ...props }: propsType) {
         </Layout>
 
     )
-}
-
-export async function getServerSideProps(context: any) {
-    let departamentos: Departamento[] = [];
-    try {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/departamentos`;
-
-        const response = await axios.get(url);
-
-        departamentos = response.data.data;
-    } catch (error) {
-
-    }
-
-    return {
-        props: {
-            departamentos
-        }
-    }
 }

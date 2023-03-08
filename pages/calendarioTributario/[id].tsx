@@ -1,4 +1,4 @@
-import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
+import { useScheduler } from "@aldabil/react-scheduler";
 import { Avatar, Box, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import TaxForm from "../../components/taxes/taxForm";
-import { Fecha, Feed, Municipio } from "../../types";
+import { cuota, Municipio } from "../../types";
 
 import { Departamento } from "../../types";
 
@@ -17,11 +17,12 @@ import FeedsTable from "../../components/taxes/feedsTable";
 import { periods } from "../../config";
 import TaxScheduler from "../../components/taxes/taxScheduler";
 import Spinner from "../../components/layouts/spinner";
+import { fechas_presentacion } from "@prisma/client";
 
 export default function CalendarioTributario() {
     const [name, setName] = useState('');
     const [period, setPeriod] = useState(1);
-    const [feeds, setFeeds] = useState<Feed[]>([]);
+    const [cuotas, setCuotas] = useState<cuota[]>([]);
     const [taxType, setTaxType] = useState(1);
     const [departamento, setDepartamento] = useState(0);
     const [municipio, setMunicipio] = useState(0);
@@ -36,8 +37,7 @@ export default function CalendarioTributario() {
     const router = useRouter();
 
     const [loading, setLoading] = useState(true);
-    const [scheduledFeeds, setScheduledFeeds] = useState<ProcessedEvent[] | undefined>();
-
+    
     const avatarSize = 160
     const avatarIconSize = 120
 
@@ -49,7 +49,7 @@ export default function CalendarioTributario() {
 
     useEffect(() => {
         updateSchedule();
-    }, [feeds])
+    }, [cuotas])
 
     const fetchData = async () => {
         const url = `/api/tax/${router.query.id}`;
@@ -57,27 +57,27 @@ export default function CalendarioTributario() {
         const response = await axios.get(url);
 
         const tax = response.data;
+
         setName(tax.nombre);
         setPeriod(tax.frecuencia);
-
-        const newFeeds = tax.cuotas.map((feed: Feed) => {
-            feed.fechas_presentacion = feed.fechas_presentacion.map((fecha: any) => {
-                fecha.fecha = new Date(fecha.fecha);
-                return fecha;
-            })
-            return feed;
-        })
-
-        setFeeds(newFeeds);
-
         setTaxType(tax.tipo);
         setDepartamento(tax.departamento);
         setMunicipio(tax.municipio);
         setApplyTo(tax.persona);
         setNumeroDigitos(tax.numero_digitos);
-        setNumeroCuotas(newFeeds.length);
-        const departamentos = await axios.get(`/api/departamento`);
 
+        const newCuotas = tax.cuotas.map((cuota: cuota) => {
+            cuota.fechas_presentacion = cuota.fechas_presentacion.map((fecha_presentacion: fechas_presentacion) => {
+                fecha_presentacion.fecha = new Date(fecha_presentacion.fecha);
+                return fecha_presentacion;
+            })
+            return cuota;
+        })
+
+        setCuotas(newCuotas);
+        setNumeroCuotas(newCuotas.length);
+
+        const departamentos = await axios.get(`/api/departamento`);
         setDepartamentos(departamentos.data);
 
         setLoading(false);
@@ -85,8 +85,8 @@ export default function CalendarioTributario() {
 
     const updateSchedule = () => {
         const events: ProcessedEvent[] = [];
-        feeds.forEach((feed, index) => {
-            feed.fechas_presentacion.forEach((fecha) => {
+        cuotas.forEach((cuota, index) => {
+            cuota.fechas_presentacion.forEach((fecha) => {
                 if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
                 events.push({
                     event_id: index,
@@ -100,7 +100,6 @@ export default function CalendarioTributario() {
             })
         })
 
-        setScheduledFeeds(events);
         setEvents(events);
 
     }
@@ -128,15 +127,15 @@ export default function CalendarioTributario() {
                         taxType={taxType} setTaxType={setTaxType}
                         departamento={departamento} setDepartamento={setDepartamento}
                         municipio={municipio} setMunicipio={setMunicipio}
-                        feeds={feeds} setFeeds={setFeeds}
+                        feeds={cuotas} setFeeds={setCuotas}
                         numeroDigitos={numeroDigitos} setNumeroDigitos={setNumeroDigitos}
                         numeroCuotas={numeroCuotas} setNumeroCuotas={setNumeroCuotas}
                         departamentos={departamentos}
                         municipios={municipios} setMunicipios={setMunicipios}
                     />
 
-                    <TaxScheduler feeds={feeds} />
-                    <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} setFeeds={setFeeds} />
+                    <TaxScheduler feeds={cuotas} />
+                    <FeedsTable periods={periods} periodSelected={period} feeds={cuotas} frequency={0} setFeeds={setCuotas} />
                 </Box>
 
             }

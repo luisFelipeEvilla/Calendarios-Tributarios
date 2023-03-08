@@ -1,17 +1,16 @@
 
-import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Modal, Paper, Select, Table, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
+import { ProcessedEvent } from "@aldabil/react-scheduler/types";
+import PeopleIcon from '@mui/icons-material/People';
+import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import axios from "axios";
+import { es } from "date-fns/locale";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { SetStateAction, useEffect, useState } from "react";
 import Layout from "../../components/layout";
-import PeopleIcon from '@mui/icons-material/People';
-import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
-import { ProcessedEvent } from "@aldabil/react-scheduler/types";
-import { es } from "date-fns/locale";
-import TableBody from "@mui/material/TableBody/TableBody";
-import MessageModal from "../../components/messageModal";
 import Spinner from "../../components/layouts/spinner";
+import MessageModal from "../../components/messageModal";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };

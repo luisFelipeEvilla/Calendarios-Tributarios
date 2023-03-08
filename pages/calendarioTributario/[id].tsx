@@ -16,6 +16,7 @@ import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import FeedsTable from "../../components/taxes/feedsTable";
 import { periods } from "../../config";
 import TaxScheduler from "../../components/taxes/taxScheduler";
+import Spinner from "../../components/layouts/spinner";
 
 export default function CalendarioTributario() {
     const [name, setName] = useState('');
@@ -65,7 +66,7 @@ export default function CalendarioTributario() {
                 return fecha;
             })
             return feed;
-        }) 
+        })
 
         setFeeds(newFeeds);
 
@@ -109,35 +110,36 @@ export default function CalendarioTributario() {
             <Head>
                 <title>Editar Impuesto</title>
             </Head>
-            <Box className={`${styles.container}`}>
-                <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
-                    <Typography variant="h4" component="h1" marginBottom={8} >
-                        Editar Impuesto
-                    </Typography>
-                    <Avatar sx={{ width: avatarSize, height: avatarSize }}>
-                        <AccountBalance sx={{ width: avatarIconSize, height: avatarIconSize }}></AccountBalance>
-                    </Avatar>
+            { loading ? <Spinner/>:
+                <Box className={`${styles.container}`}>
+                    <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
+                        <Typography variant="h4" component="h1" marginBottom={8} >
+                            Editar Impuesto
+                        </Typography>
+                        <Avatar sx={{ width: avatarSize, height: avatarSize }}>
+                            <AccountBalance sx={{ width: avatarIconSize, height: avatarIconSize }}></AccountBalance>
+                        </Avatar>
+                    </Box>
+
+                    <TaxForm
+                        name={name} setName={setName}
+                        applyTo={applyTo} setApplyTo={setApplyTo}
+                        period={period} setPeriod={setPeriod}
+                        taxType={taxType} setTaxType={setTaxType}
+                        departamento={departamento} setDepartamento={setDepartamento}
+                        municipio={municipio} setMunicipio={setMunicipio}
+                        feeds={feeds} setFeeds={setFeeds}
+                        numeroDigitos={numeroDigitos} setNumeroDigitos={setNumeroDigitos}
+                        numeroCuotas={numeroCuotas} setNumeroCuotas={setNumeroCuotas}
+                        departamentos={departamentos}
+                        municipios={municipios} setMunicipios={setMunicipios}
+                    />
+
+                    <TaxScheduler feeds={feeds} />
+                    <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} setFeeds={setFeeds} />
                 </Box>
 
-                <TaxForm
-                    name={name} setName={setName}
-                    applyTo={applyTo} setApplyTo={setApplyTo}
-                    period={period} setPeriod={setPeriod}
-                    taxType={taxType} setTaxType={setTaxType}
-                    departamento={departamento} setDepartamento={setDepartamento}
-                    municipio={municipio} setMunicipio={setMunicipio}
-                    feeds={feeds} setFeeds={setFeeds}
-                    numeroDigitos={numeroDigitos} setNumeroDigitos={setNumeroDigitos}
-                    numeroCuotas={numeroCuotas} setNumeroCuotas={setNumeroCuotas}
-                    departamentos={departamentos}
-                    municipios={municipios} setMunicipios={setMunicipios}
-                />
-
-                <TaxScheduler feeds={feeds}/>
-                <FeedsTable periods={periods} periodSelected={period} feeds={feeds} frequency={0} setFeeds={setFeeds} />
-            </Box>
-
-
+            }
         </Layout>
     )
 }

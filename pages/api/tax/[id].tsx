@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getImpuesto, updateImpuesto } from "../../../controllers/impuesto";
+import { deleteImpuesto, getImpuesto, updateImpuesto } from "../../../controllers/impuesto";
 
 export default async function handler(
     req: NextApiRequest,
@@ -34,16 +34,10 @@ export default async function handler(
             }
         case "DELETE":
             try {
-                const request = await fetch(url, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-    
-                const response = await request.json();
-    
-                res.status(200).json(response);
+                const deleted = await deleteImpuesto(Number(id));
+                if (deleted != null) return res.status(200).json(deleted)
+
+                return res.status(404).json(false);
             } catch (error: any) {
                 res.status(500).json(error);
             }

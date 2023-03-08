@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { periods, personTypes } from '../../config';
 import { Departamento, Municipio } from '../../types';
+import axios from 'axios';
+import MessageModal from '../messageModal';
 
 type Tax = { id: number };
 type PropsType = { data: Tax[], isDepartamental?: boolean, isMunicipal?: boolean, departamentos: Departamento[], municipios: Municipio[] }
@@ -14,6 +16,10 @@ export default function Table({ ...props }: PropsType): ReactElement {
     const [data, setData] = useState<Tax[]>(props.data)
     const [filterData, setFilterData] = useState(props.data);
     const [pageSize, setPageSize] = useState(10);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
+    const [error, setError] = useState(false);
 
     const router = useRouter();
 
@@ -30,12 +36,11 @@ export default function Table({ ...props }: PropsType): ReactElement {
         const url = `api/tax/${id}`;
 
         try {
-            const request = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            const response = await axios.delete(url);
+            
+            setModalOpen(true);
+            setModalTitle('Impuesto eliminado con éxito');
+            setError(false);
 
             // delete entry from data array
             const newData = data.filter((tax) => tax.id != id);
@@ -43,6 +48,9 @@ export default function Table({ ...props }: PropsType): ReactElement {
             const newFilterData = filterData.filter((tax) => tax.id != id);
             setFilterData(newFilterData);
         } catch (error) {
+            setModalOpen(true);
+            setModalTitle('Error al eliminar el impuesto');
+            setError(true);
             alert(error);
             console.error(error)
         }
@@ -156,6 +164,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <MessageModal  modalOpen={modalOpen} setModalOpen={setModalOpen} error={error} title={modalTitle} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <SearchBar handleSearch={handleSearch} />
                 <Button variant='contained' color='success' size='small' sx={{ width: 100, height: 40, marginRight: 10, marginTop: 3 }}

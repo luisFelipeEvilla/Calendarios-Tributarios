@@ -50,7 +50,6 @@ export default function Client() {
     }, [])
 
     useEffect(() => {
-        console.log(taxes)
         const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
         setFilteredTaxes(filtered);
     }, [taxes, client.tipo_persona])

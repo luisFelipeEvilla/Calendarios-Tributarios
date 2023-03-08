@@ -25,12 +25,12 @@ const Home: NextPage = ({ ...props }: any) => {
   }, []);
 
   const fetchData = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/impuesto`;
+    const url = `api/tax`;
 
     let taxes = [];
     try {
       const request = await axios.get(url);
-      const taxes = request.data.data;
+      const taxes = request.data;
       // @ts-ignore
       setNacionales(taxes.filter((tax) => tax.tipo == 1));
       // @ts-ignore
@@ -38,15 +38,15 @@ const Home: NextPage = ({ ...props }: any) => {
       // @ts-ignore
       setMunicipales(taxes.filter((tax) => tax.tipo == 3));
 
-      const departamentosUrl = `${process.env.NEXT_PUBLIC_API_URL}/departamentos`;
+      const departamentosUrl = `api/departamento`;
       const departamentosRequest = await axios.get(departamentosUrl);
 
-      setDepartamentos(departamentosRequest.data.data);
+      setDepartamentos(departamentosRequest.data);
       
-      const municipiosUrl = `${process.env.NEXT_PUBLIC_API_URL}/municipios`;
+      const municipiosUrl = `api/municipio`;
       const municipiosRequest = await axios.get(municipiosUrl);
 
-      setMuicipios(municipiosRequest.data.data);
+      setMuicipios(municipiosRequest.data);
       setLoading(false);
     } catch (error) {
       console.log(error);

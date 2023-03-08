@@ -1,0 +1,1562 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model actas {
+  id                   Int            @id @default(autoincrement()) @db.UnsignedInt
+  consecutivo          String         @unique(map: "actas_consecutivo_unique") @db.VarChar(50)
+  objetivo_general     String         @db.VarChar(512)
+  nombres_funcionarios String         @db.VarChar(512)
+  cargos_funcionarios  String         @db.VarChar(512)
+  fecha                String         @db.VarChar(16)
+  hora_inicio          String         @db.VarChar(8)
+  hora_fin             String         @db.VarChar(8)
+  presencial           Boolean
+  codigo_seguridad     String?        @db.VarChar(30)
+  anio_vigencia        Int            @default(2019) @db.UnsignedInt
+  id_servicio          Int            @db.UnsignedInt
+  id_usuario           Int            @db.UnsignedInt
+  id_cliente           Int            @db.UnsignedInt
+  publicada            Boolean        @default(true)
+  created_at           DateTime       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at           DateTime       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at           DateTime?      @db.Timestamp(0)
+  departamento         Int            @default(19)
+  municipio            Int            @default(716)
+  clientes             clientes       @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "actas_id_cliente_foreign")
+  servicios            servicios      @relation(fields: [id_servicio], references: [id], onUpdate: Restrict, map: "actas_id_servicio_foreign")
+  usuarios             usuarios       @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "actas_id_usuario_foreign")
+  departamentos        departamentos  @relation(fields: [departamento], references: [codigo_departamento], onUpdate: Restrict, map: "codigo_departamento")
+  municipios           municipios     @relation(fields: [municipio], references: [codigo_municipio], onUpdate: Restrict, map: "codigo_municipio")
+  anexos_actas         anexos_actas[]
+  items_actas          items_actas[]
+
+  @@index([consecutivo, fecha], map: "actas_consecutivo_fecha_index")
+  @@index([id_cliente], map: "actas_id_cliente_foreign")
+  @@index([id_servicio], map: "actas_id_servicio_foreign")
+  @@index([id_usuario], map: "actas_id_usuario_foreign")
+  @@index([departamento], map: "codigo_departamento")
+  @@index([municipio], map: "codigo_municipio")
+}
+
+model actas_comite {
+  id                 Int                  @id @default(autoincrement()) @db.UnsignedInt
+  consecutivo        String               @unique(map: "actas_comite_consecutivo_unique") @db.VarChar(50)
+  objetivo_general   String               @db.VarChar(512)
+  fecha              String               @db.VarChar(16)
+  hora_inicio        String               @db.VarChar(8)
+  hora_fin           String               @db.VarChar(8)
+  id_usuario         Int                  @db.UnsignedInt
+  created_at         DateTime             @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at         DateTime             @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  usuarios           usuarios             @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "actas_comite_id_usuario_foreign")
+  items_actas_comite items_actas_comite[]
+
+  @@index([id_usuario], map: "actas_comite_id_usuario_foreign")
+}
+
+model actividades_extras {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  descripcion String    @db.VarChar(300)
+  fecha       String    @db.VarChar(16)
+  hora_inicio String    @db.VarChar(8)
+  hora_fin    String    @db.VarChar(8)
+  id_servicio Int       @db.UnsignedInt
+  id_cliente  Int       @db.UnsignedInt
+  clientes    clientes  @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "actividades_extras_id_cliente_foreign")
+  servicios   servicios @relation(fields: [id_servicio], references: [id], onUpdate: Restrict, map: "actividades_extras_id_servicio_foreign")
+
+  @@index([id_cliente], map: "actividades_extras_id_cliente_foreign")
+  @@index([id_servicio], map: "actividades_extras_id_servicio_foreign")
+}
+
+model anexos_actas {
+  id      Int    @id @default(autoincrement()) @db.UnsignedInt
+  nombre  String @db.VarChar(150)
+  id_acta Int    @db.UnsignedInt
+  actas   actas  @relation(fields: [id_acta], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "anexos_actas_id_acta_foreign")
+
+  @@index([id_acta], map: "anexos_actas_id_acta_foreign")
+}
+
+model anexos_clientes {
+  id                    Int                   @id @default(autoincrement()) @db.UnsignedInt
+  nombre                String                @db.VarChar(150)
+  id_cliente            Int                   @db.UnsignedInt
+  created_at            DateTime              @default(now()) @db.Timestamp(0)
+  updated_at            DateTime?             @db.Timestamp(0)
+  id_tipo_anexo_cliente Int                   @default(1) @db.UnsignedInt
+  clientes              clientes              @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "anexos_clientes_id_cliente_foreign")
+  tipos_anexos_clientes tipos_anexos_clientes @relation(fields: [id_tipo_anexo_cliente], references: [id], onUpdate: Restrict, map: "fk_tipo_anexo_cliente")
+
+  @@index([id_cliente], map: "anexos_clientes_id_cliente_foreign")
+  @@index([id_tipo_anexo_cliente], map: "fk_tipo_anexo_cliente")
+}
+
+model anexos_empleados {
+  id                     Int                    @id @default(autoincrement()) @db.UnsignedInt
+  nombre                 String                 @db.VarChar(150)
+  id_empleado            Int                    @db.UnsignedInt
+  id_tipo_anexo_empleado Int                    @db.UnsignedInt
+  created_at             DateTime               @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at             DateTime               @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  empleados              empleados              @relation(fields: [id_empleado], references: [id], onUpdate: Restrict, map: "anexos_empleados_id_empleado_foreign")
+  tipos_anexos_empleados tipos_anexos_empleados @relation(fields: [id_tipo_anexo_empleado], references: [id], onUpdate: Restrict, map: "anexos_empleados_id_tipo_anexo_empleado_foreign")
+
+  @@index([id_empleado], map: "anexos_empleados_id_empleado_foreign")
+  @@index([id_tipo_anexo_empleado], map: "anexos_empleados_id_tipo_anexo_empleado_foreign")
+}
+
+model anexos_nuevos_informes {
+  id               Int             @id @default(autoincrement()) @db.UnsignedInt
+  nombre           String          @db.VarChar(150)
+  id_nuevo_informe Int             @db.UnsignedInt
+  filename         String          @db.VarChar(150)
+  nuevos_informes  nuevos_informes @relation(fields: [id_nuevo_informe], references: [id], onUpdate: Restrict, map: "anexos_nuevos_informes_id_nuevo_informe_foreign")
+
+  @@index([id_nuevo_informe], map: "anexos_nuevos_informes_id_nuevo_informe_foreign")
+}
+
+model auditor_acta {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  id_auditor Int
+  id_acta    Int
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model auditorlider_en_clientes {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  id_usuario Int      @db.UnsignedInt
+  id_cliente Int      @db.UnsignedInt
+  clientes   clientes @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "auditorlider_en_clientes_id_cliente_foreign")
+  usuarios   usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "auditorlider_en_clientes_id_usuario_foreign")
+
+  @@index([id_cliente], map: "auditorlider_en_clientes_id_cliente_foreign")
+  @@index([id_usuario], map: "auditorlider_en_clientes_id_usuario_foreign")
+}
+
+model balances {
+  id                                     Int                @id @default(autoincrement()) @db.UnsignedInt
+  subtotal_disponible                    String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  inversiones_cp                         String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_deudores_corto_plazo          String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_inventarios                   String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_otros_activos_corrientes      String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_diferido                      String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  inversiones_lp                         String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_deudores_largo_plazo          String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  propiedades_planta_y_equipo_neto       String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_intangibles                   String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_otros_activos_no_corrientes   String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_diferidos                     String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_valorizaciones                String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  obligaciones_financieras_cp            String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  proveedores                            String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_cuentas_por_pagar_corto_plazo String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  impuestos_gravamenes_y_tasas           String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  obligaciones_laborales_corto_plazo     String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  pasivos_estimados_y_provisiones        String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_otros_pasivos_corto_plazo     String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  obligaciones_financieras_lp            String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_otros_pasivos_largo_plazo     String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_cuentas_por_pagar_largo_plazo String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  obligaciones_laborales_largo_plazo     String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  subtotal_capital_social                String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  reservas                               String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  revalorizacion_del_patrimonio          String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  resultados_del_ejercicio               String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  resultados_de_ejercicios_anteriores    String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  superavit_por_valorizaciones           String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  efecto_niif                            String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  otras_cuentas_patrimonio               String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  ajustes_contables                      String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  id_item_valoracion                     Int                @db.UnsignedInt
+  items_valoraciones                     items_valoraciones @relation(fields: [id_item_valoracion], references: [id], onUpdate: Restrict, map: "balances_id_item_valoracion_foreign")
+
+  @@index([id_item_valoracion], map: "balances_id_item_valoracion_foreign")
+}
+
+model betas_valoraciones {
+  id                       Int                        @id @default(autoincrement()) @db.UnsignedInt
+  nombre                   String                     @db.VarChar(64)
+  valor                    Float
+  otros_datos_valoraciones otros_datos_valoraciones[]
+}
+
+model buengobierno_informesfinales {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  nombre      String    @db.VarChar(150)
+  anio        String    @db.VarChar(150)
+  descripcion String    @db.VarChar(150)
+  id_cliente  Int       @db.UnsignedInt
+  created_at  DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at  DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at  DateTime? @db.Timestamp(0)
+
+  @@index([id_cliente], map: "buengobierno_informesfinales_id_cliente_foreign")
+}
+
+model buenos_gobiernos {
+  id             Int              @id @default(autoincrement()) @db.UnsignedInt
+  publicado      Boolean          @default(false)
+  id_usuario     Int              @db.UnsignedInt
+  id_cliente     Int              @db.UnsignedInt
+  created_at     DateTime         @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at     DateTime         @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  clientes       clientes         @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "buenos_gobiernos_id_cliente_foreign")
+  usuarios       usuarios         @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "buenos_gobiernos_id_usuario_foreign")
+  componentes_bg componentes_bg[]
+  informes_bg    informes_bg[]
+
+  @@index([id_cliente], map: "buenos_gobiernos_id_cliente_foreign")
+  @@index([id_usuario], map: "buenos_gobiernos_id_usuario_foreign")
+}
+
+model calendarios_generales {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  anio        Int      @db.UnsignedInt
+  mes         Int      @db.UnsignedInt
+  dia         Int      @db.UnsignedInt
+  hora_inicio Int      @db.UnsignedInt
+  hora_fin    Int      @db.UnsignedInt
+  descripcion String?  @db.VarChar(256)
+  id_cliente  Int      @db.UnsignedInt
+  id_usuario  Int      @db.UnsignedInt
+  clientes    clientes @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "calendarios_generales_id_cliente_foreign")
+  usuarios    usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "calendarios_generales_id_usuario_foreign")
+
+  @@index([id_cliente], map: "calendarios_generales_id_cliente_foreign")
+  @@index([id_usuario], map: "calendarios_generales_id_usuario_foreign")
+}
+
+model calendarios_tributarios {
+  id                 Int       @id @default(autoincrement()) @db.UnsignedInt
+  id_impuesto        Int       @db.UnsignedInt
+  vigencia           String    @db.VarChar(8)
+  id_periodo         Int       @db.UnsignedInt
+  valor_periodo      Int       @default(0) @db.UnsignedInt
+  fecha_vencimiento  String    @db.VarChar(16)
+  fecha_presentacion String?   @db.VarChar(16)
+  fecha_pago         String?   @db.VarChar(16)
+  observacion        String?   @db.VarChar(64)
+  id_cliente         Int       @db.UnsignedInt
+  created_at         DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at         DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  clientes           clientes  @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "calendarios_tributarios_id_cliente_foreign")
+  impuestos          impuestos @relation(fields: [id_impuesto], references: [id], onUpdate: Restrict, map: "calendarios_tributarios_id_impuesto_foreign")
+  periodos           periodos  @relation(fields: [id_periodo], references: [id], onUpdate: Restrict, map: "calendarios_tributarios_id_periodo_foreign")
+
+  @@index([id_cliente], map: "calendarios_tributarios_id_cliente_foreign")
+  @@index([id_impuesto], map: "calendarios_tributarios_id_impuesto_foreign")
+  @@index([id_periodo], map: "calendarios_tributarios_id_periodo_foreign")
+}
+
+model cargos {
+  id        Int         @id @default(autoincrement()) @db.UnsignedInt
+  nombre    String      @db.VarChar(30)
+  empleados empleados[]
+}
+
+model clientes {
+  id                                              Int                                @id @default(autoincrement()) @db.UnsignedInt
+  nit                                             String                             @db.VarChar(30)
+  nombre_empresa                                  String                             @db.VarChar(100)
+  prefijo_empresa                                 String                             @default(dbgenerated("(AA)")) @db.VarChar(16)
+  pagina_web                                      String?                            @db.VarChar(100)
+  emails                                          String                             @db.VarChar(1024)
+  tipo_empresa                                    Int                                @default(0) @db.UnsignedInt
+  tipo_persona                                    Int
+  nombre_representante_legal                      String                             @db.VarChar(100)
+  documento_representante_legal                   String                             @db.VarChar(30)
+  id_usuario                                      Int                                @db.UnsignedInt
+  en_horario                                      Boolean                            @default(true)
+  created_at                                      DateTime                           @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                                      DateTime                           @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at                                      DateTime?                          @db.Timestamp(0)
+  actas                                           actas[]
+  actividades_extras                              actividades_extras[]
+  anexos_clientes                                 anexos_clientes[]
+  auditorlider_en_clientes                        auditorlider_en_clientes[]
+  buenos_gobiernos                                buenos_gobiernos[]
+  calendarios_generales                           calendarios_generales[]
+  calendarios_tributarios                         calendarios_tributarios[]
+  usuarios                                        usuarios                           @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "clientes_id_usuario_foreign")
+  contrataciones_estatales                        contrataciones_estatales[]
+  contrataciones_informesfinales                  contrataciones_informesfinales[]
+  controles_internos                              controles_internos[]
+  diagnosticos                                    diagnosticos[]
+  horarios                                        horarios[]
+  horas_pactadas                                  horas_pactadas[]
+  informes                                        informes[]
+  minimos_legales                                 minimos_legales[]
+  nicc1_clientes                                  nicc1_clientes[]
+  notificaciones                                  notificaciones[]
+  nuevos_informes                                 nuevos_informes[]
+  nuevos_informes_especiales                      nuevos_informes_especiales[]
+  pqr                                             pqr[]
+  programaciones                                  programaciones[]
+  programas_auditorias                            programas_auditorias[]
+  sistemas_de_gestion_por_clientes                sistemas_de_gestion_por_clientes[]
+  socios_en_clientes                              socios_en_clientes[]
+  sucursales                                      sucursales[]
+  traslados_traslados_id_cliente_actualToclientes traslados[]                        @relation("traslados_id_cliente_actualToclientes")
+  traslados_traslados_id_clienteToclientes        traslados[]                        @relation("traslados_id_clienteToclientes")
+  valoraciones_clientes                           valoraciones_clientes[]
+
+  @@index([id_usuario], map: "clientes_id_usuario_foreign")
+  @@index([nit, nombre_empresa], map: "clientes_nit_nombre_empresa_index")
+}
+
+model componentes_bg {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  id_tipo_componente_bg   Int                       @db.UnsignedInt
+  id_buen_gobierno        Int                       @db.UnsignedInt
+  buenos_gobiernos        buenos_gobiernos          @relation(fields: [id_buen_gobierno], references: [id], onUpdate: Restrict, map: "componentes_bg_id_buen_gobierno_foreign")
+  tipos_componentes_bg    tipos_componentes_bg      @relation(fields: [id_tipo_componente_bg], references: [id], onUpdate: Restrict, map: "componentes_bg_id_tipo_componente_bg_foreign")
+  detalles_componentes_bg detalles_componentes_bg[]
+
+  @@index([id_buen_gobierno], map: "componentes_bg_id_buen_gobierno_foreign")
+  @@index([id_tipo_componente_bg], map: "componentes_bg_id_tipo_componente_bg_foreign")
+}
+
+model componentes_ce {
+  id                       Int                       @id @default(autoincrement()) @db.UnsignedInt
+  id_tipo_componente_ce    Int                       @db.UnsignedInt
+  id_contratacion_estatal  Int                       @db.UnsignedInt
+  contrataciones_estatales contrataciones_estatales  @relation(fields: [id_contratacion_estatal], references: [id], onUpdate: Restrict, map: "componentes_ce_id_contratacion_estatal_foreign")
+  tipos_componentes_ce     tipos_componentes_ce      @relation(fields: [id_tipo_componente_ce], references: [id], onUpdate: Restrict, map: "componentes_ce_id_tipo_componente_ce_foreign")
+  detalles_componentes_ce  detalles_componentes_ce[]
+
+  @@index([id_contratacion_estatal], map: "componentes_ce_id_contratacion_estatal_foreign")
+  @@index([id_tipo_componente_ce], map: "componentes_ce_id_tipo_componente_ce_foreign")
+}
+
+model componentes_ci {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  id_tipo_componente_ci   Int                       @db.UnsignedInt
+  id_control_interno      Int                       @db.UnsignedInt
+  controles_internos      controles_internos        @relation(fields: [id_control_interno], references: [id], onUpdate: Restrict, map: "componentes_ci_id_control_interno_foreign")
+  tipos_componentes_ci    tipos_componentes_ci      @relation(fields: [id_tipo_componente_ci], references: [id], onUpdate: Restrict, map: "componentes_ci_id_tipo_componente_ci_foreign")
+  detalles_componentes_ci detalles_componentes_ci[]
+
+  @@index([id_control_interno], map: "componentes_ci_id_control_interno_foreign")
+  @@index([id_tipo_componente_ci], map: "componentes_ci_id_tipo_componente_ci_foreign")
+}
+
+model componentes_d {
+  id                     Int                      @id @default(autoincrement()) @db.UnsignedInt
+  id_tipo_componente_d   Int                      @db.UnsignedInt
+  id_diagnostico         Int                      @db.UnsignedInt
+  diagnosticos           diagnosticos             @relation(fields: [id_diagnostico], references: [id], onUpdate: Restrict, map: "componentes_d_id_diagnostico_foreign")
+  tipos_componentes_d    tipos_componentes_d      @relation(fields: [id_tipo_componente_d], references: [id], onUpdate: Restrict, map: "componentes_d_id_tipo_componente_d_foreign")
+  detalles_componentes_d detalles_componentes_d[]
+
+  @@index([id_diagnostico], map: "componentes_d_id_diagnostico_foreign")
+  @@index([id_tipo_componente_d], map: "componentes_d_id_tipo_componente_d_foreign")
+}
+
+model componentes_sub_servicios {
+  id              Int           @id @default(autoincrement()) @db.UnsignedInt
+  id_sub_servicio Int           @db.UnsignedInt
+  nombre          String?       @db.VarChar(100)
+  items_actas     items_actas[]
+}
+
+model consecutivos {
+  id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  nombre String @db.VarChar(50)
+  valor  String @db.VarChar(100)
+}
+
+model contactos {
+  id          Int        @id @default(autoincrement()) @db.UnsignedInt
+  nombre      String     @db.VarChar(50)
+  cargo       String     @db.VarChar(30)
+  email       String     @db.VarChar(50)
+  celular     String     @db.VarChar(30)
+  id_sucursal Int        @db.UnsignedInt
+  created_at  DateTime   @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at  DateTime   @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  sucursales  sucursales @relation(fields: [id_sucursal], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "contactos_id_sucursal_foreign")
+
+  @@index([id_sucursal], map: "contactos_id_sucursal_foreign")
+}
+
+model contrataciones_estatales {
+  id             Int              @id @default(autoincrement()) @db.UnsignedInt
+  publicado      Boolean          @default(false)
+  id_usuario     Int              @db.UnsignedInt
+  id_cliente     Int              @db.UnsignedInt
+  created_at     DateTime         @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at     DateTime         @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  componentes_ce componentes_ce[]
+  clientes       clientes         @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "contrataciones_estatales_id_cliente_foreign")
+  usuarios       usuarios         @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "contrataciones_estatales_id_usuario_foreign")
+  informes_ce    informes_ce[]
+
+  @@index([id_cliente], map: "contrataciones_estatales_id_cliente_foreign")
+  @@index([id_usuario], map: "contrataciones_estatales_id_usuario_foreign")
+}
+
+model contrataciones_informesfinales {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  nombre     String    @db.VarChar(150)
+  id_cliente Int       @db.UnsignedInt
+  created_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+  clientes   clientes  @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "contrataciones_informesfinales_id_cliente_foreign")
+
+  @@index([id_cliente], map: "contrataciones_informesfinales_id_cliente_foreign")
+}
+
+model controles_internos {
+  id              Int               @id @default(autoincrement()) @db.UnsignedInt
+  publicado       Boolean           @default(false)
+  id_usuario      Int               @db.UnsignedInt
+  id_cliente      Int               @db.UnsignedInt
+  created_at      DateTime          @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at      DateTime          @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  componentes_ci  componentes_ci[]
+  clientes        clientes          @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "controles_internos_id_cliente_foreign")
+  usuarios        usuarios          @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "controles_internos_id_usuario_foreign")
+  informes_ci     informes_ci[]
+  seguimientos_ci seguimientos_ci[]
+
+  @@index([id_cliente], map: "controles_internos_id_cliente_foreign")
+  @@index([id_usuario], map: "controles_internos_id_usuario_foreign")
+}
+
+model controlinterno_informesfinales {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  nombre     String    @db.VarChar(150)
+  id_cliente Int       @db.UnsignedInt
+  created_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+
+  @@index([id_cliente], map: "controlinterno_informesfinales_id_cliente_foreign")
+}
+
+model depamo {
+  id                 Int                @id @default(autoincrement()) @db.UnsignedInt
+  depreciacion       String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  amortizacion       String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  id_item_valoracion Int                @db.UnsignedInt
+  items_valoraciones items_valoraciones @relation(fields: [id_item_valoracion], references: [id], onUpdate: Restrict, map: "depamo_id_item_valoracion_foreign")
+
+  @@index([id_item_valoracion], map: "depamo_id_item_valoracion_foreign")
+}
+
+model departamentos {
+  codigo_departamento Int          @id
+  departamento        String       @db.VarChar(100)
+  actas               actas[]
+  municipios          municipios[]
+}
+
+model detalles_componentes_bg {
+  id                              Int                             @id @default(autoincrement()) @db.UnsignedInt
+  calificacion                    Int                             @db.UnsignedInt
+  observacion                     String?                         @db.VarChar(1024)
+  id_medida_componente_bg         Int                             @db.UnsignedInt
+  id_componente_bg                Int                             @db.UnsignedInt
+  medidas_detalles_componentes_bg medidas_detalles_componentes_bg @relation(fields: [id_medida_componente_bg], references: [id], onUpdate: Restrict, map: "detalles_componentes_bg_ibfk_1")
+  componentes_bg                  componentes_bg                  @relation(fields: [id_componente_bg], references: [id], onUpdate: Restrict, map: "detalles_componentes_bg_id_componente_bg_foreign")
+
+  @@index([id_componente_bg], map: "detalles_componentes_bg_id_componente_bg_foreign")
+  @@index([id_medida_componente_bg], map: "foreign_medida_detalle_bg")
+}
+
+model detalles_componentes_ce {
+  id                                Int                               @id @default(autoincrement()) @db.UnsignedInt
+  calificacion                      Int                               @db.UnsignedInt
+  observacion                       String?                           @db.VarChar(1024)
+  id_pregunta_componente_ce         Int                               @db.UnsignedInt
+  id_componente_ce                  Int                               @db.UnsignedInt
+  preguntas_detalles_componentes_ce preguntas_detalles_componentes_ce @relation(fields: [id_pregunta_componente_ce], references: [id], onUpdate: Restrict, map: "detalles_componentes_ce_ibfk_1")
+  componentes_ce                    componentes_ce                    @relation(fields: [id_componente_ce], references: [id], onUpdate: Restrict, map: "detalles_componentes_ce_id_componente_ce_foreign")
+
+  @@index([id_componente_ce], map: "detalles_componentes_ce_id_componente_ce_foreign")
+  @@index([id_pregunta_componente_ce], map: "foreign_pregunta_detalle_ce")
+}
+
+model detalles_componentes_ci {
+  id                                Int                               @id @default(autoincrement()) @db.UnsignedInt
+  calificacion                      Int                               @db.UnsignedInt
+  observacion                       String?                           @db.VarChar(1024)
+  id_pregunta_detalle_componente_ci Int                               @db.UnsignedInt
+  id_componente_ci                  Int                               @db.UnsignedInt
+  preguntas_detalles_componentes_ci preguntas_detalles_componentes_ci @relation(fields: [id_pregunta_detalle_componente_ci], references: [id], onUpdate: Restrict, map: "detalles_componentes_ci_ibfk_1")
+  componentes_ci                    componentes_ci                    @relation(fields: [id_componente_ci], references: [id], onUpdate: Restrict, map: "detalles_componentes_ci_id_componente_ci_foreign")
+
+  @@index([id_componente_ci], map: "detalles_componentes_ci_id_componente_ci_foreign")
+  @@index([id_pregunta_detalle_componente_ci], map: "foreign_pregunta_detalles_ci")
+}
+
+model detalles_componentes_d {
+  id                               Int                              @id @default(autoincrement()) @db.UnsignedInt
+  calificacion                     Int                              @db.UnsignedInt
+  situacion_actual                 String?                          @db.VarChar(1024)
+  riesgo                           String?                          @db.VarChar(1024)
+  observacion                      String?                          @db.VarChar(1024)
+  id_pregunta_detalle_componente_d Int                              @db.UnsignedInt
+  id_componente_d                  Int                              @db.UnsignedInt
+  preguntas_detalles_componentes_d preguntas_detalles_componentes_d @relation(fields: [id_pregunta_detalle_componente_d], references: [id], onUpdate: Restrict, map: "detalles_componentes_d_ibfk_1")
+  componentes_d                    componentes_d                    @relation(fields: [id_componente_d], references: [id], onUpdate: Restrict, map: "detalles_componentes_d_id_componente_d_foreign")
+
+  @@index([id_componente_d], map: "detalles_componentes_d_id_componente_d_foreign")
+  @@index([id_pregunta_detalle_componente_d], map: "foreign_pregunta_detalles_d")
+}
+
+model detalles_ml {
+  id              Int             @id @default(autoincrement()) @db.UnsignedInt
+  calificacion    Int             @db.UnsignedInt
+  observacion     String?         @db.VarChar(1024)
+  id_pregunta_ml  Int             @db.UnsignedInt
+  id_minimo_legal Int             @db.UnsignedInt
+  minimos_legales minimos_legales @relation(fields: [id_minimo_legal], references: [id], onUpdate: Restrict, map: "detalles_ml_id_minimo_legal_foreign")
+  preguntas_ml    preguntas_ml    @relation(fields: [id_pregunta_ml], references: [id], onUpdate: Restrict, map: "detalles_ml_id_pregunta_ml_foreign")
+
+  @@index([id_minimo_legal], map: "detalles_ml_id_minimo_legal_foreign")
+  @@index([id_pregunta_ml], map: "detalles_ml_id_pregunta_ml_foreign")
+}
+
+model detalles_nuevos_informes {
+  id                             Int                            @id @default(autoincrement()) @db.UnsignedInt
+  texto                          String                         @db.VarChar(2048)
+  id_tipo_detalle_nuevo_informe  Int                            @db.UnsignedInt
+  id_nuevo_informe               Int                            @db.UnsignedInt
+  nuevos_informes                nuevos_informes                @relation(fields: [id_nuevo_informe], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "detalles_nuevos_informes_id_nuevo_informe_foreign")
+  tipos_detalles_nuevos_informes tipos_detalles_nuevos_informes @relation(fields: [id_tipo_detalle_nuevo_informe], references: [id], onUpdate: Restrict, map: "detalles_nuevos_informes_id_tipo_detalle_nuevo_informe_foreign")
+
+  @@index([id_nuevo_informe], map: "detalles_nuevos_informes_id_nuevo_informe_foreign")
+  @@index([id_tipo_detalle_nuevo_informe], map: "detalles_nuevos_informes_id_tipo_detalle_nuevo_informe_foreign")
+}
+
+model diagnostico_informesfinales {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  nombre     String    @db.VarChar(150)
+  id_cliente Int       @db.UnsignedInt
+  created_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+
+  @@index([id_cliente], map: "diagnostico_informesfinales_id_cliente_foreign")
+}
+
+model diagnosticos {
+  id            Int             @id @default(autoincrement()) @db.UnsignedInt
+  publicado     Boolean         @default(false)
+  id_usuario    Int             @db.UnsignedInt
+  id_cliente    Int             @db.UnsignedInt
+  created_at    DateTime        @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at    DateTime        @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  componentes_d componentes_d[]
+  clientes      clientes        @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "diagnosticos_id_cliente_foreign")
+  usuarios      usuarios        @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "diagnosticos_id_usuario_foreign")
+  informes_d    informes_d[]
+
+  @@index([id_cliente], map: "diagnosticos_id_cliente_foreign")
+  @@index([id_usuario], map: "diagnosticos_id_usuario_foreign")
+}
+
+model documentos_varios {
+  id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  nombre String @db.VarChar(150)
+}
+
+model empleados {
+  id                           Int                            @id @default(autoincrement()) @db.UnsignedInt
+  documento_identificacion     String                         @unique(map: "empleados_documento_identificacion_unique") @db.VarChar(50)
+  nombres                      String                         @db.VarChar(40)
+  apellidos                    String                         @db.VarChar(40)
+  direccion                    String                         @db.VarChar(80)
+  ciudad                       String                         @db.VarChar(30)
+  telefono                     String                         @db.VarChar(30)
+  email                        String                         @db.VarChar(50)
+  id_cargo                     Int                            @db.UnsignedInt
+  id_usuario                   Int?                           @db.UnsignedInt
+  created_at                   DateTime                       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                   DateTime                       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at                   DateTime?                      @db.Timestamp(0)
+  foto                         String?                        @db.VarChar(150)
+  anexos_empleados             anexos_empleados[]
+  cargos                       cargos                         @relation(fields: [id_cargo], references: [id], onUpdate: Restrict, map: "empleados_id_cargo_foreign")
+  usuarios                     usuarios?                      @relation(fields: [id_usuario], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "empleados_id_usuario_foreign")
+  empleados_en_nuevos_informes empleados_en_nuevos_informes[]
+  horarios                     horarios[]
+  traslados                    traslados[]
+
+  @@index([documento_identificacion, nombres, apellidos], map: "empleados_documento_identificacion_nombres_apellidos_index")
+  @@index([id_cargo], map: "empleados_id_cargo_foreign")
+  @@index([id_usuario], map: "empleados_id_usuario_foreign")
+}
+
+model empleados_en_nuevos_informes {
+  id               Int             @id @default(autoincrement()) @db.UnsignedInt
+  id_empleado      Int             @db.UnsignedInt
+  id_nuevo_informe Int             @db.UnsignedInt
+  empleados        empleados       @relation(fields: [id_empleado], references: [id], onUpdate: Restrict, map: "empleados_en_nuevos_informes_id_empleado_foreign")
+  nuevos_informes  nuevos_informes @relation(fields: [id_nuevo_informe], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "empleados_en_nuevos_informes_id_nuevo_informe_foreign")
+
+  @@index([id_empleado], map: "empleados_en_nuevos_informes_id_empleado_foreign")
+  @@index([id_nuevo_informe], map: "empleados_en_nuevos_informes_id_nuevo_informe_foreign")
+}
+
+model factores_detalles_componentes_ci {
+  id                                      Int                                       @id @default(autoincrement()) @db.UnsignedInt
+  nombre                                  String                                    @db.VarChar(128)
+  id_tipo_componente_ci                   Int                                       @db.UnsignedInt
+  tipos_componentes_ci                    tipos_componentes_ci                      @relation(fields: [id_tipo_componente_ci], references: [id], onUpdate: Restrict, map: "factores_detalles_componentes_ci_id_tipo_componente_ci_foreign")
+  puntos_atencion_detalles_componentes_ci puntos_atencion_detalles_componentes_ci[]
+
+  @@index([id_tipo_componente_ci], map: "factores_detalles_componentes_ci_id_tipo_componente_ci_foreign")
+}
+
+model factores_detalles_componentes_d {
+  id                               Int                                @id @default(autoincrement()) @db.UnsignedInt
+  nombre                           String                             @db.VarChar(128)
+  id_tipo_componente_d             Int                                @db.UnsignedInt
+  tipos_componentes_d              tipos_componentes_d                @relation(fields: [id_tipo_componente_d], references: [id], onUpdate: Restrict, map: "factores_detalles_componentes_d_id_tipo_componente_d_foreign")
+  preguntas_detalles_componentes_d preguntas_detalles_componentes_d[]
+
+  @@index([id_tipo_componente_d], map: "factores_detalles_componentes_d_id_tipo_componente_d_foreign")
+}
+
+model fecha_cliente {
+  id                 Int      @id @default(autoincrement()) @db.UnsignedInt
+  impuesto           String   @db.VarChar(300)
+  fecha_limite       DateTime @db.Date
+  fecha_presentacion DateTime @db.Date
+  fecha_pago         DateTime @db.Date
+  cliente            Int
+}
+
+model fecha_presentacion {
+  id                                    Int      @id @default(autoincrement()) @db.UnsignedInt
+  cuota                                 Int      @db.UnsignedInt
+  nit                                   Int
+  fecha                                 DateTime @db.Date
+  cuota_fecha_presentacion_cuotaTocuota cuotas   @relation("fecha_presentacion_cuotaTocuota", fields: [cuota], references: [id], onDelete: Cascade, map: "cuota")
+
+  @@index([cuota], map: "cuota")
+}
+
+model funcionarios_en_nuevos_informes {
+  id               Int             @id @default(autoincrement()) @db.UnsignedInt
+  nombre           String          @db.VarChar(64)
+  cargo            String          @db.VarChar(64)
+  id_nuevo_informe Int             @db.UnsignedInt
+  nuevos_informes  nuevos_informes @relation(fields: [id_nuevo_informe], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "funcionarios_en_nuevos_informes_id_nuevo_informe_foreign")
+
+  @@index([id_nuevo_informe], map: "funcionarios_en_nuevos_informes_id_nuevo_informe_foreign")
+}
+
+model herramientas {
+  id                  Int                @id @default(autoincrement()) @db.UnsignedInt
+  nombre              String             @db.VarChar(150)
+  id_tipo_herramienta Int                @default(1) @db.UnsignedInt
+  tipos_herramientas  tipos_herramientas @relation(fields: [id_tipo_herramienta], references: [id], onUpdate: Restrict, map: "herramientas_id_tipo_herramienta_foreign")
+
+  @@index([id_tipo_herramienta], map: "herramientas_id_tipo_herramienta_foreign")
+}
+
+model horarios {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  dia_semana  Int       @db.UnsignedInt
+  hora_inicio String    @db.VarChar(8)
+  hora_fin    String    @db.VarChar(8)
+  id_empleado Int       @db.UnsignedInt
+  id_cliente  Int       @db.UnsignedInt
+  clientes    clientes  @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "horarios_id_cliente_foreign")
+  empleados   empleados @relation(fields: [id_empleado], references: [id], onUpdate: Restrict, map: "horarios_id_empleado_foreign")
+
+  @@index([id_cliente], map: "horarios_id_cliente_foreign")
+  @@index([id_empleado], map: "horarios_id_empleado_foreign")
+}
+
+model horas_pactadas {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  horas       Int
+  anio        String    @db.VarChar(8)
+  id_servicio Int       @db.UnsignedInt
+  id_cliente  Int       @db.UnsignedInt
+  clientes    clientes  @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "horas_pactadas_id_cliente_foreign")
+  servicios   servicios @relation(fields: [id_servicio], references: [id], onUpdate: Restrict, map: "horas_pactadas_id_servicio_foreign")
+
+  @@index([id_cliente], map: "horas_pactadas_id_cliente_foreign")
+  @@index([id_servicio], map: "horas_pactadas_id_servicio_foreign")
+}
+
+model impuestos {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  nombre                  String                    @db.VarChar(50)
+  calendarios_tributarios calendarios_tributarios[]
+}
+
+model informes {
+  id              Int            @id @default(autoincrement()) @db.UnsignedInt
+  nombre          String         @db.VarChar(150)
+  mes             Int?           @db.UnsignedInt
+  trimestre       Int?           @db.UnsignedInt
+  anio            Int?           @db.UnsignedInt
+  id_cliente      Int            @db.UnsignedInt
+  id_tipo_informe Int            @db.UnsignedInt
+  created_at      DateTime       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at      DateTime       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at      DateTime?      @db.Timestamp(0)
+  clientes        clientes       @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "informes_id_cliente_foreign")
+  tipos_informes  tipos_informes @relation(fields: [id_tipo_informe], references: [id], onUpdate: Restrict, map: "informes_id_tipo_informe_foreign")
+
+  @@index([id_cliente], map: "informes_id_cliente_foreign")
+  @@index([id_tipo_informe], map: "informes_id_tipo_informe_foreign")
+  @@index([nombre, mes, anio], map: "informes_nombre_mes_anio_index")
+}
+
+model informes_bg {
+  id                          Int                           @id @default(autoincrement()) @db.UnsignedInt
+  periodo                     String                        @db.VarChar(128)
+  objetivo                    String                        @db.VarChar(2048)
+  metodologia                 String                        @db.VarChar(2048)
+  fortalezas                  String                        @db.VarChar(2048)
+  limitaciones                String                        @db.VarChar(2048)
+  revisado                    Int                           @default(0) @db.UnsignedInt
+  publicado                   Boolean                       @default(false)
+  id_buen_gobierno            Int                           @db.UnsignedInt
+  created_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  buenos_gobiernos            buenos_gobiernos              @relation(fields: [id_buen_gobierno], references: [id], onUpdate: Restrict, map: "informes_bg_id_buen_gobierno_foreign")
+  items_informes_bg           items_informes_bg[]
+  recomendaciones_informes_bg recomendaciones_informes_bg[]
+
+  @@index([id_buen_gobierno], map: "informes_bg_id_buen_gobierno_foreign")
+}
+
+model informes_ce {
+  id                          Int                           @id @default(autoincrement()) @db.UnsignedInt
+  periodo                     String                        @db.VarChar(128)
+  objetivo                    String                        @db.VarChar(2048)
+  metodologia                 String                        @db.VarChar(2048)
+  fortalezas                  String                        @db.VarChar(2048)
+  limitaciones                String                        @db.VarChar(2048)
+  revisado                    Int                           @default(0) @db.UnsignedInt
+  publicado                   Boolean                       @default(false)
+  id_contratacion_estatal     Int                           @db.UnsignedInt
+  created_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  contrataciones_estatales    contrataciones_estatales      @relation(fields: [id_contratacion_estatal], references: [id], onUpdate: Restrict, map: "informes_ce_id_contratacion_estatal_foreign")
+  items_informes_ce           items_informes_ce[]
+  recomendaciones_informes_ce recomendaciones_informes_ce[]
+
+  @@index([id_contratacion_estatal], map: "informes_ce_id_contratacion_estatal_foreign")
+}
+
+model informes_ci {
+  id                          Int                           @id @default(autoincrement()) @db.UnsignedInt
+  periodo                     String                        @db.VarChar(128)
+  objetivo                    String                        @db.VarChar(2048)
+  metodologia                 String                        @db.VarChar(2048)
+  fortalezas                  String                        @db.VarChar(2048)
+  limitaciones                String                        @db.VarChar(2048)
+  revisado                    Int                           @default(0) @db.UnsignedInt
+  publicado                   Boolean                       @default(false)
+  id_control_interno          Int                           @db.UnsignedInt
+  created_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  controles_internos          controles_internos            @relation(fields: [id_control_interno], references: [id], onUpdate: Restrict, map: "informes_ci_id_control_interno_foreign")
+  items_informes_ci           items_informes_ci[]
+  recomendaciones_informes_ci recomendaciones_informes_ci[]
+
+  @@index([id_control_interno], map: "informes_ci_id_control_interno_foreign")
+}
+
+model informes_d {
+  id                         Int                          @id @default(autoincrement()) @db.UnsignedInt
+  periodo                    String                       @db.VarChar(128)
+  objetivo                   String                       @db.VarChar(2048)
+  metodologia                String                       @db.VarChar(2048)
+  fortalezas                 String                       @db.VarChar(2048)
+  limitaciones               String                       @db.VarChar(2048)
+  revisado                   Int                          @default(0) @db.UnsignedInt
+  publicado                  Boolean                      @default(false)
+  id_diagnostico             Int                          @db.UnsignedInt
+  created_at                 DateTime                     @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                 DateTime                     @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  diagnosticos               diagnosticos                 @relation(fields: [id_diagnostico], references: [id], onUpdate: Restrict, map: "informes_d_id_diagnostico_foreign")
+  items_informes_d           items_informes_d[]
+  recomendaciones_informes_d recomendaciones_informes_d[]
+
+  @@index([id_diagnostico], map: "informes_d_id_diagnostico_foreign")
+}
+
+model informes_ml {
+  id                          Int                           @id @default(autoincrement()) @db.UnsignedInt
+  periodo                     String                        @db.VarChar(128)
+  objetivo                    String                        @db.VarChar(2048)
+  metodologia                 String                        @db.VarChar(2048)
+  fortalezas                  String                        @db.VarChar(2048)
+  limitaciones                String                        @db.VarChar(2048)
+  revisado                    Int                           @default(0) @db.UnsignedInt
+  publicado                   Boolean                       @default(false)
+  id_minimo_legal             Int                           @db.UnsignedInt
+  created_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                  DateTime                      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  minimos_legales             minimos_legales               @relation(fields: [id_minimo_legal], references: [id], onUpdate: Restrict, map: "informes_ml_id_minimo_legal_foreign")
+  items_informes_ml           items_informes_ml[]
+  recomendaciones_informes_ml recomendaciones_informes_ml[]
+
+  @@index([id_minimo_legal], map: "informes_ml_id_minimo_legal_foreign")
+}
+
+model items_actas {
+  id                         Int                        @id @default(autoincrement()) @db.UnsignedInt
+  hallazgo                   String                     @db.VarChar(3072)
+  riesgo                     String                     @db.VarChar(3072)
+  recomendacion              String                     @db.VarChar(3072)
+  compromiso                 String                     @db.VarChar(3072)
+  responsable                String                     @db.VarChar(256)
+  id_acta                    Int                        @db.UnsignedInt
+  id_sub_servicio            Int                        @db.UnsignedInt
+  tiene_seguimiento          Boolean                    @default(false)
+  created_at                 DateTime                   @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                 DateTime                   @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at                 DateTime?                  @db.Timestamp(0)
+  id_componente_sub_servicio Int?                       @db.UnsignedInt
+  componentes_sub_servicios  componentes_sub_servicios? @relation(fields: [id_componente_sub_servicio], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "items_actas_FK")
+  actas                      actas                      @relation(fields: [id_acta], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "items_actas_id_acta_foreign")
+  sub_servicios              sub_servicios              @relation(fields: [id_sub_servicio], references: [id], onUpdate: Restrict, map: "items_actas_id_sub_servicio_foreign")
+  seguimientos               seguimientos[]
+
+  @@index([id_componente_sub_servicio], map: "items_actas_FK")
+  @@index([id_acta], map: "items_actas_id_acta_foreign")
+  @@index([id_sub_servicio], map: "items_actas_id_sub_servicio_foreign")
+}
+
+model items_actas_comite {
+  id             Int          @id @default(autoincrement()) @db.UnsignedInt
+  tema_tratado   String       @db.VarChar(1024)
+  empresa        String       @db.VarChar(512)
+  compromiso     String       @db.VarChar(1024)
+  responsable    String       @db.VarChar(512)
+  fecha_objetivo String       @db.VarChar(16)
+  id_acta_comite Int          @db.UnsignedInt
+  created_at     DateTime     @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at     DateTime     @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  actas_comite   actas_comite @relation(fields: [id_acta_comite], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "items_actas_comite_id_acta_comite_foreign")
+
+  @@index([id_acta_comite], map: "items_actas_comite_id_acta_comite_foreign")
+}
+
+model items_informes_bg {
+  id                    Int                  @id @default(autoincrement()) @db.UnsignedInt
+  observacion           String               @db.VarChar(2048)
+  id_tipo_componente_bg Int                  @db.UnsignedInt
+  id_informe_bg         Int                  @db.UnsignedInt
+  informes_bg           informes_bg          @relation(fields: [id_informe_bg], references: [id], onUpdate: Restrict, map: "items_informes_bg_id_informe_bg_foreign")
+  tipos_componentes_bg  tipos_componentes_bg @relation(fields: [id_tipo_componente_bg], references: [id], onUpdate: Restrict, map: "items_informes_bg_id_tipo_componente_bg_foreign")
+
+  @@index([id_informe_bg], map: "items_informes_bg_id_informe_bg_foreign")
+  @@index([id_tipo_componente_bg], map: "items_informes_bg_id_tipo_componente_bg_foreign")
+}
+
+model items_informes_ce {
+  id                    Int                  @id @default(autoincrement()) @db.UnsignedInt
+  observacion           String               @db.VarChar(2048)
+  id_tipo_componente_ce Int                  @db.UnsignedInt
+  id_informe_ce         Int                  @db.UnsignedInt
+  informes_ce           informes_ce          @relation(fields: [id_informe_ce], references: [id], onUpdate: Restrict, map: "items_informes_ce_id_informe_ce_foreign")
+  tipos_componentes_ce  tipos_componentes_ce @relation(fields: [id_tipo_componente_ce], references: [id], onUpdate: Restrict, map: "items_informes_ce_id_tipo_componente_ce_foreign")
+
+  @@index([id_informe_ce], map: "items_informes_ce_id_informe_ce_foreign")
+  @@index([id_tipo_componente_ce], map: "items_informes_ce_id_tipo_componente_ce_foreign")
+}
+
+model items_informes_ci {
+  id                    Int                  @id @default(autoincrement()) @db.UnsignedInt
+  observacion           String               @db.VarChar(2048)
+  id_tipo_componente_ci Int                  @db.UnsignedInt
+  id_informe_ci         Int                  @db.UnsignedInt
+  informes_ci           informes_ci          @relation(fields: [id_informe_ci], references: [id], onUpdate: Restrict, map: "items_informes_ci_id_informe_ci_foreign")
+  tipos_componentes_ci  tipos_componentes_ci @relation(fields: [id_tipo_componente_ci], references: [id], onUpdate: Restrict, map: "items_informes_ci_id_tipo_componente_ci_foreign")
+
+  @@index([id_informe_ci], map: "items_informes_ci_id_informe_ci_foreign")
+  @@index([id_tipo_componente_ci], map: "items_informes_ci_id_tipo_componente_ci_foreign")
+}
+
+model items_informes_d {
+  id                   Int                 @id @default(autoincrement()) @db.UnsignedInt
+  observacion          String              @db.VarChar(2048)
+  id_tipo_componente_d Int                 @db.UnsignedInt
+  id_informe_d         Int                 @db.UnsignedInt
+  informes_d           informes_d          @relation(fields: [id_informe_d], references: [id], onUpdate: Restrict, map: "items_informes_d_id_informe_d_foreign")
+  tipos_componentes_d  tipos_componentes_d @relation(fields: [id_tipo_componente_d], references: [id], onUpdate: Restrict, map: "items_informes_d_id_tipo_componente_d_foreign")
+
+  @@index([id_informe_d], map: "items_informes_d_id_informe_d_foreign")
+  @@index([id_tipo_componente_d], map: "items_informes_d_id_tipo_componente_d_foreign")
+}
+
+model items_informes_ml {
+  id            Int         @id @default(autoincrement()) @db.UnsignedInt
+  observacion   String      @db.VarChar(2048)
+  id_informe_ml Int         @db.UnsignedInt
+  informes_ml   informes_ml @relation(fields: [id_informe_ml], references: [id], onUpdate: Restrict, map: "items_informes_ml_id_informe_ml_foreign")
+
+  @@index([id_informe_ml], map: "items_informes_ml_id_informe_ml_foreign")
+}
+
+model items_valoraciones {
+  id                    Int                   @id @default(autoincrement()) @db.UnsignedInt
+  anio                  Int                   @db.UnsignedInt
+  id_valoracion         Int                   @db.UnsignedInt
+  balances              balances[]
+  depamo                depamo[]
+  valoraciones_clientes valoraciones_clientes @relation(fields: [id_valoracion], references: [id], onUpdate: Restrict, map: "items_valoraciones_id_valoracion_foreign")
+  pyg                   pyg[]
+
+  @@index([id_valoracion], map: "items_valoraciones_id_valoracion_foreign")
+}
+
+model medidas_detalles_componentes_bg {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  texto                   String                    @db.VarChar(2024)
+  id_tipo_componente_bg   Int                       @db.UnsignedInt
+  detalles_componentes_bg detalles_componentes_bg[]
+  tipos_componentes_bg    tipos_componentes_bg      @relation(fields: [id_tipo_componente_bg], references: [id], onUpdate: Restrict, map: "medidas_detalles_componentes_bg_id_tipo_componente_bg_foreign")
+
+  @@index([id_tipo_componente_bg], map: "medidas_detalles_componentes_bg_id_tipo_componente_bg_foreign")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model migrations {
+  migration String @db.VarChar(255)
+  batch     Int
+
+  @@ignore
+}
+
+model minimolegal_informesfinales {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  nombre     String    @db.VarChar(150)
+  id_cliente Int       @db.UnsignedInt
+  created_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+
+  @@index([id_cliente], map: "minimolegal_informesfinales_id_cliente_foreign")
+}
+
+model minimos_legales {
+  id          Int           @id @default(autoincrement()) @db.UnsignedInt
+  publicado   Boolean       @default(false)
+  id_usuario  Int           @db.UnsignedInt
+  id_cliente  Int           @db.UnsignedInt
+  created_at  DateTime      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at  DateTime      @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  detalles_ml detalles_ml[]
+  informes_ml informes_ml[]
+  clientes    clientes      @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "minimos_legales_id_cliente_foreign")
+  usuarios    usuarios      @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "minimos_legales_id_usuario_foreign")
+
+  @@index([id_cliente], map: "minimos_legales_id_cliente_foreign")
+  @@index([id_usuario], map: "minimos_legales_id_usuario_foreign")
+}
+
+model municipios {
+  codigo_departamento Int
+  codigo_municipio    Int           @id
+  municipio           String        @db.VarChar(200)
+  actas               actas[]
+  departamentos       departamentos @relation(fields: [codigo_departamento], references: [codigo_departamento], onUpdate: Restrict, map: "departamento")
+
+  @@index([codigo_departamento], map: "departamento")
+}
+
+model nicc1_clientes {
+  id                     Int                   @id @default(autoincrement()) @db.UnsignedInt
+  version                Int                   @default(1) @db.UnsignedInt
+  descripcion            String                @db.VarChar(180)
+  anio                   String                @db.VarChar(8)
+  documento              String                @db.VarChar(180)
+  id_cliente             Int                   @db.UnsignedInt
+  id_tipo_nicc1_cliente  Int                   @db.UnsignedInt
+  id_tipo2_nicc1_cliente Int                   @default(1) @db.UnsignedInt
+  tipos2_nicc1_clientes  tipos2_nicc1_clientes @relation(fields: [id_tipo2_nicc1_cliente], references: [id], onUpdate: Restrict, map: "lq_id_foreign")
+  clientes               clientes              @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "nicc1_clientes_id_cliente_foreign")
+  tipos_nicc1_clientes   tipos_nicc1_clientes  @relation(fields: [id_tipo_nicc1_cliente], references: [id], onUpdate: Restrict, map: "nicc1_clientes_id_tipo_nicc1_cliente_foreign")
+
+  @@index([id_tipo2_nicc1_cliente], map: "lq_id_foreign")
+  @@index([id_cliente], map: "nicc1_clientes_id_cliente_foreign")
+  @@index([id_tipo_nicc1_cliente], map: "nicc1_clientes_id_tipo_nicc1_cliente_foreign")
+}
+
+model notas {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  estado      Int      @default(0) @db.UnsignedInt
+  descripcion String   @db.VarChar(1024)
+  id_usuario  Int      @db.UnsignedInt
+  created_at  DateTime @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at  DateTime @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  usuarios    usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "notas_id_usuario_foreign")
+
+  @@index([id_usuario], map: "notas_id_usuario_foreign")
+}
+
+model notificaciones {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  fecha_hora String   @db.VarChar(32)
+  mensaje    String   @db.VarChar(50)
+  tipo       String   @db.VarChar(30)
+  id_externo Int?     @db.UnsignedInt
+  visto      Boolean
+  id_cliente Int      @db.UnsignedInt
+  clientes   clientes @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "notificaciones_id_cliente_foreign")
+
+  @@index([id_cliente], map: "notificaciones_id_cliente_foreign")
+}
+
+model nuevo_impuesto {
+  id             Int      @id @default(autoincrement()) @db.UnsignedInt
+  nombre         String   @db.VarChar(300)
+  persona        Int
+  frecuencia     Int
+  tipo           Int
+  departamento   Int?     @db.UnsignedInt
+  municipio      Int?     @db.UnsignedInt
+  numero_digitos Int
+  cuotas         cuotas[]
+}
+
+model nuevos_informes {
+  id                              Int                               @id @default(autoincrement()) @db.UnsignedInt
+  mes                             Int                               @db.UnsignedInt
+  anio                            Int                               @db.UnsignedInt
+  objetivo                        String                            @db.VarChar(2048)
+  alcance                         String                            @db.VarChar(2048)
+  metodologia                     String                            @db.VarChar(2048)
+  otras_consideraciones           String                            @db.VarChar(2048)
+  id_cliente                      Int                               @db.UnsignedInt
+  id_usuario                      Int                               @db.UnsignedInt
+  created_at                      DateTime                          @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                      DateTime                          @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  revisado                        Int                               @default(0) @db.UnsignedInt
+  publicado                       Boolean                           @default(false)
+  anexos_nuevos_informes          anexos_nuevos_informes[]
+  detalles_nuevos_informes        detalles_nuevos_informes[]
+  empleados_en_nuevos_informes    empleados_en_nuevos_informes[]
+  funcionarios_en_nuevos_informes funcionarios_en_nuevos_informes[]
+  clientes                        clientes                          @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "nuevos_informes_id_cliente_foreign")
+  usuarios                        usuarios                          @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "nuevos_informes_id_usuario_foreign")
+
+  @@index([id_cliente], map: "nuevos_informes_id_cliente_foreign")
+  @@index([id_usuario], map: "nuevos_informes_id_usuario_foreign")
+}
+
+model nuevos_informes_especiales {
+  id              Int            @id @default(autoincrement()) @db.UnsignedInt
+  nombre          String         @db.VarChar(150)
+  anio            Int?           @db.UnsignedInt
+  id_cliente      Int            @db.UnsignedInt
+  id_tipo_informe Int            @db.UnsignedInt
+  created_at      DateTime       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at      DateTime       @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  clientes        clientes       @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "nuevos_informes_especiales_id_cliente_foreign")
+  tipos_informes  tipos_informes @relation(fields: [id_tipo_informe], references: [id], onUpdate: Restrict, map: "nuevos_informes_especiales_id_tipo_informe_foreign")
+
+  @@index([id_cliente], map: "nuevos_informes_especiales_id_cliente_foreign")
+  @@index([id_tipo_informe], map: "nuevos_informes_especiales_id_tipo_informe_foreign")
+}
+
+model otros_datos_valoraciones {
+  id                       Int                   @id @default(autoincrement()) @db.UnsignedInt
+  otras_cuentas_patrimonio String                @default(dbgenerated("(0)")) @db.VarChar(16)
+  ajuste_contable          String                @default(dbgenerated("(0)")) @db.VarChar(16)
+  saldo_inicial_caja       String                @default(dbgenerated("(0)")) @db.VarChar(16)
+  tasa_oportunidad         Float                 @default(0.0000)
+  tasa_interes             Float                 @default(0.0000)
+  tasa_impositiva          Float                 @default(0.0000)
+  trema                    Float                 @default(0.0000)
+  dtf                      Float                 @default(0.0000)
+  spread                   Float                 @default(0.0000)
+  krf                      Float                 @default(0.0000)
+  km                       Float                 @default(0.0000)
+  embi                     Float                 @default(0.0000)
+  cds                      Float                 @default(0.0000)
+  id_beta                  Int                   @db.UnsignedInt
+  id_valoracion            Int                   @db.UnsignedInt
+  betas_valoraciones       betas_valoraciones    @relation(fields: [id_beta], references: [id], onUpdate: Restrict, map: "otros_datos_valoraciones_id_beta_foreign")
+  valoraciones_clientes    valoraciones_clientes @relation(fields: [id_valoracion], references: [id], onUpdate: Restrict, map: "otros_datos_valoraciones_id_valoracion_foreign")
+
+  @@index([id_beta], map: "otros_datos_valoraciones_id_beta_foreign")
+  @@index([id_valoracion], map: "otros_datos_valoraciones_id_valoracion_foreign")
+}
+
+model periodos {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  nombre                  String                    @db.VarChar(30)
+  limite                  Int                       @db.UnsignedInt
+  calendarios_tributarios calendarios_tributarios[]
+}
+
+model pqr {
+  id          Int         @id @default(autoincrement()) @db.UnsignedInt
+  consecutivo Int         @db.UnsignedInt
+  estado      Int         @db.UnsignedInt
+  id_cliente  Int         @db.UnsignedInt
+  id_pqr_tipo Int         @db.UnsignedInt
+  created_at  DateTime    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at  DateTime    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  clientes    clientes    @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "pqr_id_cliente_foreign")
+  pqr_tipos   pqr_tipos   @relation(fields: [id_pqr_tipo], references: [id], onUpdate: Restrict, map: "pqr_id_pqr_tipo_foreign")
+  pqr_items   pqr_items[]
+
+  @@index([id_cliente], map: "pqr_id_cliente_foreign")
+  @@index([id_pqr_tipo], map: "pqr_id_pqr_tipo_foreign")
+}
+
+model pqr_items {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  observacion String   @db.VarChar(1024)
+  id_usuario  Int      @db.UnsignedInt
+  id_pqr      Int      @db.UnsignedInt
+  created_at  DateTime @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at  DateTime @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  pqr         pqr      @relation(fields: [id_pqr], references: [id], onUpdate: Restrict, map: "pqr_items_id_pqr_foreign")
+  usuarios    usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "pqr_items_id_usuario_foreign")
+
+  @@index([id_pqr], map: "pqr_items_id_pqr_foreign")
+  @@index([id_usuario], map: "pqr_items_id_usuario_foreign")
+}
+
+model pqr_tipos {
+  id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  nombre String @db.VarChar(64)
+  pqr    pqr[]
+}
+
+model preguntas_detalles_componentes_ce {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  texto                   String                    @db.VarChar(2024)
+  id_tipo_componente_ce   Int                       @db.UnsignedInt
+  detalles_componentes_ce detalles_componentes_ce[]
+  tipos_componentes_ce    tipos_componentes_ce      @relation(fields: [id_tipo_componente_ce], references: [id], onUpdate: Restrict, map: "preguntas_detalles_componentes_ce_id_tipo_componente_ce_foreign")
+
+  @@index([id_tipo_componente_ce], map: "preguntas_detalles_componentes_ce_id_tipo_componente_ce_foreign")
+}
+
+model preguntas_detalles_componentes_ci {
+  id                                      Int                                     @id @default(autoincrement()) @db.UnsignedInt
+  pregunta                                String                                  @db.VarChar(512)
+  id_punto_atencion_detalle_componente_ci Int                                     @db.UnsignedInt
+  detalles_componentes_ci                 detalles_componentes_ci[]
+  puntos_atencion_detalles_componentes_ci puntos_atencion_detalles_componentes_ci @relation(fields: [id_punto_atencion_detalle_componente_ci], references: [id], onUpdate: Restrict, map: "preguntas_detalles_componentes_ci_ibfk_1")
+
+  @@index([id_punto_atencion_detalle_componente_ci], map: "foreign_punto_detalles_ci")
+}
+
+model preguntas_detalles_componentes_d {
+  id                              Int                             @id @default(autoincrement()) @db.UnsignedInt
+  pregunta                        String                          @db.VarChar(512)
+  id_factor_detalle_componente_d  Int                             @db.UnsignedInt
+  detalles_componentes_d          detalles_componentes_d[]
+  factores_detalles_componentes_d factores_detalles_componentes_d @relation(fields: [id_factor_detalle_componente_d], references: [id], onUpdate: Restrict, map: "preguntas_detalles_componentes_d_ibfk_1")
+
+  @@index([id_factor_detalle_componente_d], map: "foreign_factor_detalles_d")
+}
+
+model preguntas_ml {
+  id          Int           @id @default(autoincrement()) @db.UnsignedInt
+  texto       String        @db.VarChar(2024)
+  detalles_ml detalles_ml[]
+}
+
+model programaciones {
+  id                           Int      @id @default(autoincrement()) @db.UnsignedInt
+  version                      Int      @default(1) @db.UnsignedInt
+  anio                         String   @db.VarChar(8)
+  resumen_anio_anterior        String?  @db.VarChar(180)
+  matriz_riesgo                String   @db.VarChar(180)
+  evaluacion_matriz_riesgo     String   @db.VarChar(180)
+  plan_auditoria               String   @db.VarChar(180)
+  plan_auditoria_vista_cliente String   @db.VarChar(180)
+  estructura_organizacional    String?  @db.VarChar(180)
+  calendario_tributario        String   @db.VarChar(180)
+  id_cliente                   Int      @db.UnsignedInt
+  clientes                     clientes @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "programaciones_id_cliente_foreign")
+
+  @@index([id_cliente], map: "programaciones_id_cliente_foreign")
+}
+
+model programas_auditorias {
+  id                         Int                        @id @default(autoincrement()) @db.UnsignedInt
+  version                    Int                        @default(1) @db.UnsignedInt
+  descripcion                String                     @db.VarChar(180)
+  anio                       String                     @db.VarChar(8)
+  documento                  String                     @db.VarChar(180)
+  id_cliente                 Int                        @db.UnsignedInt
+  id_tipo_programa_auditoria Int                        @db.UnsignedInt
+  clientes                   clientes                   @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "programas_auditorias_id_cliente_foreign")
+  tipos_programas_auditorias tipos_programas_auditorias @relation(fields: [id_tipo_programa_auditoria], references: [id], onUpdate: Restrict, map: "programas_auditorias_id_tipo_programa_auditoria_foreign")
+
+  @@index([id_cliente], map: "programas_auditorias_id_cliente_foreign")
+  @@index([id_tipo_programa_auditoria], map: "programas_auditorias_id_tipo_programa_auditoria_foreign")
+}
+
+model puntos_atencion_detalles_componentes_ci {
+  id                                Int                                 @id @default(autoincrement()) @db.UnsignedInt
+  nombre                            String                              @db.VarChar(128)
+  id_factor_ci                      Int                                 @db.UnsignedInt
+  preguntas_detalles_componentes_ci preguntas_detalles_componentes_ci[]
+  factores_detalles_componentes_ci  factores_detalles_componentes_ci    @relation(fields: [id_factor_ci], references: [id], onUpdate: Restrict, map: "puntos_atencion_detalles_componentes_ci_ibfk_1")
+
+  @@index([id_factor_ci], map: "foreign_factor_detalles_ci")
+}
+
+model pyg {
+  id                                            Int                @id @default(autoincrement()) @db.UnsignedInt
+  ingresos_operacionales                        String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  costos_de_ventas_y_de_prestacion_de_servicios String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  gastos_operacionales_de_administraci_n        String             @default(dbgenerated("(0)")) @map("gastos_operacionales_de_administración") @db.VarChar(16)
+  gastos_operacionales_de_ventas                String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  ingresos_no_operacionales                     String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  intereses_financieros                         String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  gastos_no_operacionales                       String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  ajustes_por_inflacion                         String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  impuestos_de_renta_y_complementarios          String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  intereses_corrientes                          String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  intereses_de_mora                             String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  otros_intereses                               String             @default(dbgenerated("(0)")) @db.VarChar(16)
+  id_item_valoracion                            Int                @db.UnsignedInt
+  items_valoraciones                            items_valoraciones @relation(fields: [id_item_valoracion], references: [id], onUpdate: Restrict, map: "pyg_id_item_valoracion_foreign")
+
+  @@index([id_item_valoracion], map: "pyg_id_item_valoracion_foreign")
+}
+
+model recomendaciones_informes_bg {
+  id            Int         @id @default(autoincrement()) @db.UnsignedInt
+  observacion   String      @db.VarChar(2048)
+  id_informe_bg Int         @db.UnsignedInt
+  informes_bg   informes_bg @relation(fields: [id_informe_bg], references: [id], onUpdate: Restrict, map: "recomendaciones_informes_bg_id_informe_bg_foreign")
+
+  @@index([id_informe_bg], map: "recomendaciones_informes_bg_id_informe_bg_foreign")
+}
+
+model recomendaciones_informes_ce {
+  id            Int         @id @default(autoincrement()) @db.UnsignedInt
+  observacion   String      @db.VarChar(2048)
+  id_informe_ce Int         @db.UnsignedInt
+  informes_ce   informes_ce @relation(fields: [id_informe_ce], references: [id], onUpdate: Restrict, map: "recomendaciones_informes_ce_id_informe_ce_foreign")
+
+  @@index([id_informe_ce], map: "recomendaciones_informes_ce_id_informe_ce_foreign")
+}
+
+model recomendaciones_informes_ci {
+  id            Int         @id @default(autoincrement()) @db.UnsignedInt
+  observacion   String      @db.VarChar(2048)
+  id_informe_ci Int         @db.UnsignedInt
+  informes_ci   informes_ci @relation(fields: [id_informe_ci], references: [id], onUpdate: Restrict, map: "recomendaciones_informes_ci_id_informe_ci_foreign")
+
+  @@index([id_informe_ci], map: "recomendaciones_informes_ci_id_informe_ci_foreign")
+}
+
+model recomendaciones_informes_d {
+  id           Int        @id @default(autoincrement()) @db.UnsignedInt
+  observacion  String     @db.VarChar(2048)
+  id_informe_d Int        @db.UnsignedInt
+  informes_d   informes_d @relation(fields: [id_informe_d], references: [id], onUpdate: Restrict, map: "recomendaciones_informes_d_id_informe_d_foreign")
+
+  @@index([id_informe_d], map: "recomendaciones_informes_d_id_informe_d_foreign")
+}
+
+model recomendaciones_informes_ml {
+  id            Int         @id @default(autoincrement()) @db.UnsignedInt
+  observacion   String      @db.VarChar(2048)
+  id_informe_ml Int         @db.UnsignedInt
+  informes_ml   informes_ml @relation(fields: [id_informe_ml], references: [id], onUpdate: Restrict, map: "recomendaciones_informes_ml_id_informe_ml_foreign")
+
+  @@index([id_informe_ml], map: "recomendaciones_informes_ml_id_informe_ml_foreign")
+}
+
+model roles {
+  id       Int        @id @default(autoincrement()) @db.UnsignedInt
+  nombre   String     @db.VarChar(40)
+  usuarios usuarios[]
+}
+
+model seguimientos {
+  id                     Int         @id @default(autoincrement()) @db.UnsignedInt
+  observacion            String?     @db.VarChar(2048)
+  comentario             String?     @db.VarChar(1024)
+  cumplido               Boolean
+  id_item_acta           Int         @db.UnsignedInt
+  created_at             DateTime    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at             DateTime    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at_seguimiento DateTime?   @db.Timestamp(0)
+  updated_at_comentario  DateTime?   @db.Timestamp(0)
+  items_actas            items_actas @relation(fields: [id_item_acta], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "seguimientos_id_item_acta_foreign")
+
+  @@index([id_item_acta], map: "seguimientos_id_item_acta_foreign")
+}
+
+model seguimientos_ci {
+  id                 Int                @id @default(autoincrement()) @db.UnsignedInt
+  observaciones      String             @db.VarChar(1024)
+  id_control_interno Int                @db.UnsignedInt
+  created_at         DateTime           @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at         DateTime           @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  controles_internos controles_internos @relation(fields: [id_control_interno], references: [id], onUpdate: Restrict, map: "seguimientos_ci_id_control_interno_foreign")
+
+  @@index([id_control_interno], map: "seguimientos_ci_id_control_interno_foreign")
+}
+
+model seguimientos_comite {
+  id                  Int      @id @default(autoincrement()) @db.UnsignedInt
+  observacion         String?  @db.VarChar(1024)
+  cumplido            Boolean
+  id_item_acta_comite Int      @db.UnsignedInt
+  created_at          DateTime @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at          DateTime @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+
+  @@index([id_item_acta_comite], map: "seguimientos_comite_id_item_acta_comite_foreign")
+}
+
+model servicios {
+  id                 Int                  @id @default(autoincrement()) @db.UnsignedInt
+  nombre             String               @db.VarChar(30)
+  actas              actas[]
+  actividades_extras actividades_extras[]
+  horas_pactadas     horas_pactadas[]
+  sub_servicios      sub_servicios[]
+}
+
+model sistemas_de_gestion {
+  id                               Int                                @id @default(autoincrement()) @db.UnsignedInt
+  nombre                           String                             @db.VarChar(30)
+  sistemas_de_gestion_por_clientes sistemas_de_gestion_por_clientes[]
+}
+
+model sistemas_de_gestion_por_clientes {
+  id                     Int                 @id @default(autoincrement()) @db.UnsignedInt
+  id_sistemas_de_gestion Int                 @db.UnsignedInt
+  id_cliente             Int                 @db.UnsignedInt
+  clientes               clientes            @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "sistemas_de_gestion_por_clientes_id_cliente_foreign")
+  sistemas_de_gestion    sistemas_de_gestion @relation(fields: [id_sistemas_de_gestion], references: [id], onUpdate: Restrict, map: "sistemas_de_gestion_por_clientes_id_sistemas_de_gestion_foreign")
+
+  @@index([id_cliente], map: "sistemas_de_gestion_por_clientes_id_cliente_foreign")
+  @@index([id_sistemas_de_gestion], map: "sistemas_de_gestion_por_clientes_id_sistemas_de_gestion_foreign")
+}
+
+model socios_en_clientes {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  id_usuario Int      @db.UnsignedInt
+  id_cliente Int      @db.UnsignedInt
+  clientes   clientes @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "socios_en_clientes_id_cliente_foreign")
+  usuarios   usuarios @relation(fields: [id_usuario], references: [id], onUpdate: Restrict, map: "socios_en_clientes_id_usuario_foreign")
+
+  @@index([id_cliente], map: "socios_en_clientes_id_cliente_foreign")
+  @@index([id_usuario], map: "socios_en_clientes_id_usuario_foreign")
+}
+
+model sub_servicios {
+  id          Int           @id @default(autoincrement()) @db.UnsignedInt
+  nombre      String        @db.VarChar(50)
+  id_servicio Int           @db.UnsignedInt
+  items_actas items_actas[]
+  servicios   servicios     @relation(fields: [id_servicio], references: [id], onUpdate: Restrict, map: "sub_servicios_id_servicio_foreign")
+
+  @@index([id_servicio], map: "sub_servicios_id_servicio_foreign")
+}
+
+model sucursales {
+  id         Int         @id @default(autoincrement()) @db.UnsignedInt
+  ciudad     String      @db.VarChar(30)
+  direccion  String      @db.VarChar(80)
+  telefono   String      @db.VarChar(30)
+  principal  Boolean
+  id_cliente Int         @db.UnsignedInt
+  created_at DateTime    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at DateTime    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at DateTime?   @db.Timestamp(0)
+  contactos  contactos[]
+  clientes   clientes    @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "sucursales_id_cliente_foreign")
+
+  @@index([id_cliente], map: "sucursales_id_cliente_foreign")
+}
+
+model tipos2_nicc1_clientes {
+  id             Int              @id @default(autoincrement()) @db.UnsignedInt
+  nombre         String           @db.VarChar(64)
+  nicc1_clientes nicc1_clientes[]
+}
+
+model tipos_anexos_clientes {
+  id              Int               @id @default(autoincrement()) @db.UnsignedInt
+  nombre          String            @db.VarChar(30)
+  anexos_clientes anexos_clientes[]
+
+  @@index([id], map: "tipos_anexos_clientes_id_index")
+}
+
+model tipos_anexos_empleados {
+  id               Int                @id @default(autoincrement()) @db.UnsignedInt
+  nombre           String             @db.VarChar(50)
+  anexos_empleados anexos_empleados[]
+}
+
+model tipos_componentes_bg {
+  id                              Int                               @id @default(autoincrement()) @db.UnsignedInt
+  nombre                          String                            @db.VarChar(64)
+  componentes_bg                  componentes_bg[]
+  items_informes_bg               items_informes_bg[]
+  medidas_detalles_componentes_bg medidas_detalles_componentes_bg[]
+}
+
+model tipos_componentes_ce {
+  id                                Int                                 @id @default(autoincrement()) @db.UnsignedInt
+  nombre                            String                              @db.VarChar(64)
+  componentes_ce                    componentes_ce[]
+  items_informes_ce                 items_informes_ce[]
+  preguntas_detalles_componentes_ce preguntas_detalles_componentes_ce[]
+}
+
+model tipos_componentes_ci {
+  id                               Int                                @id @default(autoincrement()) @db.UnsignedInt
+  nombre                           String                             @db.VarChar(64)
+  componentes_ci                   componentes_ci[]
+  factores_detalles_componentes_ci factores_detalles_componentes_ci[]
+  items_informes_ci                items_informes_ci[]
+}
+
+model tipos_componentes_d {
+  id                              Int                               @id @default(autoincrement()) @db.UnsignedInt
+  nombre                          String                            @db.VarChar(64)
+  componentes_d                   componentes_d[]
+  factores_detalles_componentes_d factores_detalles_componentes_d[]
+  items_informes_d                items_informes_d[]
+}
+
+model tipos_detalles_nuevos_informes {
+  id                       Int                        @id @default(autoincrement()) @db.UnsignedInt
+  nombre                   String                     @db.VarChar(32)
+  detalles_nuevos_informes detalles_nuevos_informes[]
+}
+
+model tipos_herramientas {
+  id           Int            @id @default(autoincrement()) @db.UnsignedInt
+  nombre       String         @db.VarChar(30)
+  herramientas herramientas[]
+}
+
+model tipos_informes {
+  id                         Int                          @id @default(autoincrement()) @db.UnsignedInt
+  nombre                     String                       @db.VarChar(30)
+  informes                   informes[]
+  nuevos_informes_especiales nuevos_informes_especiales[]
+}
+
+model tipos_nicc1_clientes {
+  id             Int              @id @default(autoincrement()) @db.UnsignedInt
+  nombre         String           @db.VarChar(64)
+  nicc1_clientes nicc1_clientes[]
+}
+
+model tipos_programas_auditorias {
+  id                   Int                    @id @default(autoincrement()) @db.UnsignedInt
+  nombre               String                 @db.VarChar(64)
+  programas_auditorias programas_auditorias[]
+}
+
+model traslados {
+  id                                             Int       @id @default(autoincrement()) @db.UnsignedInt
+  fecha                                          String    @default(dbgenerated("(2019-01-01)")) @db.VarChar(16)
+  motivo                                         String    @db.VarChar(512)
+  estado                                         Int       @default(0) @db.UnsignedInt
+  codigo                                         String?   @db.VarChar(10)
+  id_cliente_actual                              Int       @db.UnsignedInt
+  id_cliente                                     Int       @db.UnsignedInt
+  id_empleado                                    Int       @db.UnsignedInt
+  created_at                                     DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                                     DateTime  @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  clientes_traslados_id_cliente_actualToclientes clientes  @relation("traslados_id_cliente_actualToclientes", fields: [id_cliente_actual], references: [id], onUpdate: Restrict, map: "traslados_id_cliente_actual_foreign")
+  clientes_traslados_id_clienteToclientes        clientes  @relation("traslados_id_clienteToclientes", fields: [id_cliente], references: [id], onUpdate: Restrict, map: "traslados_id_cliente_foreign")
+  empleados                                      empleados @relation(fields: [id_empleado], references: [id], onUpdate: Restrict, map: "traslados_id_empleado_foreign")
+
+  @@index([id_cliente_actual], map: "traslados_id_cliente_actual_foreign")
+  @@index([id_cliente], map: "traslados_id_cliente_foreign")
+  @@index([id_empleado], map: "traslados_id_empleado_foreign")
+}
+
+model usuarios {
+  id                       Int                        @id @default(autoincrement()) @db.UnsignedInt
+  nombre_usuario           String                     @unique(map: "usuarios_nombre_usuario_unique") @db.VarChar(40)
+  clave                    String                     @db.VarChar(256)
+  id_rol                   Int                        @db.UnsignedInt
+  created_at               DateTime                   @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at               DateTime                   @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  deleted_at               DateTime?                  @db.Timestamp(0)
+  remember_token           String?                    @db.VarChar(100)
+  actas                    actas[]
+  actas_comite             actas_comite[]
+  auditorlider_en_clientes auditorlider_en_clientes[]
+  buenos_gobiernos         buenos_gobiernos[]
+  calendarios_generales    calendarios_generales[]
+  clientes                 clientes[]
+  contrataciones_estatales contrataciones_estatales[]
+  controles_internos       controles_internos[]
+  diagnosticos             diagnosticos[]
+  empleados                empleados[]
+  minimos_legales          minimos_legales[]
+  notas                    notas[]
+  nuevos_informes          nuevos_informes[]
+  pqr_items                pqr_items[]
+  socios_en_clientes       socios_en_clientes[]
+  roles                    roles                      @relation(fields: [id_rol], references: [id], onUpdate: Restrict, map: "usuarios_id_rol_foreign")
+
+  @@index([id_rol], map: "usuarios_id_rol_foreign")
+}
+
+model valoraciones_clientes {
+  id                        Int                         @id @default(autoincrement()) @db.UnsignedInt
+  id_cliente                Int                         @db.UnsignedInt
+  created_at                DateTime                    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  updated_at                DateTime                    @default(dbgenerated("(0000-00-00 00:00:00)")) @db.Timestamp(0)
+  items_valoraciones        items_valoraciones[]
+  otros_datos_valoraciones  otros_datos_valoraciones[]
+  clientes                  clientes                    @relation(fields: [id_cliente], references: [id], onUpdate: Restrict, map: "valoraciones_clientes_id_cliente_foreign")
+  variables_macroeconomicas variables_macroeconomicas[]
+
+  @@index([id_cliente], map: "valoraciones_clientes_id_cliente_foreign")
+}
+
+model variables_macroeconomicas {
+  id                    Int                   @id @default(autoincrement()) @db.UnsignedInt
+  anio                  Int                   @default(0) @db.UnsignedInt
+  crecimiento_ventas    Float                 @default(0.0000)
+  inflacion_colombiana  Float                 @default(0.0000)
+  pib                   Float                 @default(0.0000)
+  tasa_cambio_promedio  Int                   @default(0) @db.UnsignedInt
+  tasa_cambio_fin_anio  Int                   @default(0) @db.UnsignedInt
+  devaluacion_nominal   Float                 @default(0.0000)
+  dtf_fin_anio          Float                 @default(0.0000)
+  dtf_nata              Float                 @default(0.0000)
+  id_valoracion         Int                   @db.UnsignedInt
+  valoraciones_clientes valoraciones_clientes @relation(fields: [id_valoracion], references: [id], onUpdate: Restrict, map: "variables_macroeconomicas_id_valoracion_foreign")
+
+  @@index([id_valoracion], map: "variables_macroeconomicas_id_valoracion_foreign")
+}
+
+model cuotas {
+  id                                                 Int                  @id @default(autoincrement()) @db.UnsignedInt
+  number                                             Int
+  tax                                                Int                  @db.UnsignedInt
+  nuevo_impuesto                                     nuevo_impuesto       @relation(fields: [tax], references: [id], onDelete: Cascade, map: "tax")
+  fecha_presentacion_fecha_presentacion_cuotaTocuota fecha_presentacion[] @relation("fecha_presentacion_cuotaTocuota")
+
+  @@index([tax], map: "tax")
+}

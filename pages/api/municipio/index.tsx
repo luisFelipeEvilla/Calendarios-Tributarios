@@ -1,6 +1,5 @@
-import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getImpuestos } from "../../../controllers/impuesto";
+import { getMunicipios } from "../../../controllers/municipio";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,9 +9,9 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             try {
-                const taxes = await getImpuestos();
+                const municipalities = await getMunicipios();
 
-                res.status(200).json(taxes);
+                res.status(200).json(municipalities);
             } catch (error) {
                 res.status(500).json(error);
             }

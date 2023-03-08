@@ -10,8 +10,7 @@ type PropsType = {
     setImpuesto: (impuesto: nuevoImpuesto) => void,
 }
 
-
-export default function ({ ...props }: PropsType) {
+export default function TaxForm({ ...props }: PropsType) {
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
     const [municipios, setMunicipios] = useState<Municipio[]>([]);
     const [periodo, setPeriodo] = useState<number>(0);

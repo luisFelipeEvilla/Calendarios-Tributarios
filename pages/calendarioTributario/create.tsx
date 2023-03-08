@@ -78,7 +78,7 @@ export default function Create({ ...props }: propsType) {
                     setImpuesto={setImpuesto}
                 />
 
-                <TaxScheduler feeds={impuesto.cuotas} />
+                <TaxScheduler cuotas={impuesto.cuotas} />
 
                 <FeedsTable cuotas={impuesto.cuotas} setCuotas={(cuotas) => setImpuesto({ ...impuesto, cuotas})} />
                 <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>

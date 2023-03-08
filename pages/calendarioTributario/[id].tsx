@@ -41,53 +41,51 @@ export default function CalendarioTributario() {
     useEffect(() => {
         if (!router.query.id) return;
 
+        const fetchData = async () => {
+            const url = `/api/tax/${router.query.id}`;
+
+            const response = await axios.get(url);
+
+            const tax = response.data;
+
+            tax.cuotas = tax.cuotas.map((cuota: cuota) => {
+                cuota.fechas_presentacion = cuota.fechas_presentacion.map((fecha_presentacion: fechas_presentacion) => {
+                    fecha_presentacion.fecha = new Date(fecha_presentacion.fecha);
+                    return fecha_presentacion;
+                })
+                return cuota;
+            })
+            setImpuesto(tax);
+
+            setLoading(false);
+        }
         fetchData();
-    }, [router.isReady])
+    }, [router.query.id])
 
     useEffect(() => {
+        const updateSchedule = () => {
+            const events: ProcessedEvent[] = [];
+            impuesto.cuotas.forEach((cuota, index) => {
+                cuota.fechas_presentacion.forEach((fecha) => {
+                    if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
+                    events.push({
+                        event_id: index,
+                        title: `${fecha.nit}`,
+                        start: fecha.fecha,
+                        end: fecha.fecha,
+                        color: '#3f51b5',
+                        textColor: 'white',
+                        allDay: true,
+                    })
+                })
+            })
+
+            setEvents(events);
+        }
         updateSchedule();
     }, [impuesto.cuotas])
 
-    const fetchData = async () => {
-        const url = `/api/tax/${router.query.id}`;
-
-        const response = await axios.get(url);
-
-        const tax = response.data;
-
-        tax.cuotas = tax.cuotas.map((cuota: cuota) => {
-            cuota.fechas_presentacion = cuota.fechas_presentacion.map((fecha_presentacion: fechas_presentacion) => {
-                fecha_presentacion.fecha = new Date(fecha_presentacion.fecha);
-                return fecha_presentacion;
-            })
-            return cuota;
-        })
-        setImpuesto(tax);
-
-        setLoading(false);
-    }
-
-    const updateSchedule = () => {
-        const events: ProcessedEvent[] = [];
-        impuesto.cuotas.forEach((cuota, index) => {
-            cuota.fechas_presentacion.forEach((fecha) => {
-                if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
-                events.push({
-                    event_id: index,
-                    title: `${fecha.nit}`,
-                    start: fecha.fecha,
-                    end: fecha.fecha,
-                    color: '#3f51b5',
-                    textColor: 'white',
-                    allDay: true,
-                })
-            })
-        })
-
-        setEvents(events);
-    }
-
-    const handleSubmit =  async () => {
+    const handleSubmit = async () => {
         const url = `/api/tax/${router.query.id}`;
 
         const data = impuesto;
@@ -112,7 +110,7 @@ export default function CalendarioTributario() {
             </Head>
             {loading ? <Spinner /> :
                 <Box className={`${styles.container}`}>
-                    <MessageModal modalOpen={modalOpen} setModalOpen={setModalOpen} error={error} title={modalTitle}/>
+                    <MessageModal modalOpen={modalOpen} setModalOpen={setModalOpen} error={error} title={modalTitle} />
                     <Box display='flex' alignItems='center' flexDirection={'column'} marginTop={10} marginBottom={7}>
                         <Typography variant="h4" component="h1" marginBottom={8} >
                             Editar Impuesto
@@ -127,9 +125,9 @@ export default function CalendarioTributario() {
                         setImpuesto={setImpuesto}
                     />
 
-                    <TaxScheduler feeds={impuesto.cuotas} />
+                    <TaxScheduler cuotas={impuesto.cuotas}  />
 
-                    <FeedsTable cuotas={impuesto.cuotas} setCuotas={(cuotas) => setImpuesto({...impuesto, cuotas}) }  />
+                    <FeedsTable cuotas={impuesto.cuotas} setCuotas={(cuotas) => setImpuesto({ ...impuesto, cuotas })} />
                     <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
                         <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                     </Box>

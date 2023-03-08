@@ -45,7 +45,7 @@ export default function Clientes() {
                                     {/* <Avatar sx={{ height: 120, width: 120 }} >
                                         {<PeopleIcon sx={{ height: 80, width: 80 }}></PeopleIcon>}
                                     </Avatar> */}
-                                    <img style={{ width: 400, height: 180, objectFit: 'cover' }} src="http://www.elinformador.com.co/images/stories/sociales/2011/11-noviembre/27rapimercar01.jpg" alt='logo' />
+                                    <Image style={{ width: 400, height: 180, objectFit: 'cover' }} src="http://www.elinformador.com.co/images/stories/sociales/2011/11-noviembre/27rapimercar01.jpg" alt='logo' />
 
                                 </Box>
                             </CardMedia>

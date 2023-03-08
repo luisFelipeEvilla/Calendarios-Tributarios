@@ -47,7 +47,7 @@ export default function Client() {
         }
 
         getClient();
-    }, [])
+    }, [router.query])
 
     useEffect(() => {
         const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
@@ -206,8 +206,8 @@ export default function Client() {
                                     <InputLabel>Agregar Impuesto</InputLabel>
                                     <Select label='Agregar Impuesto' >
                                         {
-                                            filteredTaxes.map((tax: any) => {
-                                                return <MenuItem value={tax.id}>{tax.nombre}
+                                            filteredTaxes.map((tax: any, index) => {
+                                                return <MenuItem key={index} value={tax.id}>{tax.nombre}
                                                 </MenuItem>
                                             })
                                         }
@@ -227,9 +227,9 @@ export default function Client() {
                                     </TableHead>
                                     <TableBody>
                                         {
-                                            clientTaxes.map((tax: any) => {
+                                            clientTaxes.map((tax: any, index) => {
                                                 return (
-                                                    <TableRow>
+                                                    <TableRow key={index}>
                                                         <TableCell>{tax.nombre}</TableCell>
                                                         <TableCell> {tax.cuotas.length}</TableCell>
                                                         <TableCell>

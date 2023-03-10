@@ -36,7 +36,9 @@ export default async function handler(
             }
         case "DELETE":
             try {
-                const deleted = await deleteImpuesto(Number(id));
+                const url = `${process.env.API_URL}/impuesto/${id}`;
+                const response = await axios.delete(url);
+                const deleted = response.data;
                 if (deleted != null) return res.status(200).json(deleted)
 
                 return res.status(404).json(false);

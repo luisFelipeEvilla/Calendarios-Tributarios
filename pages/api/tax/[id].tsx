@@ -1,3 +1,4 @@
+import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 import { deleteImpuesto, getImpuesto, updateImpuesto } from "../../../controllers/impuesto";
 
@@ -12,7 +13,8 @@ export default async function handler(
     switch (req.method) {
         case "GET":
             try {
-                const impuesto = await getImpuesto(Number(id));
+                const url = `${process.env.API_URL}/impuesto/${id}`;
+                const impuesto = (await axios.get(url)).data;
                 if (impuesto != null) return res.status(200).json(impuesto) 
                 
                 return res.status(404).json(false);

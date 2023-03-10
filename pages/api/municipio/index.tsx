@@ -1,3 +1,4 @@
+import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getMunicipios } from "../../../controllers/municipio";
 
@@ -9,7 +10,8 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             try {
-                const municipalities = await getMunicipios();
+                const url = `${process.env.NEXT_PUBLIC_API_URL}/municipio`
+                const municipalities = (await axios.get(url)).data;
 
                 res.status(200).json(municipalities);
             } catch (error) {

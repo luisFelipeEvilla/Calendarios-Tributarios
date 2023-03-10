@@ -25,8 +25,12 @@ export default async function handler(
         case "PUT":	
             try {
                 const { ...impuesto } = req.body;
-                const impuestoActualizado = await updateImpuesto(impuesto);
+                const url = `${process.env.API_URL}/impuesto/${id}`;
+
+                const response = await axios.put(url, impuesto);
+                const impuestoActualizado = response.data;
                 
+                console.log(impuestoActualizado)
                 if (impuestoActualizado != null) return res.status(200).json(impuestoActualizado)
 
                 return res.status(404).json(false);

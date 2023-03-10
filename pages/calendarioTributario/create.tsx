@@ -46,7 +46,7 @@ export default function Create({ ...props }: propsType) {
             setModalOpen(true);
             setModalTitle('Impuesto agregado con éxito');
             setError(false);
-           window.location.href = '/calendarioTributario';
+            window.location.href = '/calendarioTributario';
         } catch (error) {
             setModalOpen(true);
             setModalTitle('Error al agregar el impuesto');

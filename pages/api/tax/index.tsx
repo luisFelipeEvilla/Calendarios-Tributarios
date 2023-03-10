@@ -10,7 +10,7 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             try {
-                const url = `${process.env.NEXT_PUBLIC_API_URL}/impuesto`
+                const url = `${process.env.API_URL}/impuesto`
                 
                 const impuestos = (await axios.get(url)).data;
                 
@@ -22,8 +22,10 @@ export default async function handler(
             break;
         case 'POST':
             try {
-                const impuesto = await createImpuesto(req.body);
-                res.status(200).json(impuesto);
+                const url = `${process.env.API_URL}/impuesto`
+                const response = await axios.post(url, req.body);
+                
+                res.status(200).json(response.data);
             } catch (error) {
                 console.error(error);
                 res.status(500).json(error);

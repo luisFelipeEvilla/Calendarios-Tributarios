@@ -30,7 +30,6 @@ export default async function handler(
                 const response = await axios.put(url, impuesto);
                 const impuestoActualizado = response.data;
                 
-                console.log(impuestoActualizado)
                 if (impuestoActualizado != null) return res.status(200).json(impuestoActualizado)
 
                 return res.status(404).json(false);

@@ -12,12 +12,12 @@ export const personTypes = [
 ]
 
 export const periods = [
-    { name: "Selecciona una opción", value: 0, frequency: 1 },
+    { name: "Selecciona una opción", value: 0, frequency: -1 },
     { name: "Anual", value: 1, frequency: 1 },
     { name: "Semestral", value: 2, frequency: 2 },
     { name: "Cuatrimestral", value: 3, frequency: 3 },
     { name: "Trimestral", value: 4, frequency: 4 },
     { name: "Bimestral", value: 5, frequency: 6 },
     { name: "Mensual", value: 6, frequency: 12 },
-    { name: "Personalizado", value: 7, frequency: 1 }
+    { name: "Personalizado", value: 7, frequency: 0}
 ]

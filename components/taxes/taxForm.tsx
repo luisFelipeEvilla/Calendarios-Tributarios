@@ -29,35 +29,34 @@ export default function TaxForm({ ...props }: PropsType) {
         fetchDepartamentos();
         fetchMunicipios();
         
-        console.log(props.impuesto.frecuencia)
-        periods.find(periodo => periodo.value === props.impuesto.frecuencia)?.frequency && setPeriodo(props.impuesto.frecuencia);
+        const periodo = periods.find(periodo => periodo.value === props.impuesto.frecuencia)?.value || 0;
+        console.log(periodo);
+        setPeriodo(periodo);
     },[])
 
     const handlePeriodChange = (event: SelectChangeEvent<unknown>) => {
         const periodsNumber = event.target.value as number;
         setPeriodo(periodsNumber);
 
-        const frecuencia = periods.find(periodo => periodo.value === periodsNumber)?.frequency || 0;
+        const { value, frequency} = periods.find(periodo => periodo.value === periodsNumber) || {value: 0, frequency: 0};
     
         const cuotas = [];
 
-        for (let i = 0; i < frecuencia; i++) {
+        for (let i = 0; i < frequency ; i++) {
             cuotas.push({fechas_presentacion: []});
         }
 
         // @ts-ignore
-        props.setImpuesto({ ...props.impuesto, frecuencia, cuotas });
+        props.setImpuesto({ ...props.impuesto, frecuencia: value, cuotas });
     }
 
     const handleNumeroCuotasChange = (event: any) => {
         const numeroCuotas = event.target.value as number;
-        // console.log(numeroCuotas)
-        // props.setNumeroCuotas(numeroCuotas);
 
         const cuotas = [];
 
         for (let i = 0; i < numeroCuotas; i++) {
-            cuotas.push({fechas: []});
+            cuotas.push({fechas_presentacion: []});
         }
 
         // @ts-ignore
@@ -122,7 +121,7 @@ export default function TaxForm({ ...props }: PropsType) {
                 </Select>
             </FormControl>
             {
-                props.impuesto.frecuencia == 7 ?
+                periodo == 7 ?
                     <FormControl fullWidth>
                         <TextField 
                             type='number'
@@ -147,8 +146,8 @@ export default function TaxForm({ ...props }: PropsType) {
             {
                 props.impuesto.tipo != 1 ?
                     <FormControl fullWidth>
-                        <InputLabel sx={{ fontSize: 20 }}>Ubicación</InputLabel>
-                        <Select name="departamento" value={props.impuesto.departamento} onChange={handledDepartamentoChange} required>
+                        <InputLabel sx={{ fontSize: 20 }}>Departamento</InputLabel>
+                        <Select name="departamento" label="Departamento" value={props.impuesto.departamento} onChange={handledDepartamentoChange} required>
                             <MenuItem value={0}>Selecciona un departamento</MenuItem>
                             {
                                 departamentos.map((departamento, index) => <MenuItem value={departamento.codigo_departamento} key={index}>{departamento.departamento}</MenuItem>)
@@ -160,7 +159,7 @@ export default function TaxForm({ ...props }: PropsType) {
                 props.impuesto.tipo === 3 ?
                     <FormControl fullWidth>
                         <InputLabel sx={{ fontSize: 20 }}>Municipio</InputLabel>
-                        <Select name="municipio" value={props.impuesto.municipio} onChange={e => props.setImpuesto({ ...props.impuesto, municipio: e.target.value as never})} required>
+                        <Select label="Municipio" name="municipio" value={props.impuesto.municipio} onChange={e => props.setImpuesto({ ...props.impuesto, municipio: e.target.value as never})} required>
                             <MenuItem value={0}>Selecciona un municipio</MenuItem>
                             {
                                 municipios.map((municipio, index) => <MenuItem value={municipio.codigo_municipio} key={index}>{municipio.municipio}</MenuItem>)

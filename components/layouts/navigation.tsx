@@ -12,7 +12,6 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 const elements = [
     // { name: 'Home', path: '/', icon: <HomeIcon /> },
     // { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
-    { name: 'Clientes', path: '/', icon: <PeopleIcon /> },
     { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
 ]
 

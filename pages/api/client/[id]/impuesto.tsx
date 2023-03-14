@@ -8,11 +8,7 @@ export default async function handler(req: any, res: any) {
       try {
           const url = `${process.env.API_URL}/cliente/${id}/impuesto`;
 
-          const body = {
-            impuestos: req.body
-          }
-          console.log(body)
-          const response = await axios.post(url, body);
+          const response = await axios.post(url, req.body);
 
           console.log(response.data)
           res.status(200).json(response.data);

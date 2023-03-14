@@ -46,8 +46,10 @@ export default function Client() {
             }
         }
 
+        if (!router.isReady) return 
+
         getClient();
-    }, [router.query])
+    }, [router.isReady])
 
     useEffect(() => {
         const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
@@ -131,7 +133,16 @@ export default function Client() {
             cuotas
         });
 
-        handleClientTaxChange(newClientTaxes);
+        const nuevoImpuesto = {
+            id: tax.id,
+            cuotas
+        }
+
+        const url = `/api/client/${client.id}/impuesto`;
+
+        const response = await axios.post(url, nuevoImpuesto);
+
+        // handleClientTaxChange(newClientTaxes);
 
         setModalOpen(true);
         setModalMessage('Impuesto agregado correctamente');

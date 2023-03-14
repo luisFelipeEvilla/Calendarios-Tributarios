@@ -17,10 +17,11 @@ type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: str
 export default function Client() {
     const [loading, setLoading] = useState<boolean>(true);
     const [client, setClient] = useState<Client>({} as Client);
+    const [clientTaxes, setClientTaxes] = useState<any[]>([]);
+
     const [taxes, setTaxes] = useState([]);
     const [filteredTaxes, setFilteredTaxes] = useState<any[]>([]);
-    const [clientTaxes, setClientTaxes] = useState<any[]>([]);
-    const [scheduledTax, setScheduledTax] = useState<ProcessedEvent[] | undefined>();
+
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalMeessage, setModalMessage] = useState<string>('');
     const [error, setError] = useState<boolean>(false);
@@ -110,7 +111,7 @@ export default function Client() {
 
     
         const cuotas = tax.cuotas.map((cuota: any) => {
-            const fechaPresentacion = cuota.fechas.filter((fecha: any) => {
+            const fechaPresentacion = cuota.fechas_presentacion.filter((fecha: any) => {
                 const nit = client.nit.toString();
                 const digitosDeAsignacion = tax.numero_digitos;
                 
@@ -198,7 +199,7 @@ export default function Client() {
                             <Typography variant='h4'>Calendario Tributario</Typography>
 
                             <Box width={800} marginTop={5} marginBottom={5}>
-                                <Scheduler events={scheduledTax || []} locale={es} view="month"></Scheduler>
+                                <Scheduler locale={es} view="month"></Scheduler>
                             </Box>
                             <Box component='form' onSubmit={handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>
                                 <FormControl sx={{ width: 200 }}>

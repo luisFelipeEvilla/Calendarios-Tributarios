@@ -16,7 +16,7 @@ export default function FeedsTable({ ...props }: PropsType) {
         color: 'white',
     }
 
-    const formatoFecha: Intl.DateTimeFormatOptions =  { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    const formatoFecha: Intl.DateTimeFormatOptions =  { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
     const handleAddFeed = (index: number, fecha: {nit: number, date: Dayjs}) => {
         const nit = fecha.nit;

@@ -50,7 +50,11 @@ export default function CalendarioTributario() {
 
             tax.cuotas = tax.cuotas.map((cuota: cuota) => {
                 cuota.fechas_presentacion = cuota.fechas_presentacion.map((fecha_presentacion: fechas_presentacion) => {
-                    fecha_presentacion.fecha = new Date(fecha_presentacion.fecha);
+                    // hay que sumarle 1 dia más porque java script calcula la fecha con 5 horas menos
+                    const fecha = new Date(fecha_presentacion.fecha + '');
+                    fecha.setDate(fecha.getDate() + 1);
+
+                    fecha_presentacion.fecha = fecha;
                     return fecha_presentacion;
                 })
                 return cuota;

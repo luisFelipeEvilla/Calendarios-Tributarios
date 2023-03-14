@@ -13,9 +13,8 @@ import FeedsTable from "../../components/taxes/feedsTable";
 import TaxForm from "../../components/taxes/taxForm";
 import TaxScheduler from "../../components/taxes/taxScheduler";
 import MessageModal from "../../components/messageModal";
-type propsType = { departamentos: Departamento[] }
 
-export default function Create({ ...props }: propsType) {
+export default function Create({ ...props }) {
     // hooks
     const [impuesto, setImpuesto] = useState<nuevoImpuesto>({
         tipo: 1,

@@ -25,6 +25,7 @@ export default function Create({ ...props }: propsType) {
         numero_digitos: 1,
         cuotas: [] 
     } as unknown as  nuevoImpuesto);
+    const [submited, setSubmited] = useState<boolean>(false);
 
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalTitle, setModalTitle] = useState<string>('');
@@ -37,6 +38,7 @@ export default function Create({ ...props }: propsType) {
 
     // functions
     const handleSubmit = async () => {
+        setSubmited(true);
         if (impuesto.nombre.length === 0) return alert('debe ingresar un nombre para el impuesto')
 
         const url = '/api/tax';
@@ -82,7 +84,7 @@ export default function Create({ ...props }: propsType) {
 
                 <FeedsTable cuotas={impuesto.cuotas} setCuotas={(cuotas) => setImpuesto({ ...impuesto, cuotas})} />
                 <Box display='flex' justifyContent='center' width='100%' marginTop={5} marginBottom={5}>
-                    <Button variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
+                    <Button disabled={submited} variant="contained" color='success' size="large" onClick={handleSubmit}>Guardar</Button>
                 </Box>
             </Box>
         </Layout>

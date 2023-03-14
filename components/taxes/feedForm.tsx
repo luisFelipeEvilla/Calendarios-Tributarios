@@ -1,6 +1,6 @@
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DesktopDatePicker, DatePicker, esES, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
@@ -64,8 +64,8 @@ export default function FeedForm({ ...props }) {
                             />
                         </FormControl>
                         <FormControl sx={{ marginTop: 3 }} fullWidth>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DesktopDatePicker
+                            <LocalizationProvider localeText={esES.components.MuiLocalizationProvider.defaultProps.localeText}  dateAdapter={AdapterDayjs}>
+                                <DatePicker
                                     label="Fecha de presentación"
                                     inputFormat="MM/DD/YYYY"
                                     value={date}

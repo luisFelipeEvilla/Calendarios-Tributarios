@@ -16,6 +16,8 @@ export default function FeedsTable({ ...props }: PropsType) {
         color: 'white',
     }
 
+    const formatoFecha: Intl.DateTimeFormatOptions =  { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+
     const handleAddFeed = (index: number, fecha: {nit: number, date: Dayjs}) => {
         const nit = fecha.nit;
         const date = new Date(fecha.date.toDate());
@@ -64,7 +66,7 @@ export default function FeedsTable({ ...props }: PropsType) {
                                     cuota.fechas_presentacion.map((fecha, index1: number) => (
                                         <TableRow key={index1}>
                                             <TableCell>{fecha.nit}</TableCell>
-                                            <TableCell>{fecha.fecha.toDateString()}</TableCell>
+                                            <TableCell>{fecha.fecha.toLocaleDateString('es-co', formatoFecha)}</TableCell>
                                             <TableCell><Button onClick={e => handleDeletFeed(index, index1)} variant="contained" color="error">Eliminar</Button></TableCell>
                                         </TableRow>
                                     ))

@@ -38,8 +38,8 @@ export default function Create({ ...props }: propsType) {
 
     // functions
     const handleSubmit = async () => {
-        setSubmited(true);
         if (impuesto.nombre.length === 0) return alert('debe ingresar un nombre para el impuesto')
+        setSubmited(true);
 
         const url = '/api/tax';
 

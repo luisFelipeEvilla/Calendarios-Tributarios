@@ -11,13 +11,17 @@ import { SetStateAction, useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import Spinner from "../../components/layouts/spinner";
 import MessageModal from "../../components/messageModal";
+import TaxScheduler from "../../components/taxes/taxScheduler";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };
+type ImpuestoCliente = { nombre: string, cuotas: { fecha_limite: Date }[] };
+
 export default function Client() {
     const [loading, setLoading] = useState<boolean>(true);
     const [client, setClient] = useState<Client>({} as Client);
     const [clientTaxes, setClientTaxes] = useState<any[]>([]);
+    const [eventos, setEventos] = useState<any[]>([]);
 
     const [taxes, setTaxes] = useState([]);
     const [filteredTaxes, setFilteredTaxes] = useState<any[]>([]);
@@ -28,7 +32,7 @@ export default function Client() {
     // get id from url
     const router = useRouter();
 
-    const { setEvents } = useScheduler();
+    const { events, setEvents } = useScheduler();
 
     useEffect(() => {
         const getClient = async () => {
@@ -37,7 +41,22 @@ export default function Client() {
             const url = `/api/client/${id}`;
             try {
                 const response = await axios.get(url);
-                setClient(response.data);
+                const cliente = response.data;
+
+                setClient(cliente);
+
+                const fechasPresentacion = cliente.impuestos.map((impuesto:any) => {
+                    const i = { nombre: impuesto.impuesto.nombre, cuotas: []};
+
+                    i.cuotas = impuesto.cuotas.map((cuota:any) => {
+                        cuota.fecha_limite = new Date(cuota.fecha_limite);
+                        return { fecha: cuota.fecha_limite };
+                    });
+
+                    return i;
+                });
+
+                handleClientTaxChange(fechasPresentacion);
                 const taxes = await axios.get('/api/tax');
                 setTaxes(taxes.data);
                 setLoading(false);
@@ -55,6 +74,10 @@ export default function Client() {
         const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
         setFilteredTaxes(filtered);
     }, [taxes, client.tipo_persona])
+
+    useEffect(() => {
+        updateScheduler();
+    }, [clientTaxes])
 
     const handleNitChange = (e: any) => {
         const nit = parseInt(e.target.value);
@@ -74,16 +97,18 @@ export default function Client() {
     }
 
     const handleClientTaxChange = (newClientTaxes: any[]) => {
-        setClientTaxes(newClientTaxes);
-        const events: ProcessedEvent[] = [];
+        setClientTaxes(newClientTaxes);  
+    }
 
-        newClientTaxes.forEach((tax, index) => {
-            tax.cuotas.forEach((cuota: any) => {
+    const updateScheduler = () => {
+        setEvents([]);
+        clientTaxes.forEach((impuesto: ImpuestoCliente, index) => {
+            impuesto.cuotas.forEach((cuota: any) => {
                 const startDate = new Date(cuota.fecha);
                 startDate.setDate(startDate.getDate() + 1);
                 events.push({
                     event_id: index,
-                    title: tax.nombre,
+                    title: impuesto.nombre,
                     start: startDate,
                     end: startDate,
                     color: '#3f51b5',
@@ -93,7 +118,7 @@ export default function Client() {
             });
         })
         setEvents(events);
-    }
+    };
 
     const handleAddTax = async (e: any) => {
         e.preventDefault();
@@ -142,7 +167,7 @@ export default function Client() {
 
         const response = await axios.post(url, nuevoImpuesto);
 
-        // handleClientTaxChange(newClientTaxes);
+        handleClientTaxChange(newClientTaxes);
 
         setModalOpen(true);
         setModalMessage('Impuesto agregado correctamente');
@@ -210,7 +235,7 @@ export default function Client() {
                             <Typography variant='h4'>Calendario Tributario</Typography>
 
                             <Box width={800} marginTop={5} marginBottom={5}>
-                                <Scheduler locale={es} view="month"></Scheduler>
+                                <Scheduler events={events}locale={es} view="month"></Scheduler>
                             </Box>
                             <Box component='form' onSubmit={handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>
                                 <FormControl sx={{ width: 200 }}>

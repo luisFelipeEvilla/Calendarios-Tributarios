@@ -46,7 +46,7 @@ export default function Client() {
                 setClient(cliente);
 
                 const fechasPresentacion = cliente.impuestos.map((impuesto:any) => {
-                    const i = { nombre: impuesto.impuesto.nombre, cuotas: []};
+                    const i = { id: impuesto.impuesto.id, nombre: impuesto.impuesto.nombre, cuotas: []};
 
                     i.cuotas = impuesto.cuotas.map((cuota:any) => {
                         cuota.fecha_limite = new Date(cuota.fecha_limite);

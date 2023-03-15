@@ -103,6 +103,7 @@ export default function Client() {
     const updateScheduler = () => {
         setEvents([]);
         const events: ProcessedEvent[] = [];
+        console.log('hola');
         clientTaxes.forEach((impuesto: ImpuestoCliente, index) => {
             impuesto.cuotas.forEach((cuota: any) => {
                 const startDate = new Date(cuota.fecha);
@@ -150,7 +151,7 @@ export default function Client() {
             return fechaPresentacion[0];
         })
 
-        const newClientTaxes = clientTaxes;
+        const newClientTaxes = [...clientTaxes];
 
         newClientTaxes.push({
             idImpuesto: tax.id,
@@ -166,7 +167,7 @@ export default function Client() {
         const url = `/api/client/${client.id}/impuesto`;
 
         const response = await axios.post(url, nuevoImpuesto);
-
+        console.log(newClientTaxes);
         handleClientTaxChange(newClientTaxes);
 
         setModalOpen(true);

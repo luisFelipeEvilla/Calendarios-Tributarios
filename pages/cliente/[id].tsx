@@ -151,14 +151,6 @@ export default function Client() {
             return fechaPresentacion[0];
         })
 
-        const newClientTaxes = [...clientTaxes];
-
-        newClientTaxes.push({
-            idImpuesto: tax.id,
-            nombre: tax.nombre,
-            cuotas
-        });
-
         const nuevoImpuesto = {
             id: tax.id,
             cuotas
@@ -167,7 +159,16 @@ export default function Client() {
         const url = `/api/client/${client.id}/impuesto`;
 
         const response = await axios.post(url, nuevoImpuesto);
-        console.log(newClientTaxes);
+
+        const newClientTaxes = [...clientTaxes];
+
+        newClientTaxes.push({
+            id: response.data.id,
+            idImpuesto: tax.id,
+            nombre: tax.nombre,
+            cuotas
+        });
+        
         handleClientTaxChange(newClientTaxes);
 
         setModalOpen(true);

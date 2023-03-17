@@ -168,7 +168,7 @@ export default function Client() {
             nombre: tax.nombre,
             cuotas
         });
-        
+
         handleClientTaxChange(newClientTaxes);
 
         setModalOpen(true);
@@ -194,6 +194,25 @@ export default function Client() {
         console.log(e.target.value)
         setClient({ ...client, tipo_persona: e.target.value });
         console.log(client)
+    }
+
+    const handleUpdateClient = async (e: any) => {
+        e.preventDefault();
+
+        try {
+            const url = `/api/client/${client.id}`;
+            
+            const response = await axios.put(url, client);
+
+            setModalOpen(true);
+            setModalMessage('Cliente actualizado correctamente');
+            setError(false);
+        } catch (error) {
+            console.log(error);
+            setModalOpen(true);
+            setModalMessage('Error al actualizar el cliente');
+            setError(true);
+        }
     }
 
 
@@ -236,6 +255,12 @@ export default function Client() {
                                     </FormControl>
                                 </Box>
                             </Grid>
+
+                            <Grid item md={12} >
+                                <Box className='container' sx={{ justifyContent: 'center', marginTop: 5 }}>
+                                    <Button variant='contained' color='success' onClick={handleUpdateClient}>Actualizar</Button>
+                                </Box>
+                            </Grid>
                         </Grid>
 
                         <Box className='container' justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={5}>
@@ -243,10 +268,12 @@ export default function Client() {
 
                             <Box width={800} marginTop={5} marginBottom={5}>
                                 <Scheduler month={
-                                    {weekDays: [1, 2, 3, 4, 5], 
-                                    weekStartOn: 0, 
-                                    startHour: 9, 
-                                    endHour: 17,}
+                                    {
+                                        weekDays: [1, 2, 3, 4, 5],
+                                        weekStartOn: 0,
+                                        startHour: 9,
+                                        endHour: 17,
+                                    }
                                 } events={events} locale={es} view="month"></Scheduler>
                             </Box>
                             <Box component='form' onSubmit={handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>

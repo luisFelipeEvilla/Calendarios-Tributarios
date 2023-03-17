@@ -17,6 +17,18 @@ export default async function handler(
                 return res.status(500).json(error);
             }
             break;
+        case 'PUT':
+            try {
+                const url = `${process.env.API_URL}/cliente/${id}`;
+
+                const response = await axios.put(url, req.body);
+                console.log(response.data.data)
+                return res.status(200).json(response.data.data);
+            } catch (error: any) {
+                console.log(error);
+                return res.status(500).json(error);
+            }
+            break;
         default:
             break;
     }

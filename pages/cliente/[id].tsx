@@ -231,6 +231,7 @@ export default function Client() {
                                             <MenuItem value={1}>Persona Natural</MenuItem>
                                             <MenuItem value={2}>Persona Jurídica</MenuItem>
                                             <MenuItem value={3}>Gran Contribuyente</MenuItem>
+                                            <MenuItem value={4}>Régimen Simple de Tributación</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Box>
@@ -241,7 +242,12 @@ export default function Client() {
                             <Typography variant='h4'>Calendario Tributario</Typography>
 
                             <Box width={800} marginTop={5} marginBottom={5}>
-                                <Scheduler events={events} locale={es} view="month"></Scheduler>
+                                <Scheduler month={
+                                    {weekDays: [1, 2, 3, 4, 5], 
+                                    weekStartOn: 0, 
+                                    startHour: 9, 
+                                    endHour: 17,}
+                                } events={events} locale={es} view="month"></Scheduler>
                             </Box>
                             <Box component='form' onSubmit={handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>
                                 <FormControl sx={{ width: 200 }}>

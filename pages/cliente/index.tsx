@@ -39,14 +39,14 @@ export default function Clientes() {
             <Box className="container" flexWrap={"wrap"} justifyContent={'center'} alignItems='center' >
                 {
                     filteredClients.map((client, index) => (
-                        <Card key={index} sx={{ width: 400, margin: 5, height: 400, '&:hover': { transform: 'scale(1.03)' } }}>
-                            <CardMedia>
+                        <Card key={index} sx={{ width: 400, margin: 5, height: 230, '&:hover': { transform: 'scale(1.03)' } }}>
+                            {/* <CardMedia>
                                 <Box sx={{ width: '100%', height: 180, backgroundColor: 'grey', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Avatar sx={{ height: 120, width: 120 }} >
                                         {<PeopleIcon sx={{ height: 80, width: 80 }}></PeopleIcon>}
                                     </Avatar>
                                 </Box>
-                            </CardMedia>
+                            </CardMedia> */}
                             <CardContent sx={{ height: 170 }}>
                                 <Typography sx={{
                                     display: '-webkit-box',

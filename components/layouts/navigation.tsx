@@ -9,10 +9,13 @@ import Image from 'next/image';
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/authContext';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
+
 const elements = [
     // { name: 'Home', path: '/', icon: <HomeIcon /> },
     { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
     { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
+    { name: 'Impuestos', path: '/impuesto', icon: <AssuredWorkloadIcon />}
 ]
 
 export default function Navigation({ ...props }) {

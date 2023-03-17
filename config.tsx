@@ -8,7 +8,8 @@ export const personTypes = [
     { name: "Todos", value: 0 },
     { name: "Persona Natural", value: 1 },
     { name: "Persona Juridica", value: 2 },
-    { name: "Grandes Contribuyentes", value: 3 }
+    { name: "Grandes Contribuyentes", value: 3 },
+    { name: "Regimen Simple de Tributación", value: 4 }
 ]
 
 export const periods = [

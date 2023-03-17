@@ -1,9 +1,30 @@
 import styled from "@emotion/styled";
-import { Box } from "@mui/material"
+import { Box, TextField } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { useEffect, useState } from "react";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { esES } from "@mui/material/locale";
+import dayjs, { Dayjs } from "dayjs";
+
 
 export default function TablaGestionImpuestos({ ...props }) {
+    const [mes, setMes] = useState(dayjs(new Date()));
+    const [impuestosFiltrados, setImpuestosFiltrados] = useState(props.impuestos);
     const mensajeFechaNula = 'No Reportada';
+
+    useEffect(() => {
+        filtrarPorMes();
+    }, [mes])
+
+    const filtrarPorMes = () => {
+        const fecha = mes.toDate();
+        const filtrado = props.impuestos.filter((impuesto: any) => {
+            return (impuesto.fecha_limite.getMonth() == fecha.getMonth() && impuesto.fecha_limite.getFullYear() == fecha.getFullYear());
+        });
+
+        setImpuestosFiltrados(filtrado);
+    }
 
     const formatoFecha: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
     const columnas: GridColDef[] = [
@@ -26,11 +47,26 @@ export default function TablaGestionImpuestos({ ...props }) {
     ]
 
     return (
-        <Box sx={{ display: 'flex', minHeight: 600, width: 1000 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 600, width: 1000 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={esES} >
+                <DatePicker 
+                    views={['month', 'year']}
+                    label="Mes"
+                    value={mes}
+                    onChange={(newDate) => setMes(newDate || dayjs(new Date()))}
+                    renderInput={(params) => <TextField {...params}
+                    style={{ width: 200, margin: 'auto', marginBottom: 25 }}
+                    select={false}
+                    />
+                    }
+                />
+
+            </LocalizationProvider>
+
             <Box sx={{ flexGrow: 1 }}>
                 <DataGrid
                     columns={columnas}
-                    rows={props.impuestos}
+                    rows={impuestosFiltrados}
                     initialState={{
                         sorting: {
                             sortModel: [
@@ -43,7 +79,7 @@ export default function TablaGestionImpuestos({ ...props }) {
                     }}
                     getRowClassName={(params) => {
                         //@ts-ignore
-                        if (params.row.fecha_limite < new Date() && params.row.fecha_presentacion == null) return 'vencido' 
+                        if (params.row.fecha_limite < new Date() && params.row.fecha_presentacion == null) return 'vencido'
 
                         return '';
                     }}

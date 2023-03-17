@@ -4,14 +4,13 @@ import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import PeopleIcon from '@mui/icons-material/People';
 import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import axios from "axios";
-import { es } from "date-fns/locale";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { SetStateAction, useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import Spinner from "../../components/layouts/spinner";
 import MessageModal from "../../components/messageModal";
-import TaxScheduler from "../../components/taxes/taxScheduler";
+import CalendarioCliente from "../../components/schedulers/calendarioCliente";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };
@@ -31,8 +30,6 @@ export default function Client() {
     // get id from url
     const router = useRouter();
 
-    const { events, setEvents } = useScheduler();
-
     useEffect(() => {
         if (!router.isReady) return
 
@@ -43,10 +40,6 @@ export default function Client() {
         const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
         setFilteredTaxes(filtered);
     }, [taxes, client.tipo_persona])
-
-    useEffect(() => {
-        updateScheduler();
-    }, [clientTaxes])
 
     const getClient = async () => {
         const { id } = router.query;
@@ -92,35 +85,9 @@ export default function Client() {
         setClient({ ...client, pagina_web: e.target.value });
     }
 
-    const handlePrefijoEmpresaChange = (e: any) => {
-        setClient({ ...client, prefijo_empresa: e.target.value });
-    }
-
     const handleClientTaxChange = (newClientTaxes: any[]) => {
         setClientTaxes(newClientTaxes);
     }
-
-    const updateScheduler = () => {
-        setEvents([]);
-        const events: ProcessedEvent[] = [];
-        console.log('hola');
-        clientTaxes.forEach((impuesto: ImpuestoCliente, index) => {
-            impuesto.cuotas.forEach((cuota: any) => {
-                const startDate = new Date(cuota.fecha);
-                startDate.setDate(startDate.getDate() + 1);
-                events.push({
-                    event_id: index,
-                    title: impuesto.nombre,
-                    start: startDate,
-                    end: startDate,
-                    color: '#3f51b5',
-                    textColor: '#fff',
-                    allDay: true,
-                })
-            });
-        })
-        setEvents(events);
-    };
 
     const handleAddTax = async (e: any) => {
         e.preventDefault();
@@ -191,9 +158,7 @@ export default function Client() {
     }
 
     const handleTipoPersonaChange = (e: any) => {
-        console.log(e.target.value)
         setClient({ ...client, tipo_persona: e.target.value });
-        console.log(client)
     }
 
     const handleUpdateClient = async (e: any) => {
@@ -201,7 +166,7 @@ export default function Client() {
 
         try {
             const url = `/api/client/${client.id}`;
-            
+
             const response = await axios.put(url, client);
 
             setModalOpen(true);
@@ -237,7 +202,6 @@ export default function Client() {
                                     {formInput('Nombre de la empresa', client.nombre_empresa, handleNombreEmpresaChange)}
                                     {formInput('NIT', client.nit, handleNitChange)}
                                     {formInput('Página web', client.pagina_web, handlePaginaWebChange)}
-                                    {formInput('Prefijo De Empresa', client.prefijo_empresa, handlePrefijoEmpresaChange)}
                                 </Box>
                             </Grid>
                             <Grid item md={6}>
@@ -263,61 +227,7 @@ export default function Client() {
                             </Grid>
                         </Grid>
 
-                        <Box className='container' justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={5}>
-                            <Typography variant='h4'>Calendario Tributario</Typography>
-
-                            <Box width={800} marginTop={5} marginBottom={5}>
-                                <Scheduler month={
-                                    {
-                                        weekDays: [1, 2, 3, 4, 5],
-                                        weekStartOn: 0,
-                                        startHour: 9,
-                                        endHour: 17,
-                                    }
-                                } events={events} locale={es} view="month"></Scheduler>
-                            </Box>
-                            <Box component='form' onSubmit={handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>
-                                <FormControl sx={{ width: 200 }}>
-                                    <InputLabel>Agregar Impuesto</InputLabel>
-                                    <Select label='Agregar Impuesto' >
-                                        {
-                                            filteredTaxes.map((tax: any, index) => {
-                                                return <MenuItem key={index} value={tax.id}>{tax.nombre}
-                                                </MenuItem>
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <Button type='submit' color='success' variant='contained'>Agregar</Button>
-                            </Box>
-
-                            <Box sx={{ marginBottom: 5, width: 800 }}>
-                                <Table component={Paper}>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Impuesto</TableCell>
-                                            <TableCell>Cuotas</TableCell>
-                                            <TableCell>Acciones</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {
-                                            clientTaxes.map((tax: any, index) => {
-                                                return (
-                                                    <TableRow key={index}>
-                                                        <TableCell>{tax.nombre}</TableCell>
-                                                        <TableCell> {tax.cuotas.length}</TableCell>
-                                                        <TableCell>
-                                                            <Button color='error' variant='contained' onClick={e => handleDeleteTax(tax.id)}>Eliminar</Button>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            })
-                                        }
-                                    </TableBody>
-                                </Table>
-                            </Box>
-                        </Box>
+                        <CalendarioCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} handleAddTax={handleAddTax} handleDeleteTax={handleDeleteTax} />
                     </Box>
             }
         </Layout>

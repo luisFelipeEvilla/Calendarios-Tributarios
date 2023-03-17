@@ -5,7 +5,6 @@ import Layout from "../../components/layout";
 import PeopleIcon from '@mui/icons-material/People';
 import SearchBar from "../../components/layouts/searchbar";
 import Link from "next/link";
-import Image from "next/image";
 import Spinner from "../../components/layouts/spinner";
 import Head from "next/head";
 type Client = { id: number, nit: string, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string };
@@ -60,6 +59,7 @@ export default function Clientes() {
                                 <Typography variant="body2" sx={{ marginBotton: 0 }}><b>Email: </b> {client.emails.split(',')[0]}</Typography>
                             </CardContent>
                             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <Button variant="contained" size='medium' color='success'><Link href={`/cliente/${client.id}/gestionTributaria`} style={{ textDecoration: 'none', color: 'white' }}> Gestion Tributaria </Link></Button>
                                 <Button variant="contained" size='medium' color='info'><Link href={`/cliente/${client.id}`} style={{ textDecoration: 'none', color: 'white' }}> Detalles </Link></Button>
                             </CardActions>
 

@@ -1,17 +1,16 @@
 
 import PeopleIcon from '@mui/icons-material/People';
-import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { SetStateAction, useEffect, useState } from "react";
-import Layout from "../../components/layout";
-import FormularioCliente from '../../components/layouts/cliente/formulario';
-import Spinner from "../../components/layouts/spinner";
-import MessageModal from "../../components/messageModal";
-import CalendarioCliente from "../../components/schedulers/calendarioCliente";
-import ImpuestosCliente from "../../components/taxes/ImpuestosCliente";
-import { tiposPersona } from "../../config";
+import { useEffect, useState } from "react";
+import Layout from "../../../components/layout";
+import FormularioCliente from '../../../components/layouts/cliente/formulario';
+import Spinner from "../../../components/layouts/spinner";
+import MessageModal from "../../../components/messageModal";
+import CalendarioCliente from "../../../components/schedulers/calendarioCliente";
+import ImpuestosCliente from "../../../components/taxes/ImpuestosCliente";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };
@@ -163,7 +162,7 @@ export default function Client() {
                         <FormularioCliente cliente={client} setCliente={setClient} setModalOpen={setModalOpen} setModalMessage={setModalMessage} setError={setError} />
                         
                         <Box className='container' justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={2}>
-                            <CalendarioCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} />
+                            <CalendarioCliente impuestosCliente={clientTaxes} />
                             <ImpuestosCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} handleAddTax={handleAddTax} handleDeleteTax={handleDeleteTax} />
                         </Box>
                     </Box>

@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import { es } from "date-fns/locale";
 import { useEffect } from "react";
 
-type PropsType = { impuestos: any[], impuestosCliente: any[] }
+type PropsType = { impuestosCliente: any[] }
 type ImpuestoCliente = { nombre: string, cuotas: { fecha_limite: Date }[] };
 export default function CalendarioCliente({ ...props }: PropsType) {
     const { events, setEvents } = useScheduler();

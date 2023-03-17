@@ -1,16 +1,16 @@
 
-import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
-import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import PeopleIcon from '@mui/icons-material/People';
-import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Avatar, Box, Button, FormControl, Grid, Input, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { SetStateAction, useEffect, useState } from "react";
 import Layout from "../../components/layout";
+import FormularioCliente from '../../components/layouts/cliente/formulario';
 import Spinner from "../../components/layouts/spinner";
 import MessageModal from "../../components/messageModal";
 import CalendarioCliente from "../../components/schedulers/calendarioCliente";
+import ImpuestosCliente from "../../components/taxes/ImpuestosCliente";
 import { tiposPersona } from "../../config";
 
 
@@ -70,20 +70,6 @@ export default function Client() {
         } catch (error) {
             console.log(error);
         }
-    }
-
-
-    const handleNitChange = (e: any) => {
-        const nit = parseInt(e.target.value);
-        setClient({ ...client, nit });
-    }
-
-    const handleNombreEmpresaChange = (e: any) => {
-        setClient({ ...client, nombre_empresa: e.target.value });
-    }
-
-    const handlePaginaWebChange = (e: any) => {
-        setClient({ ...client, pagina_web: e.target.value });
     }
 
     const handleClientTaxChange = (newClientTaxes: any[]) => {
@@ -158,30 +144,6 @@ export default function Client() {
 
     }
 
-    const handleTipoPersonaChange = (e: any) => {
-        setClient({ ...client, tipo_persona: e.target.value });
-    }
-
-    const handleUpdateClient = async (e: any) => {
-        e.preventDefault();
-
-        try {
-            const url = `/api/client/${client.id}`;
-
-            const response = await axios.put(url, client);
-
-            setModalOpen(true);
-            setModalMessage('Cliente actualizado correctamente');
-            setError(false);
-        } catch (error) {
-            console.log(error);
-            setModalOpen(true);
-            setModalMessage('Error al actualizar el cliente');
-            setError(true);
-        }
-    }
-
-
     return (
         <Layout>
             <Head>
@@ -194,53 +156,19 @@ export default function Client() {
                         <Avatar sx={{ height: 200, width: 200, marginBottom: 5 }}>
                             <PeopleIcon sx={{ height: 140, width: 140 }} />
                         </Avatar>
-
+                        
                         <Typography variant='h3'>{client?.nombre_empresa}</Typography>
-                        <Grid container spacing={0} maxWidth={1000} marginTop={5}>
-                            <Grid item md={6}>
-                                <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Typography variant='h4'>Información General</Typography>
-                                    {formInput('Nombre de la empresa', client.nombre_empresa, handleNombreEmpresaChange)}
-                                    {formInput('NIT', client.nit, handleNitChange)}
-                                    {formInput('Página web', client.pagina_web, handlePaginaWebChange)}
-                                </Box>
-                            </Grid>
-                            <Grid item md={6}>
-                                <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Typography variant='h4'>Información Tributaria</Typography>
-                                    <FormControl sx={{ width: 300, marginTop: 3 }}>
-                                        <InputLabel htmlFor="nit">Tipo de Persona</InputLabel>
-                                        <Select value={client.tipo_persona} onChange={handleTipoPersonaChange} name="Tipo de persona" label="Tipo de persona">
-                                            {
-                                                tiposPersona.map((tipo) => {
-                                                    return <MenuItem value={tipo.value}>{tipo.name}</MenuItem>
-                                                })
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                            </Grid>
+                    
 
-                            <Grid item md={12} >
-                                <Box className='container' sx={{ justifyContent: 'center', marginTop: 5 }}>
-                                    <Button variant='contained' color='success' onClick={handleUpdateClient}>Actualizar</Button>
-                                </Box>
-                            </Grid>
-                        </Grid>
-
-                        <CalendarioCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} handleAddTax={handleAddTax} handleDeleteTax={handleDeleteTax} />
+                        <FormularioCliente cliente={client} setCliente={setClient} setModalOpen={setModalOpen} setModalMessage={setModalMessage} setError={setError} />
+                        
+                        <Box className='container' justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={2}>
+                            <CalendarioCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} />
+                            <ImpuestosCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} handleAddTax={handleAddTax} handleDeleteTax={handleDeleteTax} />
+                        </Box>
                     </Box>
             }
         </Layout>
-    )
-}
-
-function formInput(label: string, value: any, setValue: SetStateAction<any>) {
-    return (
-        <FormControl sx={{ width: 300, marginTop: 3 }}>
-            <InputLabel htmlFor="nit">{label}</InputLabel>
-            <Input id="nit" value={value} onChange={(e) => setValue(e)} />
-        </FormControl>
     )
 }
 

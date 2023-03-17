@@ -11,6 +11,7 @@ import Layout from "../../components/layout";
 import Spinner from "../../components/layouts/spinner";
 import MessageModal from "../../components/messageModal";
 import CalendarioCliente from "../../components/schedulers/calendarioCliente";
+import { tiposPersona } from "../../config";
 
 
 type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };
@@ -210,11 +211,11 @@ export default function Client() {
                                     <FormControl sx={{ width: 300, marginTop: 3 }}>
                                         <InputLabel htmlFor="nit">Tipo de Persona</InputLabel>
                                         <Select value={client.tipo_persona} onChange={handleTipoPersonaChange} name="Tipo de persona" label="Tipo de persona">
-                                            <MenuItem value={0}>Seleccione un tipo de persona</MenuItem>
-                                            <MenuItem value={1}>Persona Natural</MenuItem>
-                                            <MenuItem value={2}>Persona Jurídica</MenuItem>
-                                            <MenuItem value={3}>Gran Contribuyente</MenuItem>
-                                            <MenuItem value={4}>Régimen Simple de Tributación</MenuItem>
+                                            {
+                                                tiposPersona.map((tipo) => {
+                                                    return <MenuItem value={tipo.value}>{tipo.name}</MenuItem>
+                                                })
+                                            }
                                         </Select>
                                     </FormControl>
                                 </Box>

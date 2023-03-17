@@ -5,7 +5,7 @@ import Layout from "../../components/layout";
 
 import axios from "axios";
 import Head from "next/head";
-import { periods, personTypes } from '../../config';
+import { periods, tiposPersona } from '../../config';
 import styles from '../../styles/calendarioTributario/create.module.css';
 
 import { Departamento, Municipio, nuevoImpuesto } from "../../types";

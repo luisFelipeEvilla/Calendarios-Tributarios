@@ -4,7 +4,7 @@ import { Box, Button } from '@mui/material';
 import SearchBar from './searchbar';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { periods, personTypes } from '../../config';
+import { periods, tiposPersona } from '../../config';
 import { Departamento, Municipio } from '../../types';
 import axios from 'axios';
 import MessageModal from '../messageModal';
@@ -62,7 +62,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
         {
             field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
-            valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name
+            valueGetter: (params: GridValueGetterParams) => tiposPersona.find((type) => type.value == params.row.persona)?.name
         },
         {
             field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
@@ -97,7 +97,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
         },
         {
             field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
-            valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name
+            valueGetter: (params: GridValueGetterParams) => tiposPersona.find((type) => type.value == params.row.persona)?.name
         },
         {
             field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',
@@ -136,7 +136,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
         },
         {
             field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
-            valueGetter: (params: GridValueGetterParams) => personTypes.find((type) => type.value == params.row.persona)?.name
+            valueGetter: (params: GridValueGetterParams) => tiposPersona.find((type) => type.value == params.row.persona)?.name
         },
         {
             field: 'frecuencia', headerName: 'Frecuencia', flex: 1, headerAlign: 'center', align: 'center',

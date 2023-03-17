@@ -4,7 +4,7 @@ export const taxTypes = [
     { name: "Municipal", value: 3 }
 ];
 
-export const personTypes = [
+export const tiposPersona = [
     { name: "Todos", value: 0 },
     { name: "Persona Natural", value: 1 },
     { name: "Persona Juridica", value: 2 },

@@ -1,7 +1,7 @@
 import { Box, FormControl, TextField, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { personTypes, periods, taxTypes } from "../../config";
+import { tiposPersona, periods, taxTypes } from "../../config";
 import styles from '../../styles/calendarioTributario/create.module.css';
 import { Departamento, Municipio, nuevoImpuesto } from "../../types";
 
@@ -93,7 +93,7 @@ export default function TaxForm({ ...props }: PropsType) {
                 <InputLabel sx={{ fontSize: 20 }} >Aplica a</InputLabel>
                 <Select name='Aplica' value={props.impuesto.persona} fullWidth label='Aplica a' onChange={e => props.setImpuesto({ ...props.impuesto, persona: e.target.value as number})}>
                     {
-                        personTypes.map((taxType) => (
+                        tiposPersona.map((taxType) => (
                             <MenuItem key={taxType.value} value={taxType.value}
                             >{taxType.name}</MenuItem>
                         ))

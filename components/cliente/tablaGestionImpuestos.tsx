@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Box } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 
@@ -5,7 +6,6 @@ export default function TablaGestionImpuestos({ ...props }) {
     const mensajeFechaNula = 'No Reportada';
 
     const formatoFecha: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
-    console.log(props.impuestos)
     const columnas: GridColDef[] = [
         { field: 'nombre', headerName: 'Nombre', flex: 2, headerAlign: 'center', align: 'center' },
         {
@@ -16,7 +16,7 @@ export default function TablaGestionImpuestos({ ...props }) {
         {
             field: 'fecha_presentacion', headerName: 'Fecha de Presentacion', flex: 1, headerAlign: 'center', align: 'center',
             type: 'date',
-            valueFormatter: (params) => params.value ? params.value.toLocaleDateString('es-co', formatoFecha) : mensajeFechaNula
+            valueFormatter: (params) => params.value ? params.value.toLocaleDateString('es-co', formatoFecha) : mensajeFechaNula,
         },
         {
             field: 'Fecha_pago', headerName: 'Fecha de Pago', flex: 1, headerAlign: 'center', align: 'center',
@@ -40,6 +40,12 @@ export default function TablaGestionImpuestos({ ...props }) {
                                 },
                             ],
                         }
+                    }}
+                    getRowClassName={(params) => {
+                        //@ts-ignore
+                        if (params.row.fecha_limite < new Date() && params.row.fecha_presentacion == null) return 'vencido' 
+
+                        return '';
                     }}
                 />
             </Box>

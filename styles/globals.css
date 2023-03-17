@@ -9,3 +9,7 @@ body {
     display: flex;
     width: 100%;
 }
+
+.vencido {
+    background-color: #f0494b;
+}

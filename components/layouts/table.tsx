@@ -58,7 +58,6 @@ export default function Table({ ...props }: PropsType): ReactElement {
 
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
         {
             field: 'persona', headerName: 'Aplica a', flex: 1, headerAlign: 'center', align: 'center',
@@ -89,7 +88,6 @@ export default function Table({ ...props }: PropsType): ReactElement {
     ];
 
     const departamentalColumns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
         {
             field: 'departamento', headerName: 'Departamento', flex: 1, headerAlign: 'center', align: 'center',
@@ -124,7 +122,6 @@ export default function Table({ ...props }: PropsType): ReactElement {
     ];
 
     const municipalColumns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', flex: 0.2, headerAlign: 'center', align: 'center' },
         { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
         {
             field: 'departamento', headerName: 'Departamento', flex: 1, headerAlign: 'center', align: 'center',

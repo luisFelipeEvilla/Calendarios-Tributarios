@@ -38,8 +38,7 @@ export default function GestionTributaria() {
             setClient(cliente);
 
             const fechasPresentacion = cliente.impuestos.map((impuesto: any) => {
-                const i = { id: impuesto.id, idImpuesto: impuesto.impuesto.id, nombre: impuesto.impuesto.nombre, cuotas: [] };
-
+                const i = { id: impuesto.id, idImpuesto: impuesto.impuesto.id, tipo: impuesto.impuesto.tipo, nombre: impuesto.impuesto.nombre, cuotas: [] };
                 i.cuotas = impuesto.cuotas.map((cuota: any) => {
                     cuota.fecha_limite = new Date(cuota.fecha_limite);
                     return { id: cuota.id, nombre: impuesto.impuesto.nombre, fecha: cuota.fecha_limite };

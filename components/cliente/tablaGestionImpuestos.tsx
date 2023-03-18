@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import { Box, TextField } from "@mui/material"
-import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { DataGrid, GridColDef, GridRowModel, GridValidRowModel } from "@mui/x-data-grid"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { esES } from "@mui/material/locale";
 import dayjs, { Dayjs } from "dayjs";
+import axios from "axios";
 
 
 export default function TablaGestionImpuestos({ ...props }) {
@@ -38,25 +39,43 @@ export default function TablaGestionImpuestos({ ...props }) {
             field: 'fecha_presentacion', headerName: 'Fecha de Presentacion', flex: 1, headerAlign: 'center', align: 'center',
             type: 'date',
             valueFormatter: (params) => params.value ? params.value.toLocaleDateString('es-co', formatoFecha) : mensajeFechaNula,
+            editable: true
         },
         {
-            field: 'Fecha_pago', headerName: 'Fecha de Pago', flex: 1, headerAlign: 'center', align: 'center',
+            field: 'fecha_pago', headerName: 'Fecha de Pago', flex: 1, headerAlign: 'center', align: 'center',
             type: 'date',
-            valueFormatter: (params) => params.value ? params.value.toLocaleDateString('es-co', formatoFecha) : mensajeFechaNula
+            valueFormatter: (params) => params.value ? params.value.toLocaleDateString('es-co', formatoFecha) : mensajeFechaNula,
+            editable: true
         },
     ]
+    
+   const handleUpdate = async (newRow: GridValidRowModel) => {
+        const idImpuesto = newRow.id;
 
+        const impuesto = props.impuestos.find((impuesto: any) => impuesto.id == idImpuesto);
+
+        if (impuesto) {
+           if (newRow.field == 'fecha_presentacion') impuesto.fecha_presentacion = newRow.value;
+           if (newRow.field == 'fecha_pago') impuesto.fecha_pago = newRow.value;
+        }
+
+        // todo actualizar impuesto
+        const url = `/api/client/${props.idCliente}/gestionTributaria/${idImpuesto}`
+        const response = await axios.put(url, impuesto);
+
+        console.log(response.data);
+   }
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 600, width: 1000 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={esES} >
-                <DatePicker 
+                <DatePicker
                     views={['month', 'year']}
                     label="Mes"
                     value={mes}
                     onChange={(newDate) => setMes(newDate || dayjs(new Date()))}
                     renderInput={(params) => <TextField {...params}
-                    style={{ width: 200, margin: 'auto', marginBottom: 25 }}
-                    select={false}
+                        style={{ width: 200, margin: 'auto', marginBottom: 25 }}
+                        select={false}
                     />
                     }
                 />
@@ -77,6 +96,7 @@ export default function TablaGestionImpuestos({ ...props }) {
                             ],
                         }
                     }}
+                    onCellEditCommit={handleUpdate}
                     getRowClassName={(params) => {
                         //@ts-ignore
                         if (params.row.fecha_limite < new Date() && params.row.fecha_presentacion == null) return 'vencido'

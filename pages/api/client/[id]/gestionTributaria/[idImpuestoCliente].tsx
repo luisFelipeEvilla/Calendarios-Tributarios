@@ -1,14 +1,19 @@
 import axios from "axios";
 
 export default async function handler(req: any, res: any) {
-  const { id, idImpuesto } = req.query;
+  const { id, idImpuestoCliente } = req.query;
 
+  console.log(req.method)
   switch (req.method) {
-    case 'DELETE':
+    case 'GET':
+      return res.status(200).json({ id, idImpuestoCliente });
+    break;
+    case 'PUT':
       try {
-          const url = `${process.env.API_URL}/cliente/${id}/impuesto/${idImpuesto}`;
+          const url = `${process.env.API_URL}/cliente/${id}/impuesto/${idImpuestoCliente}`;
 
-          const response = await axios.delete(url);
+          console.log(req.body);
+          const response = await axios.put(url, req.body);
 
           console.log(response.data)
           res.status(200).json(response.data);

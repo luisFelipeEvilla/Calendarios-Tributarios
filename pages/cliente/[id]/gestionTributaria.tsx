@@ -6,6 +6,7 @@ import TablaGestionImpuestos from "../../../components/cliente/tablaGestionImpue
 import Layout from "../../../components/layout";
 import Spinner from "../../../components/layouts/spinner";
 import CalendarioCliente from "../../../components/schedulers/calendarioCliente";
+import { getFechaConLocale } from "../../../utils";
 
 export default function GestionTributaria() {
     const [client, setClient] = useState<any>({} as any);
@@ -51,11 +52,11 @@ export default function GestionTributaria() {
 
             cliente.impuestos.forEach((impuesto: any) => {
                 impuesto.cuotas.forEach((cuota: any) => {
-                    cuota.fecha_limite = new Date(cuota.fecha_limite);
-                    cuota.fecha_limite.setDate(cuota.fecha_limite.getDate() + 1);
+                    if (cuota.fecha_presentacion) cuota.fecha_presentacion = getFechaConLocale(cuota.fecha_presentacion);
+                    if (cuota.fecha_pago) cuota.fecha_pago = getFechaConLocale(cuota.fecha_pago);
                     impuestos.push({
                         id: cuota.id, nombre: impuesto.impuesto.nombre,
-                        fecha_limite: cuota.fecha_limite,
+                        fecha_limite: getFechaConLocale(cuota.fecha_limite),
                         fecha_presentacion: cuota.fecha_presentacion,
                         fecha_pago: cuota.fecha_pago
                     });
@@ -83,7 +84,7 @@ export default function GestionTributaria() {
                         :
                         <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center' }}>
                             <CalendarioCliente impuestosCliente={clientTaxes} />
-                            <TablaGestionImpuestos impuestos={impuestosTabla} />
+                            <TablaGestionImpuestos idCliente={router.query.id} impuestos={impuestosTabla} />
                         </Box>
                 }
             </Box>

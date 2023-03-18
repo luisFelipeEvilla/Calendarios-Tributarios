@@ -29,7 +29,7 @@ export default function Formularioclientee({ ...props }) {
         try {
             const url = `/api/client/${props.cliente.id}`;
 
-            const response = await axios.put(url, cliente);
+            const response = await axios.put(url, props.cliente);
 
             props.setModalOpen(true);
             props.setModalMessage('clientee actualizado correctamente');

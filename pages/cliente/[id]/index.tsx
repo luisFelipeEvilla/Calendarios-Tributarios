@@ -89,7 +89,7 @@ export default function Client() {
         }
 
         const taxId = parseInt(e.target[0].value);
-        const tax = taxes.find((tax: any) => tax.id === taxId) || {} as any;
+        const tax = taxes.find((tax: any) => tax.id == taxId) || {} as any;
 
         const cuotas = tax.cuotas.map((cuota: any) => {
             const fechaPresentacion = cuota.fechas_presentacion.filter((fecha: any) => {

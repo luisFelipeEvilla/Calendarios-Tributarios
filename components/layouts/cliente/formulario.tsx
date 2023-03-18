@@ -27,7 +27,7 @@ export default function Formularioclientee({ ...props }) {
         e.preventDefault();
 
         try {
-            const url = `/api/cliente/${props.cliente.id}`;
+            const url = `/api/client/${props.cliente.id}`;
 
             const response = await axios.put(url, cliente);
 

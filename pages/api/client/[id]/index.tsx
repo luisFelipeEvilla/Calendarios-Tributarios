@@ -22,7 +22,6 @@ export default async function handler(
                 const url = `${process.env.API_URL}/cliente/${id}`;
 
                 const response = await axios.put(url, req.body);
-                console.log(response.data.data)
                 return res.status(200).json(response.data.data);
             } catch (error: any) {
                 console.log(error);

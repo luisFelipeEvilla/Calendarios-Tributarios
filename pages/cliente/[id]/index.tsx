@@ -52,7 +52,7 @@ export default function Client() {
             setClient(cliente);
 
             const fechasPresentacion = cliente.impuestos.map((impuesto: any) => {
-                const i = { id: impuesto.id, idImpuesto: impuesto.impuesto.id, nombre: impuesto.impuesto.nombre, cuotas: [] };
+                const i = { id: impuesto.id, idImpuesto: impuesto.impuesto.id, tipo: impuesto.impuesto.tipo,nombre: impuesto.impuesto.nombre, cuotas: [] };
 
                 i.cuotas = impuesto.cuotas.map((cuota: any) => {
                     cuota.fecha_limite = new Date(cuota.fecha_limite);
@@ -118,6 +118,7 @@ export default function Client() {
         newClientTaxes.push({
             id: response.data.id,
             idImpuesto: tax.id,
+            tipo: tax.tipo,
             nombre: tax.nombre,
             cuotas
         });

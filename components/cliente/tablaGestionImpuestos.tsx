@@ -48,25 +48,24 @@ export default function TablaGestionImpuestos({ ...props }) {
             editable: true
         },
     ]
-    
-   const handleUpdate = async (newRow: GridValidRowModel) => {
+
+    const handleUpdate = async (newRow: GridValidRowModel) => {
         const idImpuesto = newRow.id;
 
         const impuesto = props.impuestos.find((impuesto: any) => impuesto.id == idImpuesto);
 
         if (impuesto) {
-           if (newRow.field == 'fecha_presentacion') impuesto.fecha_presentacion = newRow.value;
-           if (newRow.field == 'fecha_pago') impuesto.fecha_pago = newRow.value;
+            if (newRow.field == 'fecha_presentacion') impuesto.fecha_presentacion = newRow.value;
+            if (newRow.field == 'fecha_pago') impuesto.fecha_pago = newRow.value;
         }
 
         // todo actualizar impuesto
         const url = `/api/client/${props.idCliente}/gestionTributaria/${idImpuesto}`
         const response = await axios.put(url, impuesto);
+    }
 
-        console.log(response.data);
-   }
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 600, width: 1000 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 800, width: 1000 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={esES} >
                 <DatePicker
                     views={['month', 'year']}

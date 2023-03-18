@@ -15,7 +15,6 @@ const elements = [
     // { name: 'Home', path: '/', icon: <HomeIcon /> },
     { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
     { name: 'calendario Tributario', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
-    { name: 'Impuestos', path: '/gestionTributaria', icon: <AssuredWorkloadIcon />}
 ]
 
 export default function Navigation({ ...props }) {

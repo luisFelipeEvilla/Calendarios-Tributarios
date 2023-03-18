@@ -82,7 +82,7 @@ export default function GestionTributaria() {
                     loading ?
                         <Spinner />
                         :
-                        <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center' }}>
+                        <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center', marginBottom: 8 }}>
                             <CalendarioCliente impuestosCliente={clientTaxes} />
                             <TablaGestionImpuestos idCliente={router.query.id} impuestos={impuestosTabla} />
                         </Box>

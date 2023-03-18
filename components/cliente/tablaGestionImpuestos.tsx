@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Box, TextField } from "@mui/material"
-import { DataGrid, GridColDef, GridRowModel, GridValidRowModel } from "@mui/x-data-grid"
+import { DataGrid, GridColDef, GridRowModel, GridToolbar, GridValidRowModel } from "@mui/x-data-grid"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -29,7 +29,7 @@ export default function TablaGestionImpuestos({ ...props }) {
 
     const formatoFecha: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
     const columnas: GridColDef[] = [
-        { field: 'nombre', headerName: 'Nombre', flex: 2, headerAlign: 'center', align: 'center' },
+        { field: 'nombre', headerName: 'Nombre', flex: 1, headerAlign: 'center', align: 'center' },
         {
             field: 'fecha_limite', headerName: 'Fecha de Vencimiento', flex: 1, headerAlign: 'center', align: 'center',
             type: 'date',
@@ -83,6 +83,7 @@ export default function TablaGestionImpuestos({ ...props }) {
 
             <Box sx={{ flexGrow: 1 }}>
                 <DataGrid
+                    components={{ Toolbar: GridToolbar }}
                     columns={columnas}
                     rows={impuestosFiltrados}
                     initialState={{

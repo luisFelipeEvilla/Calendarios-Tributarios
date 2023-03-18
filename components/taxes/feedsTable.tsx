@@ -18,9 +18,9 @@ export default function FeedsTable({ ...props }: PropsType) {
 
     const formatoFecha: Intl.DateTimeFormatOptions =  { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-    const handleAddFeed = (index: number, fecha: {nit: number, date: Dayjs}) => {
+    const handleAddFeed = (index: number, fecha: {nit: number, date: any}) => {
         const nit = fecha.nit;
-        const date = new Date(fecha.date.toDate());
+        const date = new Date(fecha.date['$y'], fecha.date['$M'], fecha.date['$D']);
 
         const newCuota = { nit, fecha: date }
         const newCuotas = [...props.cuotas];

@@ -28,7 +28,6 @@ export default function CalendarioCliente({ ...props }: PropsType) {
             impuesto.cuotas.forEach((cuota: any) => {
                 const startDate = new Date(cuota.fecha);
                 startDate.setDate(startDate.getDate() + 1);
-                console.log(impuesto);
                 events.push({
                     event_id: index,
                     title: impuesto.nombre,

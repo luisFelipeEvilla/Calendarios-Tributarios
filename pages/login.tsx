@@ -73,7 +73,11 @@ export default function SignInSide() {
 
       login(response.data.user, response.data.token);
 
-      router.push('/calendarioTributario');
+      const rol = response.data.user.rol.nombre;
+
+      if (rol === 'admin') router.push('/calendarioTributario');
+      if (rol === 'auditor') router.push('/cliente');
+      if (rol === 'cliente') router.push(`/cliente/${response.data.user.cliente.id}/gestionTributaria`);
     } catch (error) {
       console.error(error);
     }

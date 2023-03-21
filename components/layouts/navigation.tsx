@@ -31,7 +31,7 @@ export default function Navigation({ ...props }) {
         ]
     
         const navegacionClientes = [
-            { name: 'Mis Impuestos', path: `/cliente/${user.cliente.id}/gestionTributaria`, icon : <CalendarTodayIcon />}
+            { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
         ]
 
         if (user.rol.nombre == 'cliente') {

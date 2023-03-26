@@ -96,7 +96,10 @@ export default function Client() {
                 const nit = client.nit.toString();
                 const digitosDeAsignacion = tax.numero_digitos;
 
-                if (fecha.nit == nit.slice(nit.length - digitosDeAsignacion)) {
+                fecha.nit = parseInt(fecha.nit);
+                const digitosDeVerificacion = parseInt(nit.slice(nit.length - digitosDeAsignacion));
+                
+                if (fecha.nit == digitosDeVerificacion) {
                     return fecha;
                 }
             })

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, TextField } from "@mui/material"
+import { Box, Button, TextField } from "@mui/material"
 import { DataGrid, GridColDef, GridRowModel, GridToolbar, GridValidRowModel } from "@mui/x-data-grid"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
@@ -7,12 +7,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { esES } from "@mui/material/locale";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 
 export default function TablaGestionImpuestos({ ...props }) {
     const [mes, setMes] = useState(dayjs(new Date()));
     const [impuestosFiltrados, setImpuestosFiltrados] = useState(props.impuestos);
     const mensajeFechaNula = 'No Reportada';
+
+    const router = useRouter();
 
     useEffect(() => {
         filtrarPorMes();
@@ -66,20 +69,27 @@ export default function TablaGestionImpuestos({ ...props }) {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 800, width: 1000 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={esES} >
-                <DatePicker
-                    views={['month', 'year']}
-                    label="Mes"
-                    value={mes}
-                    onChange={(newDate) => setMes(newDate || dayjs(new Date()))}
-                    renderInput={(params) => <TextField {...params}
-                        style={{ width: 200, margin: 'auto', marginBottom: 25 }}
-                        select={false}
+            <Box className='container'>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={esES} >
+                    <DatePicker
+                        views={['month', 'year']}
+                        label="Mes"
+                        value={mes}
+                        onChange={(newDate) => setMes(newDate || dayjs(new Date()))}
+                        renderInput={(params) => <TextField {...params}
+                            style={{ width: 200, margin: 'auto', marginBottom: 25 }}
+                            select={false}
+                        />
+                        }
                     />
-                    }
-                />
 
-            </LocalizationProvider>
+                </LocalizationProvider>
+
+
+                <Button  variant='contained' sx={{height: 60}}
+                onClick={() => router.push(`/cliente/${props.idCliente}/gestionTributaria/pdf`)}
+                color='info'>Descargar Informe</Button>
+            </Box>
 
             <Box sx={{ flexGrow: 1 }}>
                 <DataGrid

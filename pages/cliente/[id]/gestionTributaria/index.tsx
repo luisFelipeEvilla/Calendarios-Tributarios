@@ -2,11 +2,11 @@ import { Box } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import TablaGestionImpuestos from "../../../components/cliente/tablaGestionImpuestos";
-import Layout from "../../../components/layout";
-import Spinner from "../../../components/layouts/spinner";
-import CalendarioCliente from "../../../components/schedulers/calendarioCliente";
-import { getFechaConLocale } from "../../../utils";
+import TablaGestionImpuestos from "../../../../components/cliente/tablaGestionImpuestos";
+import Layout from "../../../../components/layout";
+import Spinner from "../../../../components/layouts/spinner";
+import CalendarioCliente from "../../../../components/schedulers/calendarioCliente";
+import { getFechaConLocale } from "../../../../utils";
 
 export default function GestionTributaria() {
     const [client, setClient] = useState<any>({} as any);

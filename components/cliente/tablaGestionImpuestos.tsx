@@ -86,7 +86,7 @@ export default function TablaGestionImpuestos({ ...props }) {
                 </LocalizationProvider>
 
 
-                <Button  variant='contained' sx={{height: 60}}
+                <Button  variant='contained' sx={{height: 45}}
                 onClick={() => router.push(`/cliente/${props.idCliente}/gestionTributaria/pdf`)}
                 color='info'>Descargar Informe</Button>
             </Box>

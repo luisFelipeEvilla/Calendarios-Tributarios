@@ -200,7 +200,7 @@ const PDFView = ({ ...props }) => {
                                 }
 
                                 return (
-                                    <View wrap={false} style={{ ...styles.tableRow }}>
+                                    <View key={index} wrap={false} style={{ ...styles.tableRow }}>
                                         <Text style={{ ...styles.tableCell }}>
                                             {impuesto.nombre}
                                         </Text>

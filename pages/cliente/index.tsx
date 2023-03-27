@@ -28,7 +28,8 @@ export default function Clientes() {
     const handleSearch = (e: any) => {
         const search = e.target.value;
         const filtered = clients.filter((client) => {
-            return client.nombre_empresa.toLowerCase().includes(search.toLowerCase());
+            const sanitizedNombreEmpresa = client.nombre_empresa.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina las tildes y acentos 
+            return sanitizedNombreEmpresa.toLowerCase().includes(search.toLowerCase());
         });
         setFilteredClients(filtered);
     }
@@ -83,10 +84,10 @@ export default function Clientes() {
 
             {
                 loading ?
-                    <Spinner/> :
+                    <Spinner /> :
                     <Box className="container" flexWrap={"wrap"} justifyContent={'center'} alignItems='center' flexDirection={'column'}>
                         <SearchBar handleSearch={handleSearch} />
-                      { getClientsCards()}
+                        {getClientsCards()}
                     </Box>
             }
 

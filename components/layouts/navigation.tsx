@@ -37,7 +37,7 @@ export default function Navigation({ ...props }) {
         if (user.rol.nombre == 'cliente') {
             setElements(navegacionClientes)
             setNombre(user.cliente.nombre_empresa);
-        } else setNombre(user.empleado.nombres + ' ' + user.empleado.apellidos)
+        } else setNombre(user.empleado.nombres.split(' ')[0] + ' ' + user.empleado.apellidos.split(' ')[0])
 
         if (user.rol.nombre == 'admin') setElements(navegacionAdministrador);
         if (user.rol.nombre == 'auditor') setElements(navegacionEmpleados) 
@@ -61,11 +61,11 @@ export default function Navigation({ ...props }) {
 
     return (
         <Drawer PaperProps={{ sx: drawerPaperStyle }} variant="permanent" sx={drawerStyle}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 5, marginBottom: 5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', alignContent: 'center', marginTop: 5, marginBottom: 5 }}>
                 <Avatar sx={avatarStyle}>
                     <Image src='/images/logo.png' alt='avatar' width={120} height={120}></Image>
                 </Avatar>
-                <Typography sx={{ marginTop: 3 }}>
+                <Typography sx={{ marginTop: 3, marginX: 'auto  ' }}>
                     {nombre}
                 </Typography>
             </Box>

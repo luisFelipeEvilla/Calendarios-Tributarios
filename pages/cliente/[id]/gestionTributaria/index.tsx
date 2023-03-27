@@ -10,9 +10,8 @@ import { getFechaConLocale } from "../../../../utils";
 
 export default function GestionTributaria() {
     const [client, setClient] = useState<any>({} as any);
-    const [clientTaxes, setClientTaxes] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [taxes, setTaxes] = useState([]);
+    const [clientTaxes, setClientTaxes] = useState<any[]>([]); // para el calendario
+    const [loading, setLoading] = useState<boolean>(true); // para la tabla
 
     const [impuestosTabla, setImpuestosTabla] = useState<any[]>([]);
 
@@ -23,10 +22,6 @@ export default function GestionTributaria() {
 
         getClient();
     }, [router.isReady])
-
-    const handleClientTaxChange = (newClientTaxes: any[]) => {
-        setClientTaxes(newClientTaxes);
-    }
 
     const getClient = async () => {
         const { id } = router.query;
@@ -63,9 +58,7 @@ export default function GestionTributaria() {
             })
 
             setImpuestosTabla(impuestos);
-            handleClientTaxChange(fechasPresentacion);
-            const taxes = await axios.get('/api/tax');
-            setTaxes(taxes.data);
+            setClientTaxes(fechasPresentacion);
             setLoading(false);
         } catch (error) {
             console.log(error);

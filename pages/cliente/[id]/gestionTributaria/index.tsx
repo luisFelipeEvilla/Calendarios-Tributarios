@@ -75,7 +75,7 @@ export default function GestionTributaria() {
 
         <Layout>
             <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center' }}>
-                <h1>Gestion Tributaria</h1>
+                <h1>Gestión Tributaria</h1>
 
                 {
                     loading ?

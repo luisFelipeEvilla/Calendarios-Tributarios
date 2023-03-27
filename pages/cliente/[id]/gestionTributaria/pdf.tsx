@@ -21,6 +21,7 @@ const View = () => {
     const router = useRouter();
 
     useEffect(() => {
+        if (!router.isReady) return
         getClient();
     }, [router.isReady]);
 
@@ -35,7 +36,6 @@ const View = () => {
         try {
             const response = await axios.get(url);
             const cliente = response.data;
-            console.log(cliente);
             setClient(cliente);
 
             const fechasPresentacion = cliente.impuestos.map((impuesto: any) => {
@@ -48,20 +48,31 @@ const View = () => {
                 return i;
             });
 
-            const impuestos: { id: any; nombre: any; fecha_limite: any; fecha_presentacion: any; fecha_pago: any; }[] = [];
+            const impuestos: { id: any; frecuencia: number, vigencia: string, nombre: any; fecha_limite: any; fecha_presentacion: any; fecha_pago: any; }[] = [];
 
             cliente.impuestos.forEach((impuesto: any) => {
-                impuesto.cuotas.forEach((cuota: any) => {
+                impuesto.cuotas.forEach((cuota: any, index: number) => {
                     if (cuota.fecha_presentacion) cuota.fecha_presentacion = getFechaConLocale(cuota.fecha_presentacion);
                     if (cuota.fecha_pago) cuota.fecha_pago = getFechaConLocale(cuota.fecha_pago);
                     impuestos.push({
                         id: cuota.id, nombre: impuesto.impuesto.nombre,
+                        frecuencia: impuesto.impuesto.frecuencia,
                         fecha_limite: getFechaConLocale(cuota.fecha_limite),
+                        vigencia: `${impuesto.impuesto.vigencia} - ${index + 1}`,
                         fecha_presentacion: cuota.fecha_presentacion,
                         fecha_pago: cuota.fecha_pago
                     });
                 })
             })
+
+            // ordenar impuesto por nombre y fecha_limite
+            impuestos.sort((a, b) => {
+                if (a.nombre > b.nombre) return 1;
+                if (a.nombre < b.nombre) return -1;
+                if (a.fecha_limite > b.fecha_limite) return 1;
+                if (a.fecha_limite < b.fecha_limite) return -1;
+                return 0;
+            });
 
             setImpuestosTabla(impuestos);
             handleClientTaxChange(fechasPresentacion);
@@ -74,7 +85,7 @@ const View = () => {
     }
 
     return (
-        <InvoicePDF cliente={client} />
+        loading ? <div>Cargando...</div> : <InvoicePDF cliente={client} impuestos={impuestosTabla} />
     )
 }
 

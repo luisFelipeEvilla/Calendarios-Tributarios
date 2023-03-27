@@ -1,14 +1,11 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { display, fontSize } from "@mui/system";
 import { Document, Page, View, Text, Image, PDFViewer, StyleSheet, Font } from "@react-pdf/renderer";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { getFechaConLocale } from "../../utils";
+import { ReactElement, JSXElementConstructor, ReactFragment, ReactPortal } from "react";
+import { periods } from "../../config";
 
 const styles = StyleSheet.create({
     body: {
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
     },
     header: {
         display: 'flex',
@@ -46,20 +43,28 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
 
+    tableCol: {
+        fontSize: 10,
+        fontWeight: 700
+    },
+
     tableCell: {
         paddingHorizontal: 10,
         paddingVertical: 5,
         alignContent: 'center',
-        fontSize: 10,
+        fontSize: 9,
         fontWeight: 'normal',
         flex: 1,
+        textAlign: 'center',
         borderStyle: "solid",
         borderBottomWidth: 1,
         borderRightWidth: 1,
     }
 })
 
-const PDFView = ({...props}) => {
+const PDFView = ({ ...props }) => {
+    const formatoFecha: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
+    const mensajeFechaNula = 'No Reportada';
     return (
         <PDFViewer style={{ height: '100vh', width: '100vw' }}>
             <Document title="Informe Gestion tributaria">
@@ -108,6 +113,64 @@ const PDFView = ({...props}) => {
                             </Text>
                         </View>
                     </View>
+
+                    <View style={{ ...styles.table, marginTop: 20 }}>
+
+                        <View style={{ ...styles.tableRow }}>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Impuesto
+                            </Text>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Periodo
+                            </Text>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Vigencia
+                            </Text>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Fecha de Vencimiento
+                            </Text>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Fecha de Presentación
+                            </Text>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Fecha de Pago
+                            </Text>
+                            <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
+                                Estado
+                            </Text>
+                        </View>x
+
+
+                        {   
+                            props.impuestos.map((impuesto: { nombre: string ; frecuencia: number,  fecha_limite: Date | null ; fecha_presentacion: Date | null ; fecha_pago:  Date | null }, index: number) => {
+                                return (
+                                    <View wrap={false} style={{ ...styles.tableRow }}>
+                                        <Text style={{ ...styles.tableCell }}>
+                                            {impuesto.nombre}
+                                        </Text>
+                                        <Text style={{ ...styles.tableCell }}>
+                                            { periods.find(periodo => periodo.value == impuesto.frecuencia)?.name }
+                                        </Text>
+                                        <Text style={{ ...styles.tableCell }}>
+                                            {`${impuesto.vigencia}` }
+                                        </Text>
+                                        <Text style={{ ...styles.tableCell }}>
+                                            {impuesto.fecha_limite?.toLocaleDateString('es-co', formatoFecha)} 
+                                        </Text>
+                                        <Text style={{ ...styles.tableCell }}>
+                                            {impuesto.fecha_presentacion?.toLocaleDateString('es-co', formatoFecha) || mensajeFechaNula}
+                                        </Text>
+                                        <Text style={{ ...styles.tableCell }}>
+                                            {impuesto.fecha_pago?.toLocaleDateString('es-co', formatoFecha) || mensajeFechaNula}
+                                        </Text>
+                                        <Text style={{ ...styles.tableCell }}>
+                                        </Text>
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
+
                 </Page>
             </Document>
         </PDFViewer>

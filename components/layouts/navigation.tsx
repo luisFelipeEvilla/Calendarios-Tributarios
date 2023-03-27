@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../contexts/authContext';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 
 export default function Navigation({ ...props }) {
@@ -29,19 +30,18 @@ export default function Navigation({ ...props }) {
             { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
             { name: 'Configuración', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
         ]
-    
-        const navegacionClientes = [
-            { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
-        ]
 
         if (user.rol.nombre == 'cliente') {
+            const navegacionClientes = [
+                { name: 'Mis impuestos', path: `/cliente/${user.cliente.id}/gestionTributaria`, icon: <AccountBalanceIcon /> },
+            ]
+
             setElements(navegacionClientes)
             setNombre(user.cliente.nombre_empresa);
         } else setNombre(user.empleado.nombres.split(' ')[0] + ' ' + user.empleado.apellidos.split(' ')[0])
 
         if (user.rol.nombre == 'admin') setElements(navegacionAdministrador);
         if (user.rol.nombre == 'auditor') setElements(navegacionEmpleados) 
-        
     }, [user]);
 
     const handleNavigation = (path: string) => {

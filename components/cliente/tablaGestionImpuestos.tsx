@@ -1,16 +1,17 @@
-import styled from "@emotion/styled";
-import { Box, Button, TextField } from "@mui/material"
-import { DataGrid, GridColDef, GridRowModel, GridToolbar, GridValidRowModel } from "@mui/x-data-grid"
+import { Box, Button, TextField } from "@mui/material";
+import { DataGrid, GridColDef, GridToolbar, GridValidRowModel } from "@mui/x-data-grid";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { esES } from "@mui/material/locale";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { AuthContext } from "../../contexts/authContext";
 
 
 export default function TablaGestionImpuestos({ ...props }) {
+    const {user} = useContext(AuthContext);
     const [mes, setMes] = useState(dayjs(new Date()));
     const [impuestosFiltrados, setImpuestosFiltrados] = useState(props.impuestos);
     const mensajeFechaNula = 'No Reportada';
@@ -53,6 +54,7 @@ export default function TablaGestionImpuestos({ ...props }) {
     ]
 
     const handleUpdate = async (newRow: GridValidRowModel) => {
+        if (user.rol.nombre.toLowerCase().includes('cliente')) return;
         const idImpuesto = newRow.id;
 
         const impuesto = props.impuestos.find((impuesto: any) => impuesto.id == idImpuesto);

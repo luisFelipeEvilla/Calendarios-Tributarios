@@ -20,11 +20,15 @@ export default function CalendarioCliente({ ...props }: PropsType) {
         '#f50057',
         // municipales
         '#ff9800',
+        // seguridad social
+        '#9a6ce2'
     ]
     const updateScheduler = () => {
         setEvents([]);
         const events: ProcessedEvent[] = [];
         props.impuestosCliente.forEach((impuesto: ImpuestoCliente, index: number) => {
+            let color = colores[impuesto.tipo - 1];
+            if (impuesto.nombre.toLowerCase().includes('seguridad social')) color = colores[3];
             impuesto.cuotas.forEach((cuota: any) => {
                 const startDate = new Date(cuota.fecha);
                 startDate.setDate(startDate.getDate() + 1);
@@ -33,7 +37,7 @@ export default function CalendarioCliente({ ...props }: PropsType) {
                     title: impuesto.nombre,
                     start: startDate,
                     end: startDate,
-                    color: colores[impuesto.tipo -1 ],
+                    color,
                     textColor: '#fff',
                     allDay: true,
                 })

@@ -32,15 +32,20 @@ export default function Formularioclientee({ ...props }) {
             const response = await axios.put(url, props.cliente);
 
             props.setModalOpen(true);
-            props.setModalMessage('clientee actualizado correctamente');
+            props.setModalMessage('cliente actualizado correctamente');
             props.setError(false);
         } catch (error) {
             console.log(error);
             props.setModalOpen(true);
-            props.setModalMessage('Error al actualizar el clientee');
+            props.setModalMessage('Error al actualizar el cliente');
             props.setError(true);
         }
     }
+
+    const handleEmailNotificacionesChange = (e: any) => {
+        props.setCliente({ ...props.cliente, email_calendario: e.target.value });
+    }
+
     return (
         <Grid container spacing={0} maxWidth={1000} marginTop={5}>
             <Grid item md={6}>
@@ -49,6 +54,7 @@ export default function Formularioclientee({ ...props }) {
                     {formInput('Nombre de la empresa', props.cliente.nombre_empresa, handleNombreEmpresaChange)}
                     {formInput('NIT', props.cliente.nit, handleNitChange)}
                     {formInput('Página web', props.cliente.pagina_web, handlePaginaWebChange)}
+                    {formInput('Email de Notificaciones', props.cliente.email_calendario, handleEmailNotificacionesChange)}
                 </Box>
             </Grid>
             <Grid item md={6}>

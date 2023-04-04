@@ -182,7 +182,7 @@ const PDFView = ({ ...props }) => {
                                 let estado = 'Sin registrar';
                                 let color = { color: 'black' };
 
-                                if (impuesto.fecha_presentacion) {
+                                /* if (impuesto.fecha_presentacion) {
                                     const oportuno = impuesto.fecha_presentacion <= impuesto.fecha_limite;
 
                                     if (oportuno) { 
@@ -197,7 +197,7 @@ const PDFView = ({ ...props }) => {
                                         estado = 'Extemporáneo';
                                         color.color = 'red';
                                     }
-                                }
+                                } */
 
                                 return (
                                     <View key={index} wrap={false} style={{ ...styles.tableRow }}>

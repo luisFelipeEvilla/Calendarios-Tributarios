@@ -11,7 +11,6 @@ export default async function handler(
         case 'GET':
             try {
                 const url = `${process.env.NEXT_PUBLIC_API_URL}/departamento`
-                console.log(url);
                 const departments = (await axios.get(url)).data;
 
                 res.status(200).json(departments);

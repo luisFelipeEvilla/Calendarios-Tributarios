@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRightWidth: 0,
         borderLeft: 0,
-        borderBottomWidth: 0
+        borderBottomWidth: 0,
     },
 
     tableRow: {
@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderTop: 1,
         borderColor: '#29C5F6',
-        marginHorizontal: 60
-
+        marginHorizontal: 60,
+        marginTop: 200
     }
 })
 
@@ -150,7 +150,7 @@ const PDFView = ({ ...props }) => {
                         </View>
                     </View>
 
-                    <View  style={{ ...styles.table, marginTop: 20 }}>
+                    <View  style={{ ...styles.table, marginTop: 20, marginBottom: 100 }}>
 
                         <View style={{ ...styles.tableRow }}>
                             <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
@@ -230,7 +230,7 @@ const PDFView = ({ ...props }) => {
                         }
                     </View>
 
-                    <View style={{ ...styles.footer }}>
+                    <View wrap={false} style={{ ...styles.footer }}>
                         <View style={{ border: 1, borderColor: '#' }}>
 
                         </View>

@@ -50,10 +50,6 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         width: "auto",
         borderStyle: "solid",
-        borderWidth: 1,
-        borderRightWidth: 0,
-        borderLeft: 0,
-        borderBottomWidth: 0,
     },
 
     tableRow: {
@@ -73,6 +69,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Oswald',
         fontWeight: 700,
         verticalAlign: 'sub',
+        borderTopWidth: 1,
     },
 
     tableCell: {
@@ -143,7 +140,7 @@ const PDFView = ({ ...props }) => {
                         </View>
                     </View>
 
-                    <View style={{ ...styles.table, marginTop: 10 }} >
+                    <View style={{ ...styles.table, marginTop: 10, borderTop: 1 }} >
                         <View style={styles.tableRow}>
                             <Text style={{ ...styles.tableCell, flex: 0.5, fontWeight: 'bold', fontSize: 12 }}>
                                 Cliente
@@ -162,7 +159,7 @@ const PDFView = ({ ...props }) => {
 
                     <View style={{ ...styles.table, marginTop: 20, marginBottom: 100 }}>
 
-                        <View style={{ ...styles.tableRow }}>
+                        <View style={{ ...styles.tableRow }} fixed>
                             <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
                                 Impuesto
                             </Text>
@@ -248,10 +245,10 @@ const PDFView = ({ ...props }) => {
                             R&R Consultorias Empresariales S.A.S
                         </Text>
                         <Text>
-                            Avenida del Ferrocarril No. 29-200 - Edificio El Mayor Bussiness Center Oficina 101 Santa Marta D.T.C.H
+                            Correo Electrónico: gerencia@rrconsultorias.com
                         </Text>
                         <Text>
-                            Correo Electrónico: gerencia@rrconsultorias.com
+                            Avenida del Ferrocarril No. 29-200 - Edificio El Mayor Bussiness Center Oficina 101 Santa Marta D.T.C.H
                         </Text>
                     </View>
                 </Page>

@@ -11,7 +11,8 @@ Font.register({
 const styles = StyleSheet.create({
     body: {
         margin: 0,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        paddingBottom: 55
     },
 
     header: {
@@ -19,20 +20,29 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 20,
+        marginBottom: 10,
         alignContent: 'center',
         alignItems: 'center',
     },
 
     titulo: {
         display: 'flex',
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 'bold',
         marginTop: -10,
         fontFamily: 'Oswald'
     },
 
-    registro: {
+    registroContainer: {
         fontSize: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+
+    registro: {
+        display: 'flex',
+        flexDirection: 'column',
     },
 
     table: {
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         fontSize: 10,
         position: 'absolute',
-        bottom: 5,
+        bottom: 10,
         left: 0,
         right: 0,
         justifyContent: 'center',
@@ -93,7 +103,6 @@ const styles = StyleSheet.create({
         borderTop: 1,
         borderColor: '#29C5F6',
         marginHorizontal: 60,
-        marginTop: 200
     }
 })
 
@@ -104,8 +113,8 @@ const PDFView = ({ ...props }) => {
         <PDFViewer style={{ height: '100vh', width: '100vw' }} >
             <Document title={`Informe de Gestión Tributaria ${props.cliente.nombre_empresa}`}>
                 <Page style={styles.body}>
-                    <View style={styles.header}>
-                        <Image src="/images/logo.png" style={{ height: 100, width: 100, alignSelf: 'flex-start' }} />
+                    <View style={styles.header} fixed>
+                        <Image src="/images/logo.png" style={{ height: 60, width: 80, alignSelf: 'flex-start' }} />
 
                         <View style={styles.titulo}>
                             <Text style={{}}>
@@ -113,6 +122,14 @@ const PDFView = ({ ...props }) => {
                             </Text>
                         </View>
 
+                        <View>
+                            <Text style={{ fontSize: 10 }}>
+                                Santa Marta D.T.C.H, {new Date().toLocaleDateString()}
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.registroContainer}>
                         <View style={styles.registro}>
                             <Text>
                                 Código: F-PS-20
@@ -124,12 +141,6 @@ const PDFView = ({ ...props }) => {
                                 Fecha: 01/04/2023
                             </Text>
                         </View>
-                    </View>
-
-                    <View style={{ display: 'flex', flexDirection: 'column', marginTop: 20 }}>
-                        <Text style={{ fontSize: 10, alignSelf: 'flex-end' }}>
-                            Santa Marta D.T.C.H, {new Date().toLocaleDateString()}
-                        </Text>
                     </View>
 
                     <View style={{ ...styles.table, marginTop: 10 }} >
@@ -149,7 +160,7 @@ const PDFView = ({ ...props }) => {
                         </View>
                     </View>
 
-                    <View  style={{ ...styles.table, marginTop: 20, marginBottom: 100 }}>
+                    <View style={{ ...styles.table, marginTop: 20, marginBottom: 100 }}>
 
                         <View style={{ ...styles.tableRow }}>
                             <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
@@ -229,7 +240,7 @@ const PDFView = ({ ...props }) => {
                         }
                     </View>
 
-                    <View wrap={false} style={{ ...styles.footer }}>
+                    <View wrap={false} style={{ ...styles.footer }} fixed>
                         <View style={{ border: 1, borderColor: '#' }}>
 
                         </View>
@@ -237,19 +248,10 @@ const PDFView = ({ ...props }) => {
                             R&R Consultorias Empresariales S.A.S
                         </Text>
                         <Text>
-                            Avenida del Ferrocarril No. 29-200 - Edificio El Mayor Bussiness Center Oficina 101
-                        </Text>
-                        <Text>
-                            Líneas de Comunicación: (035) 436 5102 / Móviles: 310 499 2172 - 310 472 4067
+                            Avenida del Ferrocarril No. 29-200 - Edificio El Mayor Bussiness Center Oficina 101 Santa Marta D.T.C.H
                         </Text>
                         <Text>
                             Correo Electrónico: gerencia@rrconsultorias.com
-                        </Text>
-                        <Text>
-                            Página Web: www.rrconsultoriasempresariales.com
-                        </Text>
-                        <Text>
-                            Santa Marta D.T.C.H. - Colombia
                         </Text>
                     </View>
                 </Page>

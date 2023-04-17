@@ -30,7 +30,6 @@ export default function TaxForm({ ...props }: PropsType) {
         fetchMunicipios();
         
         const periodo = periods.find(periodo => periodo.value === props.impuesto.frecuencia)?.value || 0;
-        console.log(periodo);
         setPeriodo(periodo);
     },[])
 

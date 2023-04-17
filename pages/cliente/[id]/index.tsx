@@ -101,8 +101,10 @@ export default function Client() {
     const handleAddTax = async (e: any) => {
         e.preventDefault();
 
+        const taxId = parseInt(e.target['impuesto'].value);
+
         // find it tax has been added
-        const taxOnclient = clientTaxes.find((tax) => tax.idImpuesto === parseInt(e.target[0].value));
+        const taxOnclient = clientTaxes.find((tax) => tax.idImpuesto === taxId);
 
         if (taxOnclient) {
             setModalOpen(true);
@@ -111,9 +113,7 @@ export default function Client() {
             return;
         }
 
-        const taxId = parseInt(e.target[0].value);
         const tax = taxes.find((tax: any) => tax.id == taxId) || {} as any;
-
         const cuotas = tax.cuotas.map((cuota: any) => {
             const fechaPresentacion = cuota.fechas_presentacion.filter((fecha: any) => {
                 const nit = client.nit.toString();

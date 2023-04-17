@@ -64,6 +64,18 @@ export default function Client() {
 
             handleClientTaxChange(fechasPresentacion);
             const taxes = await axios.get('/api/tax');
+
+            // ordenar impuestos por nombre
+            taxes.data.sort((a: any, b: any) => {
+                if (a.nombre < b.nombre) {
+                    return -1;
+                }
+                if (a.nombre > b.nombre) {
+                    return 1;
+                }
+                return 0;
+            });
+            
             setTaxes(taxes.data);
             setLoading(false);
         } catch (error) {

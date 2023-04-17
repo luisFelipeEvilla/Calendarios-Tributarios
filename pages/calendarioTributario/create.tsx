@@ -20,7 +20,7 @@ export default function Create({ ...props }) {
         tipo: 1,
         nombre: '',
         frecuencia: 0,
-        persona: 1,
+        persona: 0,
         numero_digitos: 1,
         cuotas: [] 
     } as unknown as  nuevoImpuesto);

@@ -62,6 +62,17 @@ export default function Client() {
                 return i;
             });
 
+            // ordenar impuestos por nombre
+            fechasPresentacion.sort((a: any, b: any) => {
+                if (a.nombre < b.nombre) {
+                    return -1;
+                }
+                if (a.nombre > b.nombre) {
+                    return 1;
+                }
+                return 0;
+            });
+
             handleClientTaxChange(fechasPresentacion);
             const taxes = await axios.get('/api/tax');
 
@@ -75,7 +86,7 @@ export default function Client() {
                 }
                 return 0;
             });
-            
+
             setTaxes(taxes.data);
             setLoading(false);
         } catch (error) {

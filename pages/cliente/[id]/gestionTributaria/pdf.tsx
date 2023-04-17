@@ -7,7 +7,7 @@ import { getFechaConLocale } from "../../../../utils";
 
 
 const InvoicePDF = dynamic(() => import("../../../../components/cliente/pdf"), {
-    ssr: false,
+    ssr: false
 });
 
 
@@ -65,10 +65,8 @@ const View = () => {
                 })
             })
 
-            // ordenar impuesto por nombre y fecha_limite
+            // ordenar impuesto por fecha limite
             impuestos.sort((a, b) => {
-                if (a.nombre > b.nombre) return 1;
-                if (a.nombre < b.nombre) return -1;
                 if (a.fecha_limite > b.fecha_limite) return 1;
                 if (a.fecha_limite < b.fecha_limite) return -1;
                 return 0;

@@ -61,13 +61,13 @@ const styles = StyleSheet.create({
     tableCol: {
         fontSize: 10,
         fontFamily: 'Oswald',
-        fontWeight: 700
+        fontWeight: 700,
+        verticalAlign: 'sub',
     },
 
     tableCell: {
         paddingHorizontal: 10,
         paddingVertical: 5,
-        alignContent: 'center',
         fontSize: 9,
         fontWeight: 'normal',
         flex: 1,
@@ -102,7 +102,6 @@ const PDFView = ({ ...props }) => {
     const mensajeFechaNula = 'Sin registrar';
     return (
         <PDFViewer style={{ height: '100vh', width: '100vw' }} >
-
             <Document title={`Informe de Gestión Tributaria ${props.cliente.nombre_empresa}`}>
                 <Page style={styles.body}>
                     <View style={styles.header}>
@@ -110,7 +109,7 @@ const PDFView = ({ ...props }) => {
 
                         <View style={styles.titulo}>
                             <Text style={{}}>
-                                Informe De Gestión Tributaria
+                                Informe de Gestión Tributaria
                             </Text>
                         </View>
 
@@ -119,10 +118,10 @@ const PDFView = ({ ...props }) => {
                                 Código: F-PS-20
                             </Text>
                             <Text>
-                                Versión: 02
+                                Versión: 03
                             </Text>
                             <Text>
-                                Fecha: 17/11/2016
+                                Fecha: 01/04/2023
                             </Text>
                         </View>
                     </View>
@@ -166,7 +165,7 @@ const PDFView = ({ ...props }) => {
                                 Fecha de Vencimiento
                             </Text>
                             <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
-                                Fecha de Presentación
+                                {'Fecha de \n presentación'}
                             </Text>
                             <Text style={{ ...styles.tableCell, ...styles.tableCol }}>
                                 Fecha de Pago

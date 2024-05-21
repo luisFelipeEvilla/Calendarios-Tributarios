@@ -63,7 +63,7 @@ export default function FeedsTable({ ...props }: PropsType) {
                                     </TableHead>
                                     <TableBody>
                                 {
-                                    cuota.fechas_presentacion.map((fecha, index1: number) => (
+                                    cuota.fechas_presentacion.map((fecha: any, index1: number) => (
                                         <TableRow key={index1}>
                                             <TableCell>{fecha.nit}</TableCell>
                                             <TableCell>{fecha.fecha.toLocaleDateString('es-co', formatoFecha)}</TableCell>

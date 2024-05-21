@@ -17,7 +17,6 @@ import FeedsTable from "../../components/taxes/feedsTable";
 import { periods } from "../../config";
 import TaxScheduler from "../../components/taxes/taxScheduler";
 import Spinner from "../../components/layouts/spinner";
-import { fechas_presentacion } from "@prisma/client";
 import MessageModal from "../../components/messageModal";
 
 export default function CalendarioTributario() {
@@ -49,7 +48,7 @@ export default function CalendarioTributario() {
             const tax = response.data;
 
             tax.cuotas = tax.cuotas.map((cuota: cuota) => {
-                cuota.fechas_presentacion = cuota.fechas_presentacion.map((fecha_presentacion: fechas_presentacion) => {
+                cuota.fechas_presentacion = cuota.fechas_presentacion.map((fecha_presentacion: any) => {
                     // Crear una nueva fecha y establecer la hora a las 0 horas
                     const fecha = new Date(`${fecha_presentacion.fecha}T00:00:00`);
                     console.log(fecha);
@@ -68,8 +67,8 @@ export default function CalendarioTributario() {
     useEffect(() => {
         const updateSchedule = () => {
             const events: ProcessedEvent[] = [];
-            impuesto.cuotas.forEach((cuota, index) => {
-                cuota.fechas_presentacion.forEach((fecha) => {
+            impuesto.cuotas.forEach((cuota: any, index: number) => {
+                cuota.fechas_presentacion.forEach((fecha: any) => {
                     if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
                     events.push({
                         event_id: index,

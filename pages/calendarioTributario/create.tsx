@@ -19,6 +19,7 @@ export default function Create({ ...props }) {
     const [impuesto, setImpuesto] = useState<nuevoImpuesto>({
         tipo: 1,
         nombre: '',
+        vigencia: new Date().getFullYear(),
         frecuencia: 0,
         persona: 0,
         numero_digitos: 1,
@@ -38,9 +39,11 @@ export default function Create({ ...props }) {
     // functions
     const handleSubmit = async () => {
         if (impuesto.nombre.length === 0) return alert('debe ingresar un nombre para el impuesto')
-        setSubmited(true);
+        // setSubmited(true);
 
         const url = '/api/tax';
+
+        console.log(impuesto);
 
         try {
            const request = await axios.post(url, impuesto);
@@ -54,6 +57,8 @@ export default function Create({ ...props }) {
             setError(true);
             alert(error);
             console.error(error);
+        } finally {
+            setSubmited(false);
         }
 
     }

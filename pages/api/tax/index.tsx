@@ -1,6 +1,5 @@
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { createImpuesto, getImpuestos } from "../../../controllers/impuesto";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,8 +9,13 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             try {
-                const url = `${process.env.API_URL}/impuesto`
-                
+                // get query params
+                const { vigencia } = req.query;
+
+                const url = `${process.env.API_URL}/impuesto?vigencia=${vigencia}`
+
+                console.log(url);
+
                 const impuestos = (await axios.get(url)).data;
                 
                 res.status(200).json(impuestos);

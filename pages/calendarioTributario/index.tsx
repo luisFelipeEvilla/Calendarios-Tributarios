@@ -6,9 +6,10 @@ import Head from 'next/head';
 import Layout from '../../components/layout';
 import Accordeon from '../../components/layouts/accordion';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Spinner from '../../components/layouts/spinner';
 import { Departamento, Municipio } from '../../types';
+import { FiltersContext } from '../../contexts/FiltersContext';
 
 
 const Home: NextPage = ({ ...props }: any) => {
@@ -20,15 +21,18 @@ const Home: NextPage = ({ ...props }: any) => {
 
   const [loading, setLoading] = useState(true);
 
+  const { year, setYear } = useContext(FiltersContext);
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [year]);
 
   const fetchData = async () => {
-    const url = `api/tax`;
+    const url = `api/tax?vigencia=${year}`;
 
     let taxes = [];
     try {
+      setLoading(true);
       const request = await axios.get(url);
       const taxes = request.data;
       // @ts-ignore
@@ -42,14 +46,15 @@ const Home: NextPage = ({ ...props }: any) => {
       const departamentosRequest = await axios.get(departamentosUrl);
 
       setDepartamentos(departamentosRequest.data);
-      
+
       const municipiosUrl = `api/municipio`;
       const municipiosRequest = await axios.get(municipiosUrl);
 
       setMuicipios(municipiosRequest.data);
-      setLoading(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -73,7 +78,7 @@ const Home: NextPage = ({ ...props }: any) => {
                 <Accordeon title="Impuestos Departamentales" data={departamentales} isDepartamental={true} departamentos={departamentos} />
               </Box>
               <Box sx={{ width: '100%' }}>
-                <Accordeon title="Impuestos Municipales" data={municipales} isMunicipal={true} departamentos={departamentos} municipios={municipios}/>
+                <Accordeon title="Impuestos Municipales" data={municipales} isMunicipal={true} departamentos={departamentos} municipios={municipios} />
               </Box>
             </div>
         }

@@ -1,6 +1,6 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Button } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import SearchBar from './searchbar';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -8,6 +8,7 @@ import { periods, tiposPersona } from '../../config';
 import { Departamento, Municipio } from '../../types';
 import axios from 'axios';
 import MessageModal from '../messageModal';
+import { FiltersContext } from '../../contexts/FiltersContext';
 
 type Tax = { id: number };
 type PropsType = { data: Tax[], isDepartamental?: boolean, isMunicipal?: boolean, departamentos: Departamento[], municipios: Municipio[] }
@@ -20,6 +21,8 @@ export default function Table({ ...props }: PropsType): ReactElement {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
     const [error, setError] = useState(false);
+
+    const { year, setYear } = useContext(FiltersContext);
 
     const router = useRouter();
 
@@ -37,7 +40,7 @@ export default function Table({ ...props }: PropsType): ReactElement {
 
         try {
             const response = await axios.delete(url);
-            
+
             setModalOpen(true);
             setModalTitle('Impuesto eliminado con éxito');
             setError(false);
@@ -161,9 +164,26 @@ export default function Table({ ...props }: PropsType): ReactElement {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <MessageModal  modalOpen={modalOpen} setModalOpen={setModalOpen} error={error} title={modalTitle} />
+            <MessageModal modalOpen={modalOpen} setModalOpen={setModalOpen} error={error} title={modalTitle} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <SearchBar handleSearch={handleSearch} />
+                <Box sx={{ display: 'flex', gap: 8, alignContent: 'center', alignItems: 'center' }}>
+                    <SearchBar handleSearch={handleSearch} />
+
+                    <FormControl>
+                        <InputLabel
+                            id='vigencia'
+                        >Vigencia</InputLabel>
+                        <Select
+                            label='vigencia'
+                            name='vigencia'
+                            value={year} onChange={(e) => setYear(e.target.value as number)}>
+                            <MenuItem value={2023}>2023</MenuItem>
+                            <MenuItem value={2024}>2024</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                </Box>
+
                 <Button variant='contained' color='success' size='small' sx={{ width: 100, height: 40, marginRight: 10, marginTop: 3 }}
                     onClick={() => router.push('/calendarioTributario/create')}
                 >

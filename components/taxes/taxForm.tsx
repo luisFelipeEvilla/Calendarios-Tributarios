@@ -89,6 +89,21 @@ export default function TaxForm({ ...props }: PropsType) {
                 />
             </FormControl>
             <FormControl fullWidth>
+                <InputLabel 
+                    id="vigencia"
+                    sx={{ fontSize: 20 }}
+                >Vigencia</InputLabel>
+                <Select 
+                    label='vigencia'
+                    name='vigencia'
+                    value={props.impuesto.vigencia}
+                    onChange={e => props.setImpuesto({ ...props.impuesto, vigencia: e.target.value as number})}
+                >
+                    <MenuItem value={2023}>2023</MenuItem>
+                    <MenuItem value={2024}>2024</MenuItem>
+                </Select>
+            </FormControl>
+            <FormControl fullWidth>
                 <InputLabel sx={{ fontSize: 20 }} >Aplica a</InputLabel>
                 <Select name='Aplica' value={props.impuesto.persona} fullWidth label='Aplica a' onChange={e => props.setImpuesto({ ...props.impuesto, persona: e.target.value as number})}>
                     {

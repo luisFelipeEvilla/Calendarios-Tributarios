@@ -1,6 +1,5 @@
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { deleteImpuesto, getImpuesto, updateImpuesto } from "../../../controllers/impuesto";
 
 export default async function handler(
     req: NextApiRequest,

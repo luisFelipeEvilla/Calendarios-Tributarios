@@ -1,12 +1,15 @@
 import { Box, FormControl, InputLabel, Select, MenuItem, Button, Table, Paper, TableHead, TableRow, TableCell, TableBody } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { taxTypes } from "../../config"
+import { FiltersContext } from "../../contexts/FiltersContext"
 
 export default function ImpuestosCliente({ ...props }) {
     const[impuestos, setImpuestos] = useState<any>([])
 
     const [tipoImpuesto, setTipoImpuesto] = useState<any>(1)
     const [impuestoSeleccionado, setImpuestoSeleccionado] = useState<any>(null)
+
+    const { year, setYear } = useContext(FiltersContext);
 
     useEffect(() => {
         // filtrar impuestos por tipo
@@ -30,7 +33,18 @@ export default function ImpuestosCliente({ ...props }) {
                     </Select>
                 </FormControl>
 
-                <FormControl sx={{ width: 200 }}>
+                <FormControl sx={{ width: 100}}>
+                    <InputLabel id='vigencia'>Vigencia</InputLabel>
+                    <Select label='vigencia' name='vigencia'
+                        value={year}
+                        onChange={e => setYear(e.target.value as number)}                    
+                    >
+                        <MenuItem value={2023}>2023</MenuItem>
+                        <MenuItem value={2024}>2024</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ width: 300 }}>
                     <InputLabel>Agregar Impuesto</InputLabel>
                     <Select label='Impuestos Nacionales' name={'impuesto'} value={impuestoSeleccionado} onChange={e => setImpuestoSeleccionado(e.target.value)}  >
                         {

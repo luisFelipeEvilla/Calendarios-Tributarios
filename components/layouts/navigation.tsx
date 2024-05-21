@@ -33,8 +33,6 @@ export default function Navigation({ ...props }) {
 
         if (user.rol.nombre == 'cliente') {
             const navegacionClientes = [
-                { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
-                { name: 'Configuración', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
                 { name: 'Mis impuestos', path: `/cliente/${user.cliente.id}/gestionTributaria`, icon: <AccountBalanceIcon /> },
             ]
 

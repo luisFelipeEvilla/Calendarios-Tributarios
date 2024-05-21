@@ -27,7 +27,7 @@ export default function FeedsTable({ ...props }: PropsType) {
         //@ts-ignore
         newCuotas[index].fechas_presentacion.push(newCuota);
         // organize feeds by date
-        newCuotas[index].fechas_presentacion.sort((a, b) => { return a.fecha.getTime() - b.fecha.getTime() });
+        newCuotas[index].fechas_presentacion.sort((a: any, b: any) => { return a.fecha.getTime() - b.fecha.getTime() });
 
         props.setCuotas(newCuotas);
     }

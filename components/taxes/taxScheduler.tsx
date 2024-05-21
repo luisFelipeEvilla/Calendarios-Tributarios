@@ -14,7 +14,7 @@ export default function TaxScheduler({ ...props }: PropsType) {
         const updateSchedule = () => {
             const events: ProcessedEvent[] = [];
             props.cuotas.forEach((feed, index) => {
-                feed.fechas_presentacion.forEach((fecha) => {
+                feed.fechas_presentacion.forEach((fecha: any) => {
                     if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
                     events.push({
                         event_id: index,

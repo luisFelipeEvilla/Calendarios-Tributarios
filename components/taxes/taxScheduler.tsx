@@ -1,7 +1,6 @@
 import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { Box } from "@mui/material";
-import { nuevo_impuesto } from "@prisma/client";
 import { es } from "date-fns/locale";
 import { useEffect } from "react";
 import { cuota } from "../../types";

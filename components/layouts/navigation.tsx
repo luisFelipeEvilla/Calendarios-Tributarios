@@ -14,7 +14,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 export default function Navigation({ ...props }) {
     const { user, logout } = useContext(AuthContext);
-    const [ elements, setElements ] = useState<any[]>([]);
+    const [elements, setElements] = useState<any[]>([]);
     const [nombre, setNombre] = useState<string>('');
     const router = useRouter();
 
@@ -25,7 +25,7 @@ export default function Navigation({ ...props }) {
             // { name: 'Home', path: '/', icon: <HomeIcon /> },
             { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
         ]
-    
+
         const navegacionAdministrador = [
             { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
             { name: 'Configuración', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
@@ -33,6 +33,8 @@ export default function Navigation({ ...props }) {
 
         if (user.rol.nombre == 'cliente') {
             const navegacionClientes = [
+                { name: 'Clientes', path: '/cliente', icon: <PeopleIcon /> },
+                { name: 'Configuración', path: '/calendarioTributario', icon: <CalendarTodayIcon /> },
                 { name: 'Mis impuestos', path: `/cliente/${user.cliente.id}/gestionTributaria`, icon: <AccountBalanceIcon /> },
             ]
 
@@ -41,7 +43,7 @@ export default function Navigation({ ...props }) {
         } else setNombre(user.empleado.nombres.split(' ')[0] + ' ' + user.empleado.apellidos.split(' ')[0])
 
         if (user.rol.nombre == 'admin') setElements(navegacionAdministrador);
-        if (user.rol.nombre == 'auditor') setElements(navegacionEmpleados) 
+        if (user.rol.nombre == 'auditor') setElements(navegacionEmpleados)
     }, [user]);
 
     const handleNavigation = (path: string) => {

@@ -1024,6 +1024,7 @@ model notificaciones {
 model nuevo_impuesto {
   id             Int      @id @default(autoincrement()) @db.UnsignedInt
   nombre         String   @db.VarChar(300)
+  vigencia       Int     @db.UnsignedInt
   persona        Int
   frecuencia     Int
   tipo           Int

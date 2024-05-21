@@ -38,6 +38,7 @@ export async function createImpuesto(impuesto: nuevoImpuesto) {
     const newImpuesto = await prisma.nuevo_impuesto.create({
         data: {
             nombre: impuesto.nombre,
+            vigencia: impuesto.vigencia,
             numero_digitos: impuesto.numero_digitos,
             departamento: impuesto.departamento,
             municipio: impuesto.municipio,

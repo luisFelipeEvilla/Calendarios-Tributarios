@@ -1,6 +1,5 @@
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getMunicipios } from "../../../controllers/municipio";
 
 export default async function handler(
     req: NextApiRequest,

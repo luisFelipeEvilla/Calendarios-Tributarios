@@ -92,18 +92,13 @@ export default function Client() {
 
       setClient(cliente);
 
-      console.log("cliente", cliente);
-      console.log("year", year);
-
-      const fechasPresentacion = cliente.impuestos
-        .filter((impuesto: any) => impuesto.impuesto.vigencia == year)
-        .map((impuesto: any) => {
-          const i = {
-            id: impuesto.id,
-            idImpuesto: impuesto.impuesto.id,
-            tipo: impuesto.impuesto.tipo,
-            nombre: impuesto.impuesto.nombre,
-            cuotas: [],
+      const fechasPresentacion = cliente.impuestos.map((impuesto: any) => {
+        const i = {
+          id: impuesto.id,
+          idImpuesto: impuesto.impuesto.id,
+          tipo: impuesto.impuesto.tipo,
+          nombre: impuesto.impuesto.nombre,
+          cuotas: [],
         };
 
         i.cuotas = impuesto.cuotas.map((cuota: any) => {

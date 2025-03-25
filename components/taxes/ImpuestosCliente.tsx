@@ -75,7 +75,7 @@ export default function ImpuestosCliente({ ...props }) {
                     </TableHead>
                     <TableBody>
                         {
-                            props.impuestosCliente.map((tax: any, index: number) => {
+                            props.impuestosCliente.filter((tax: any) => tax.vigencia == year).map((tax: any, index: number) => {
                                 return (
                                     <TableRow key={index}>
                                         <TableCell>{tax.nombre}</TableCell>

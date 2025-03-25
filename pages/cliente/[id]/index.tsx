@@ -1,214 +1,266 @@
-
-import PeopleIcon from '@mui/icons-material/People';
+import PeopleIcon from "@mui/icons-material/People";
 import { Avatar, Box, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import Layout from "../../../components/layout";
-import FormularioCliente from '../../../components/layouts/cliente/formulario';
+import FormularioCliente from "../../../components/layouts/cliente/formulario";
 import Spinner from "../../../components/layouts/spinner";
 import MessageModal from "../../../components/messageModal";
 import CalendarioCliente from "../../../components/schedulers/calendarioCliente";
 import ImpuestosCliente from "../../../components/taxes/ImpuestosCliente";
-import { FiltersContext } from '../../../contexts/FiltersContext';
+import { FiltersContext } from "../../../contexts/FiltersContext";
 
-
-type Client = { id: number, nit: number, nombre_empresa: string, pagina_web: string, emails: string, nombre_representante_legal: string, prefijo_empresa: string, tipo_persona: number, telefono: string, direccion: string, fecha_creacion: string, fecha_modificacion: string, fecha_eliminacion: number };
-type ImpuestoCliente = { nombre: string, cuotas: { fecha_limite: Date }[] };
+type Client = {
+  id: number;
+  nit: number;
+  nombre_empresa: string;
+  pagina_web: string;
+  emails: string;
+  nombre_representante_legal: string;
+  prefijo_empresa: string;
+  tipo_persona: number;
+  telefono: string;
+  direccion: string;
+  fecha_creacion: string;
+  fecha_modificacion: string;
+  fecha_eliminacion: number;
+};
+type ImpuestoCliente = { nombre: string; cuotas: { fecha_limite: Date }[] };
 
 export default function Client() {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [client, setClient] = useState<Client>({} as Client);
-    const [clientTaxes, setClientTaxes] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [client, setClient] = useState<Client>({} as Client);
+  const [clientTaxes, setClientTaxes] = useState<any[]>([]);
 
-    const [taxes, setTaxes] = useState([]);
-    const [filteredTaxes, setFilteredTaxes] = useState<any[]>([]);
+  const [taxes, setTaxes] = useState([]);
+  const [filteredTaxes, setFilteredTaxes] = useState<any[]>([]);
 
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [modalMeessage, setModalMessage] = useState<string>('');
-    const [error, setError] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalMeessage, setModalMessage] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
 
-    const { year } = useContext(FiltersContext);
-    // get id from url
-    const router = useRouter();
+  const { year } = useContext(FiltersContext);
+  // get id from url
+  const router = useRouter();
 
-    useEffect(() => {
-        if (!router.isReady) return
+  useEffect(() => {
+    if (!router.isReady) return;
 
-        getClient();
-    }, [router.isReady])
+    getClient();
+  }, [router.isReady]);
 
-    useEffect(() => {
-        getTaxes();
-    }, [year])
+  useEffect(() => {
+    getTaxes();
+  }, [year]);
 
-    useEffect(() => {
-        const filtered = taxes.filter((tax: any) => tax.persona == client.tipo_persona || tax.persona == 0);
-        setFilteredTaxes(filtered);
-    }, [taxes, client.tipo_persona])
+  useEffect(() => {
+    const filtered = taxes.filter(
+      (tax: any) => tax.persona == client.tipo_persona || tax.persona == 0
+    );
+    setFilteredTaxes(filtered);
+  }, [taxes, client.tipo_persona]);
 
-    async function getTaxes() {
-        const taxes = await axios.get('/api/tax', {
-            params: {
-                vigencia: year
-            }
+  async function getTaxes() {
+    const taxes = await axios.get("/api/tax", {
+      params: {
+        vigencia: year,
+      },
+    });
+
+    taxes.data.sort((a: any, b: any) => {
+      if (a.nombre < b.nombre) {
+        return -1;
+      }
+      if (a.nombre > b.nombre) {
+        return 1;
+      }
+      return 0;
+    });
+
+    setTaxes(taxes.data);
+  }
+
+  const getClient = async () => {
+    const { id } = router.query;
+
+    const url = `/api/client/${id}`;
+    try {
+      const response = await axios.get(url);
+      const cliente = response.data;
+
+      setClient(cliente);
+
+      const fechasPresentacion = cliente.impuestos
+        .filter((impuesto: any) => impuesto.impuesto.vigencia == year)
+        .map((impuesto: any) => {
+          const i = {
+            id: impuesto.id,
+            idImpuesto: impuesto.impuesto.id,
+            tipo: impuesto.impuesto.tipo,
+            nombre: impuesto.impuesto.nombre,
+            cuotas: [],
+        };
+
+        i.cuotas = impuesto.cuotas.map((cuota: any) => {
+          cuota.fecha_limite = new Date(cuota.fecha_limite);
+          return { fecha: cuota.fecha_limite };
         });
 
-        taxes.data.sort((a: any, b: any) => {
-            if (a.nombre < b.nombre) {
-                return -1;
-            }
-            if (a.nombre > b.nombre) {
-                return 1;
-            }
-            return 0;
-        });
+        return i;
+      });
 
-        setTaxes(taxes.data);
-    }
-
-    const getClient = async () => {
-        const { id } = router.query;
-
-        const url = `/api/client/${id}`;
-        try {
-            const response = await axios.get(url);
-            const cliente = response.data;
-
-            setClient(cliente);
-
-            const fechasPresentacion = cliente.impuestos.map((impuesto: any) => {
-                const i = { id: impuesto.id, idImpuesto: impuesto.impuesto.id, tipo: impuesto.impuesto.tipo, nombre: impuesto.impuesto.nombre, cuotas: [] };
-
-                i.cuotas = impuesto.cuotas.map((cuota: any) => {
-                    cuota.fecha_limite = new Date(cuota.fecha_limite);
-                    return { fecha: cuota.fecha_limite };
-                });
-
-                return i;
-            });
-
-            // ordenar impuestos por nombre
-            fechasPresentacion.sort((a: any, b: any) => {
-                if (a.nombre < b.nombre) {
-                    return -1;
-                }
-                if (a.nombre > b.nombre) {
-                    return 1;
-                }
-                return 0;
-            });
-
-            handleClientTaxChange(fechasPresentacion);
-
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
+      // ordenar impuestos por nombre
+      fechasPresentacion.sort((a: any, b: any) => {
+        if (a.nombre < b.nombre) {
+          return -1;
         }
-    }
-
-    const handleClientTaxChange = (newClientTaxes: any[]) => {
-        setClientTaxes(newClientTaxes);
-    }
-
-    const handleAddTax = async (e: any) => {
-        e.preventDefault();
-
-        const taxId = parseInt(e.target['impuesto'].value);
-
-        // find it tax has been added
-        const taxOnclient = clientTaxes.find((tax) => tax.idImpuesto === taxId);
-
-        if (taxOnclient) {
-            setModalOpen(true);
-            setModalMessage('El impuesto ya ha sido agregado');
-            setError(true);
-            return;
+        if (a.nombre > b.nombre) {
+          return 1;
         }
+        return 0;
+      });
 
-        const tax = taxes.find((tax: any) => tax.id == taxId) || {} as any;
-        const cuotas = tax.cuotas.map((cuota: any) => {
-            const fechaPresentacion = cuota.fechas_presentacion.filter((fecha: any) => {
-                const nit = client.nit.toString();
-                const digitosDeAsignacion = tax.numero_digitos;
+      handleClientTaxChange(fechasPresentacion);
 
-                fecha.nit = parseInt(fecha.nit);
-                const digitosDeVerificacion = parseInt(nit.slice(nit.length - digitosDeAsignacion));
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-                if (fecha.nit == digitosDeVerificacion) {
-                    return fecha;
-                }
-            })
+  const handleClientTaxChange = (newClientTaxes: any[]) => {
+    setClientTaxes(newClientTaxes);
+  };
 
-            return fechaPresentacion[0];
-        })
+  const handleAddTax = async (e: any) => {
+    e.preventDefault();
 
-        const nuevoImpuesto = {
-            id: tax.id,
-            cuotas
+    const taxId = parseInt(e.target["impuesto"].value);
+
+    // find it tax has been added
+    const taxOnclient = clientTaxes.find((tax) => tax.idImpuesto === taxId);
+
+    if (taxOnclient) {
+      setModalOpen(true);
+      setModalMessage("El impuesto ya ha sido agregado");
+      setError(true);
+      return;
+    }
+
+    const tax = taxes.find((tax: any) => tax.id == taxId) || ({} as any);
+    const cuotas = tax.cuotas.map((cuota: any) => {
+      const fechaPresentacion = cuota.fechas_presentacion.filter(
+        (fecha: any) => {
+          const nit = client.nit.toString();
+          const digitosDeAsignacion = tax.numero_digitos;
+
+          fecha.nit = parseInt(fecha.nit);
+          const digitosDeVerificacion = parseInt(
+            nit.slice(nit.length - digitosDeAsignacion)
+          );
+
+          if (fecha.nit == digitosDeVerificacion) {
+            return fecha;
+          }
         }
+      );
 
-        const url = `/api/client/${client.id}/impuesto`;
+      return fechaPresentacion[0];
+    });
 
-        const response = await axios.post(url, nuevoImpuesto);
+    const nuevoImpuesto = {
+      id: tax.id,
+      cuotas,
+    };
 
-        const newClientTaxes = [...clientTaxes];
+    const url = `/api/client/${client.id}/impuesto`;
 
-        newClientTaxes.push({
-            id: response.data.id,
-            idImpuesto: tax.id,
-            tipo: tax.tipo,
-            nombre: tax.nombre,
-            cuotas
-        });
+    const response = await axios.post(url, nuevoImpuesto);
 
-        handleClientTaxChange(newClientTaxes);
+    const newClientTaxes = [...clientTaxes];
 
-        setModalOpen(true);
-        setModalMessage('Impuesto agregado correctamente');
-        setError(false);
-    }
+    newClientTaxes.push({
+      id: response.data.id,
+      idImpuesto: tax.id,
+      tipo: tax.tipo,
+      nombre: tax.nombre,
+      cuotas,
+    });
 
-    const handleDeleteTax = async (taxId: number) => {
-        const url = `/api/client/${client.id}/impuesto/${taxId}`;
+    handleClientTaxChange(newClientTaxes);
 
-        const response = await axios.delete(url);
+    setModalOpen(true);
+    setModalMessage("Impuesto agregado correctamente");
+    setError(false);
+  };
 
-        const newClientTaxes = clientTaxes.filter((tax) => tax.id !== taxId);
-        handleClientTaxChange(newClientTaxes);
+  const handleDeleteTax = async (taxId: number) => {
+    const url = `/api/client/${client.id}/impuesto/${taxId}`;
 
-        setModalOpen(true);
-        setModalMessage('Impuesto eliminado correctamente');
-        setError(true);
+    const response = await axios.delete(url);
 
-    }
+    const newClientTaxes = clientTaxes.filter((tax) => tax.id !== taxId);
+    handleClientTaxChange(newClientTaxes);
 
-    return (
-        <Layout>
-            <Head>
-                <title>Editar cliente</title>
-            </Head>
-            {
-                loading ? <Spinner /> :
-                    <Box className="container" justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={5}>
-                        <MessageModal modalOpen={modalOpen} setModalOpen={setModalOpen} title={modalMeessage} error={error} />
-                        <Avatar sx={{ height: 200, width: 200, marginBottom: 5 }}>
-                            <PeopleIcon sx={{ height: 140, width: 140 }} />
-                        </Avatar>
+    setModalOpen(true);
+    setModalMessage("Impuesto eliminado correctamente");
+    setError(true);
+  };
 
-                        <Typography variant='h3'>{client?.nombre_empresa}</Typography>
+  return (
+    <Layout>
+      <Head>
+        <title>Editar cliente</title>
+      </Head>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <Box
+          className="container"
+          justifyContent={"center"}
+          flexDirection="column"
+          alignItems={"center"}
+          marginTop={5}
+        >
+          <MessageModal
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            title={modalMeessage}
+            error={error}
+          />
+          <Avatar sx={{ height: 200, width: 200, marginBottom: 5 }}>
+            <PeopleIcon sx={{ height: 140, width: 140 }} />
+          </Avatar>
 
+          <Typography variant="h3">{client?.nombre_empresa}</Typography>
 
-                        <FormularioCliente cliente={client} setCliente={setClient} setModalOpen={setModalOpen} setModalMessage={setModalMessage} setError={setError} />
+          <FormularioCliente
+            cliente={client}
+            setCliente={setClient}
+            setModalOpen={setModalOpen}
+            setModalMessage={setModalMessage}
+            setError={setError}
+          />
 
-                        <Box className='container' justifyContent={'center'} flexDirection='column' alignItems={'center'} marginTop={2}>
-                            <CalendarioCliente impuestosCliente={clientTaxes} />
-                            <ImpuestosCliente impuestos={filteredTaxes} impuestosCliente={clientTaxes} handleAddTax={handleAddTax} handleDeleteTax={handleDeleteTax} />
-                        </Box>
-                    </Box>
-            }
-        </Layout>
-    )
+          <Box
+            className="container"
+            justifyContent={"center"}
+            flexDirection="column"
+            alignItems={"center"}
+            marginTop={2}
+          >
+            <CalendarioCliente impuestosCliente={clientTaxes} />
+            <ImpuestosCliente
+              impuestos={filteredTaxes}
+              impuestosCliente={clientTaxes}
+              handleAddTax={handleAddTax}
+              handleDeleteTax={handleDeleteTax}
+            />
+          </Box>
+        </Box>
+      )}
+    </Layout>
+  );
 }
-

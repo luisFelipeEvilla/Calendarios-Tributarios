@@ -93,7 +93,6 @@ export default function Client() {
       setClient(cliente);
 
       const fechasPresentacion = cliente.impuestos
-        .filter((impuesto: any) => parseInt(impuesto.impuesto.vigencia) === year)
         .map((impuesto: any) => {
           const i = {
             id: impuesto.id,

@@ -99,6 +99,7 @@ export default function Client() {
             idImpuesto: impuesto.impuesto.id,
             tipo: impuesto.impuesto.tipo,
             nombre: impuesto.impuesto.nombre,
+            vigencia: impuesto.impuesto.vigencia,
             cuotas: [],
         };
 

@@ -13,7 +13,6 @@ export default function ImpuestosCliente({ ...props }) {
 
     useEffect(() => {
         // filtrar impuestos por tipo
-        console.log(props.impuestos)
         const newImpuestos = props.impuestos.filter((impuesto: any) => impuesto.tipo == tipoImpuesto)
 
         setImpuestos(newImpuestos);

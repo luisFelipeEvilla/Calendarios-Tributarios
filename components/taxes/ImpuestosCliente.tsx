@@ -18,6 +18,9 @@ export default function ImpuestosCliente({ ...props }) {
         setImpuestos(newImpuestos);
     }, [props.impuestos, tipoImpuesto])
 
+
+    console.log("impuestos cliente", props.impuestosCliente)
+
     return (
         <Box className='container' sx={{ flexDirection: 'column', alignItems: 'center' }}>
             <Box component='form' onSubmit={props.handleAddTax} sx={{ display: 'flex', gap: 4, marginTop: 2, marginBottom: 4 }}>

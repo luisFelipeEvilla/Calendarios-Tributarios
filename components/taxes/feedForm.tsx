@@ -67,10 +67,8 @@ export default function FeedForm({ ...props }) {
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     label="Fecha de presentación"
-                                    inputFormat="MM/DD/YYYY"
                                     value={date}
                                     onChange={handleDateChange}
-                                    renderInput={(params) => <TextField {...params} />}
                                 />
                             </LocalizationProvider>
                         </FormControl>

@@ -1,18 +1,13 @@
-import { Scheduler, useScheduler } from "@aldabil/react-scheduler";
+import { Scheduler } from "@aldabil/react-scheduler";
 import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import { Box } from "@mui/material";
 import { es } from "date-fns/locale";
-import { useEffect } from "react";
+import { useMemo } from "react";
 
 type PropsType = { impuestosCliente: any[] }
 type ImpuestoCliente = { nombre: string, tipo: number, cuotas: { fecha_limite: Date }[] };
+
 export default function CalendarioCliente({ ...props }: PropsType) {
-    const { events, setEvents } = useScheduler();
-
-    useEffect(() => {
-        updateScheduler();
-    }, [props.impuestosCliente])
-
     const colores = [
         // nacionales
         '#3f51b5',
@@ -23,17 +18,17 @@ export default function CalendarioCliente({ ...props }: PropsType) {
         // seguridad social
         '#9a6ce2'
     ]
-    const updateScheduler = () => {
-        setEvents([]);
-        const events: ProcessedEvent[] = [];
+
+    const events: ProcessedEvent[] = useMemo(() => {
+        const eventsList: ProcessedEvent[] = [];
         props.impuestosCliente.forEach((impuesto: ImpuestoCliente, index: number) => {
             let color = colores[impuesto.tipo - 1];
             if (impuesto.nombre.toLowerCase().includes('seguridad social')) color = colores[3];
-            impuesto.cuotas.forEach((cuota: any) => {
+            impuesto.cuotas.forEach((cuota: any, cuotaIndex: number) => {
                 const startDate = new Date(cuota.fecha);
                 startDate.setDate(startDate.getDate() + 1);
-                events.push({
-                    event_id: index,
+                eventsList.push({
+                    event_id: `${index}-${cuotaIndex}`,
                     title: impuesto.nombre,
                     start: startDate,
                     end: startDate,
@@ -43,8 +38,8 @@ export default function CalendarioCliente({ ...props }: PropsType) {
                 })
             });
         })
-        setEvents(events);
-    };
+        return eventsList;
+    }, [props.impuestosCliente])
 
     return (
         <Box width={800} marginTop={5} marginBottom={5}>

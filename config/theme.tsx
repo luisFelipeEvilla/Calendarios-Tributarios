@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { esES } from "@mui/x-date-pickers";
+import { esES } from "@mui/x-date-pickers/locales";
 import { esES as coreEsEs } from "@mui/material/locale";
 
 const theme = createTheme({

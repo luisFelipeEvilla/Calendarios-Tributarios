@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@aldabil/react-scheduler": "^2.6.13",
+    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
@@ -18,7 +19,8 @@
     "@mui/x-date-pickers": "^7.29.4",
     "@next/font": "13.1.6",
     "@prisma/client": "^4.11.0",
-    "@react-pdf/renderer": "^3.1.9",
+    "@react-pdf/renderer": "^4.3.1",
+    "@swc/helpers": "^0.5.17",
     "@types/node": "18.11.19",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
@@ -45,7 +47,8 @@
     "typescript": "4.9.5"
   },
   "engines": {
-    "node": "22.14.0",
+    "node": "22.21.1",
     "npm": "9.5.0"
-  }
+  },
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }

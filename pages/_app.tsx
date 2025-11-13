@@ -1,19 +1,17 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { CacheProvider } from '@emotion/react';
 import theme from '../config/theme';
-import createEmotionCache from '../config/cache';
+// import createEmotionCache from '../config/cache';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { AuthProvider } from "../contexts/authContext";
 import Head from 'next/head';
 import { FiltersProvider } from '../contexts/FiltersContext';
-const clientSideEmotionCache = createEmotionCache();
+// const clientSideEmotionCache = createEmotionCache();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <FiltersProvider>
-        <CacheProvider value={clientSideEmotionCache}>
           <ThemeProvider theme={theme}>
             <Head>
               <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png" />
@@ -37,7 +35,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
             <CssBaseline />
           </ThemeProvider>
-        </CacheProvider>
       </FiltersProvider>
     </AuthProvider>
   )

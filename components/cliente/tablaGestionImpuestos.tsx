@@ -72,17 +72,12 @@ export default function TablaGestionImpuestos({ ...props }) {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 800, width: 1000 }}>
             <Box className='container'>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={esES} >
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'es'} >
                     <DatePicker
                         views={['month', 'year']}
                         label="Mes"
                         value={mes}
                         onChange={(newDate) => setMes(newDate || dayjs(new Date()))}
-                        renderInput={(params) => <TextField {...params}
-                            style={{ width: 200, margin: 'auto', marginBottom: 25 }}
-                            select={false}
-                        />
-                        }
                     />
 
                 </LocalizationProvider>

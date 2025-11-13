@@ -1,4 +1,3 @@
-import { useScheduler } from "@aldabil/react-scheduler";
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
@@ -12,7 +11,6 @@ import { Departamento } from "../../types";
 
 import styles from '../../styles/calendarioTributario/create.module.css';
 import { AccountBalance } from "@mui/icons-material";
-import { ProcessedEvent } from "@aldabil/react-scheduler/types";
 import FeedsTable from "../../components/taxes/feedsTable";
 import { periods } from "../../config";
 import TaxScheduler from "../../components/taxes/taxScheduler";
@@ -27,8 +25,6 @@ export default function CalendarioTributario() {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalTitle, setModalTitle] = useState("");
     const [error, setError] = useState(false);
-
-    const { setEvents } = useScheduler();
 
     const router = useRouter();
 
@@ -63,29 +59,6 @@ export default function CalendarioTributario() {
         }
         fetchData();
     }, [router.query.id])
-
-    useEffect(() => {
-        const updateSchedule = () => {
-            const events: ProcessedEvent[] = [];
-            impuesto.cuotas.forEach((cuota: any, index: number) => {
-                cuota.fechas_presentacion.forEach((fecha: any) => {
-                    if (typeof fecha.fecha === 'string') fecha.fecha = new Date(fecha.fecha);
-                    events.push({
-                        event_id: index,
-                        title: `${fecha.nit}`,
-                        start: fecha.fecha,
-                        end: fecha.fecha,
-                        color: '#3f51b5',
-                        textColor: 'white',
-                        allDay: true,
-                    })
-                })
-            })
-
-            setEvents(events);
-        }
-        updateSchedule();
-    }, [impuesto.cuotas])
 
     const handleSubmit = async () => {
         const url = `/api/tax/${router.query.id}`;

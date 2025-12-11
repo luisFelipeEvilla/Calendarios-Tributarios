@@ -1,21 +1,22 @@
+'use client'
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Layout from "../../components/layout";
-import TaxForm from "../../components/taxes/taxForm";
-import { cuota, Municipio, nuevoImpuesto } from "../../types";
+import Layout from "../../../components/layout";
+import TaxForm from "../../../components/taxes/taxForm";
+import { cuota, Municipio, nuevoImpuesto } from "../../../types";
 
-import { Departamento } from "../../types";
+import { Departamento } from "../../../types";
 
 import styles from '../../styles/calendarioTributario/create.module.css';
 import { AccountBalance } from "@mui/icons-material";
-import FeedsTable from "../../components/taxes/feedsTable";
-import { periods } from "../../config";
-import TaxScheduler from "../../components/taxes/taxScheduler";
-import Spinner from "../../components/layouts/spinner";
-import MessageModal from "../../components/messageModal";
+import FeedsTable from "../../../components/taxes/feedsTable";
+import { periods } from "../../../config";
+import TaxScheduler from "../../../components/taxes/taxScheduler";
+import Spinner from "../../../components/layouts/spinner";
+import MessageModal from "../../../components/messageModal";
 
 export default function CalendarioTributario() {
     const [impuesto, setImpuesto] = useState<nuevoImpuesto>({ cuotas: [] } as unknown as nuevoImpuesto);

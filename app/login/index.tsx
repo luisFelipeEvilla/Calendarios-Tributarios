@@ -1,3 +1,4 @@
+'use client'
 import Head from "next/head";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -17,7 +18,7 @@ import { useContext, useState } from "react";
 import { setCookie } from "nookies";
 
 import banner from '../public/images/login-banner.jpg';
-import { AuthContext } from "../contexts/authContext";
+import { AuthContext } from "../../../contexts/authContext";
 
 function Copyright(props: any) {
   return (

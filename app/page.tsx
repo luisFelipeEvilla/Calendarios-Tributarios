@@ -1,3 +1,4 @@
+'use client'
 import { Box, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import Head from 'next/head';

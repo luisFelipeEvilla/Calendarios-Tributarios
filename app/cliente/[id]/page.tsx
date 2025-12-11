@@ -1,3 +1,4 @@
+'use client'
 import PeopleIcon from "@mui/icons-material/People";
 import { Avatar, Box, Typography } from "@mui/material";
 import axios from "axios";

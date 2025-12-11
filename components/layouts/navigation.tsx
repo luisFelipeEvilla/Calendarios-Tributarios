@@ -1,67 +1,81 @@
-"use client"
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import HomeIcon from "@mui/icons-material/Home";
-import PeopleIcon from "@mui/icons-material/People";
-import {
-  Box,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import Drawer from "@mui/material/Drawer";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/authContext";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+"use client";
 
-export default function Navigation({ ...props }) {
+import { usePathname } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/contexts/authContext";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Users, Calendar, Landmark, LogOut, Sparkles } from "lucide-react";
+
+interface NavElement {
+  name: string;
+  path: string;
+  icon: React.ReactNode;
+}
+
+export default function Navigation() {
   const { user, logout } = useContext(AuthContext);
-  const [elements, setElements] = useState<any[]>([]);
+  const [elements, setElements] = useState<NavElement[]>([]);
   const [nombre, setNombre] = useState<string>("");
-  const router = useRouter();
+  const [rol, setRol] = useState<string>("");
+  const pathname = usePathname();
 
   useEffect(() => {
     if (user.rol == null) return;
 
-    const navegacionEmpleados = [
-      // { name: 'Home', path: '/', icon: <HomeIcon /> },
-      { name: "Clientes", path: "/cliente", icon: <PeopleIcon /> },
+    const navegacionEmpleados: NavElement[] = [
+      { name: "Clientes", path: "/cliente", icon: <Users /> },
     ];
 
-    const navegacionAdministrador = [
-      { name: "Clientes", path: "/cliente", icon: <PeopleIcon /> },
+    const navegacionAdministrador: NavElement[] = [
+      { name: "Clientes", path: "/cliente", icon: <Users /> },
       {
         name: "Configuración",
         path: "/calendarioTributario",
-        icon: <CalendarTodayIcon />,
+        icon: <Calendar />,
       },
     ];
 
-    if (user.rol.nombre == "cliente") {
-      const navegacionClientes = [
+    if (user.rol.nombre === "cliente") {
+      const navegacionClientes: NavElement[] = [
         {
           name: "Mis impuestos",
           path: `/cliente/${user.cliente.id}/gestionTributaria`,
-          icon: <AccountBalanceIcon />,
+          icon: <Landmark />,
         },
       ];
-
       setElements(navegacionClientes);
       setNombre(user.cliente.nombre_empresa);
-    } else
+      setRol("Cliente");
+    } else {
       setNombre(
         user.empleado.nombres.split(" ")[0] +
           " " +
           user.empleado.apellidos.split(" ")[0]
       );
+    }
 
-    if (user.rol.nombre == "admin") setElements(navegacionAdministrador);
-    if (user.rol.nombre == "auditor") setElements(navegacionEmpleados);
+    if (user.rol.nombre === "admin") {
+      setElements(navegacionAdministrador);
+      setRol("Administrador");
+    }
+    if (user.rol.nombre === "auditor") {
+      setElements(navegacionEmpleados);
+      setRol("Auditor");
+    }
   }, [user]);
 
   const handleNavigation = (path: string) => {
@@ -73,74 +87,85 @@ export default function Navigation({ ...props }) {
     window.location.href = "/login";
   };
 
-  const avatarStyle = {
-    width: 120,
-    height: 120,
-    boxShadow: "4px 6px 26px -7px rgba(0,0,0,0.5);",
-  };
-  const drawerStyle = {
-    width: 238,
-    height: "100vh",
-    backgroundColor: "primary.main",
-    color: "secondary.main",
-  };
-  const drawerPaperStyle = {
-    width: 238,
-    backgroundColor: "primary.main",
-    color: "secondary.main",
-  };
-  const iconsStyle = { color: "secondary.main" };
-  const itemStyle = {
-    "&:hover": {
-      transform: "scale(1.03)",
-      backgroundColor: "rgba(255,255,255,0.1)",
-    },
-  };
+  const isActive = (path: string) =>
+    pathname === path || pathname?.startsWith(path + "/");
 
   return (
-    <Drawer
-      PaperProps={{ sx: drawerPaperStyle }}
-      variant="permanent"
-      sx={drawerStyle}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          alignContent: "center",
-          marginTop: 5,
-          marginBottom: 5,
-        }}
-      >
-        <Avatar sx={avatarStyle}>
-          <Image
-            src="/images/logo.png"
-            alt="avatar"
-            width={120}
-            height={120}
-          ></Image>
-        </Avatar>
-        <Typography sx={{ marginTop: 3, marginX: "auto  " }}>
-          {nombre}
-        </Typography>
-      </Box>
-      {elements.map((element, index) => (
-        <ListItem key={index} disablePadding sx={itemStyle}>
-          <ListItemButton onClick={(e) => handleNavigation(element.path)}>
-            <ListItemIcon sx={iconsStyle}>{element.icon}</ListItemIcon>
-            <ListItemText primary={element.name} sx={iconsStyle} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-      <ListItem disablePadding sx={itemStyle}>
-        <ListItemButton onClick={(e) => handleLogout()}>
-          <ListItemIcon sx={iconsStyle}>
-            <ExitToAppIcon />
-          </ListItemIcon>
-          <ListItemText primary="Cerrar Sesión" sx={iconsStyle} />
-        </ListItemButton>
-      </ListItem>
-    </Drawer>
+    <Sidebar collapsible="icon" className="border-r-0">
+      {/* Header */}
+      <SidebarHeader className="p-3 group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
+          <Avatar className="h-9 w-9 shrink-0 ring-2 ring-sidebar-primary/30 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+            <AvatarImage src="/images/logo.png" alt="Logo" />
+            <AvatarFallback className="bg-linear-to-br from-sidebar-primary to-sidebar-primary/70 text-white font-bold text-xs">
+              CT
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+            <span className="text-sm font-semibold tracking-tight truncate text-sidebar-foreground">
+              {nombre}
+            </span>
+            <span className="text-[11px] font-medium text-sidebar-foreground/60">
+              {rol}
+            </span>
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarSeparator className="opacity-30 group-data-[collapsible=icon]:mx-2" />
+
+      <SidebarContent className="px-2 group-data-[collapsible=icon]:px-1">
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-sidebar-foreground/40 font-semibold px-2">
+            Navegación
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {elements.map((element) => {
+                const active = isActive(element.path);
+                return (
+                  <SidebarMenuItem key={element.path}>
+                    <SidebarMenuButton
+                      onClick={() => handleNavigation(element.path)}
+                      isActive={active}
+                      tooltip={element.name}
+                      className={
+                        active
+                          ? "bg-linear-to-r from-sidebar-primary to-sidebar-primary/80 text-white shadow-lg shadow-sidebar-primary/25 font-medium"
+                          : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                      }
+                    >
+                      {element.icon}
+                      <span>{element.name}</span>
+                      {active && (
+                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-2 group-data-[collapsible=icon]:p-1">
+        <SidebarSeparator className="mb-2 opacity-30 group-data-[collapsible=icon]:mx-1" />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip="Cerrar Sesión"
+              className="text-sidebar-foreground/60 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Cerrar Sesión</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+
+      <SidebarRail />
+    </Sidebar>
   );
 }

@@ -4,13 +4,13 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 
 // components
-import Layout from '../../components/layout';
-import Accordeon from '../../components/layouts/accordion';
+import Layout from '../../../components/layout';
+import Accordeon from '../../../components/layouts/accordion';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import Spinner from '../../components/layouts/spinner';
-import { Departamento, Municipio } from '../../types';
-import { FiltersContext } from '../../contexts/FiltersContext';
+import Spinner from '../../../components/layouts/spinner';
+import { Departamento, Municipio } from '../../../types';
+import { FiltersContext } from '../../../contexts/FiltersContext';
 
 
 const Home: NextPage = ({ ...props }: any) => {

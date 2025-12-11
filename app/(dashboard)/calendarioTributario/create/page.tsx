@@ -2,18 +2,18 @@
 import AccountBalance from "@mui/icons-material/AccountBalance";
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
-import Layout from "../../../components/layout";
+import Layout from "../../../../components/layout";
 
 import axios from "axios";
 import Head from "next/head";
-import { periods, tiposPersona } from '../../../config';
+import { periods, tiposPersona } from '../../../../config';
 import styles from '../../styles/calendarioTributario/create.module.css';
 
-import { Departamento, Municipio, nuevoImpuesto } from "../../../types";
-import FeedsTable from "../../../components/taxes/feedsTable";
-import TaxForm from "../../../components/taxes/taxForm";
-import TaxScheduler from "../../../components/taxes/taxScheduler";
-import MessageModal from "../../../components/messageModal";
+import { Departamento, Municipio, nuevoImpuesto } from "../../../../types";
+import FeedsTable from "../../../../components/taxes/feedsTable";
+import TaxForm from "../../../../components/taxes/taxForm";
+import TaxScheduler from "../../../../components/taxes/taxScheduler";
+import MessageModal from "../../../../components/messageModal";
 
 export default function Create({ ...props }) {
     // hooks

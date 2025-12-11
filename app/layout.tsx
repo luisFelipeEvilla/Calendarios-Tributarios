@@ -3,7 +3,7 @@ import { Providers } from "../components/providers";
 
 export default function RootLayout({ children }: any) {
   return (
-    <html lang="es" className="h-full">
+    <html lang="es">
       <body>
         <Providers>{children}</Providers>
       </body>

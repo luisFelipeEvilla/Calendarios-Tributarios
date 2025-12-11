@@ -1,15 +1,25 @@
-import { Breadcrumbs, Link } from "@mui/material";
-import Box from '@mui/material/Box';
+"use client";
+
 import Navigation from "./layouts/navigation";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
-export default function Layout({ ...props }) {
+interface LayoutProps {
+  children: React.ReactNode;
+}
 
-    return (
-        <Box sx={{ display: 'flex', height: '100vh', flexGrow: 1,}}>
-            <Navigation/>
-            <Box sx={{display: 'flex', flexDirection: 'column', flexGrow: 1}}>
-                {props.children}
-            </Box>
-        </Box >
-    )
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <SidebarProvider
+      defaultOpen={false}
+      style={{
+        "--sidebar-width": "13rem",
+        "--sidebar-width-icon": "3rem",
+      } as React.CSSProperties}
+    >
+      <Navigation />
+      <SidebarInset>
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }	

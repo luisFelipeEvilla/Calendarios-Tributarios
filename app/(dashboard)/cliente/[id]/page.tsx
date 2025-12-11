@@ -5,13 +5,13 @@ import axios from "axios";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import Layout from "../../../components/layout";
-import FormularioCliente from "../../../components/layouts/cliente/formulario";
-import Spinner from "../../../components/layouts/spinner";
-import MessageModal from "../../../components/messageModal";
-import CalendarioCliente from "../../../components/schedulers/calendarioCliente";
-import ImpuestosCliente from "../../../components/taxes/ImpuestosCliente";
-import { FiltersContext } from "../../../contexts/FiltersContext";
+import Layout from "../../../../components/layout";
+import FormularioCliente from "../../../../components/layouts/cliente/formulario";
+import Spinner from "../../../../components/layouts/spinner";
+import MessageModal from "../../../../components/messageModal";
+import CalendarioCliente from "../../../../components/schedulers/calendarioCliente";
+import ImpuestosCliente from "../../../../components/taxes/ImpuestosCliente";
+import { FiltersContext } from "../../../../contexts/FiltersContext";
 
 type Client = {
   id: number;

@@ -1,10 +1,27 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-type PropsType = {size?: string}
-export default function Spinner({...props} : PropsType) {
-    return (
-        <Box sx={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-            <CircularProgress size={props.size || '5rem'}/>
-        </Box>
-    );
+interface SpinnerProps {
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}
+
+export default function Spinner({ size = "lg", className }: SpinnerProps) {
+  const sizeClasses = {
+    sm: "h-4 w-4",
+    md: "h-6 w-6",
+    lg: "h-10 w-10",
+  };
+
+  return (
+    <div className="flex w-full h-full justify-center items-center py-8">
+      <Loader2
+        className={cn(
+          "animate-spin text-primary",
+          sizeClasses[size],
+          className
+        )}
+      />
+    </div>
+  );
 }

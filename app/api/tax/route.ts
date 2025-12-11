@@ -1,41 +1,40 @@
-import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<any |  Error>
-) {
-    
-    switch (req.method) {
-        case 'GET':
-            try {
-                // get query params
-                const { vigencia } = req.query;
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const vigencia = searchParams.get("vigencia");
 
-                const url = `${process.env.API_URL}/impuesto?vigencia=${vigencia}`
+    const url = `${process.env.API_URL}/impuesto?vigencia=${vigencia}`;
 
-                console.log(url);
+    console.log(url);
 
-                const impuestos = (await axios.get(url)).data;
-                
-                res.status(200).json(impuestos);
-            } catch (error) {
-                console.log(error);
-                res.status(500).json(error);
-            }
-            break;
-        case 'POST':
-            try {
-                const url = `${process.env.API_URL}/impuesto`
-                const response = await axios.post(url, req.body);
-                
-                res.status(200).json(response.data);
-            } catch (error) {
-                console.error(error);
-                res.status(500).json(error);
-            }
-        default:
-            break;
-    }
-   
+    const response = await fetch(url);
+    const impuestos = await response.json();
+
+    return NextResponse.json(impuestos);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error fetching impuestos" }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const url = `${process.env.API_URL}/impuesto`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error creating impuesto" }, { status: 500 });
+  }
 }

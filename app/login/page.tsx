@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2, Lock, User, KeyRound, ArrowRight } from "lucide-react";
+import { Loader2, Lock, User, KeyRound, ArrowRight, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const ROLE_ROUTES: Record<string, string> = {
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
@@ -38,7 +39,7 @@ export default function LoginPage() {
         password,
       });
 
-      if (response.statusCode !== 200) {
+      if (response.status !== 200) {
         setError("Usuario o contraseña incorrectos");
         return;
       }
@@ -171,14 +172,26 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     required
                     disabled={isLoading}
                     autoComplete="current-password"
                     onChange={clearError}
-                    className="pl-12 h-13 rounded-2xl border-slate-200 bg-slate-50/80 focus:bg-white focus:border-blue-500 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
+                    className="pl-12 pr-12 h-13 rounded-2xl border-slate-200 bg-slate-50/80 focus:bg-white focus:border-blue-500 transition-all duration-200 focus:ring-2 focus:ring-blue-500/20"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
               </div>
 

@@ -81,7 +81,7 @@ export default function AppSidebar() {
     pathname === path || pathname?.startsWith(path + "/");
 
   return (
-    <aside className="w-44 min-h-screen bg-slate-900 text-white flex flex-col">
+    <aside className="w-44 h-screen bg-slate-900 text-white flex flex-col fixed left-0 top-0 z-50">
       {/* Header */}
       <div className="p-4 border-b border-slate-700">
         <div className="flex flex-col items-center gap-2 text-center">

@@ -12,6 +12,12 @@ interface User {
   };
   cliente?: {
     id: number;
+    nombre_empresa: string;
+  };
+  empleado?: {
+    id: number;
+    nombres: string;
+    apellidos: string;
   };
 }
 

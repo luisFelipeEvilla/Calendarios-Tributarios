@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/contexts/authContext";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/authContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Calendar, Landmark, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,30 +13,32 @@ interface NavElement {
   icon: React.ReactNode;
 }
 
+const NAVEGACION_EMPLEADOS: NavElement[] = [
+  { name: "Clientes", path: "/cliente", icon: <Users className="h-5 w-5" /> },
+];
+
+const NAVEGACION_ADMINISTRADOR: NavElement[] = [
+  { name: "Clientes", path: "/cliente", icon: <Users className="h-5 w-5" /> },
+  {
+    name: "Configuración",
+    path: "/calendarioTributario",
+    icon: <Calendar className="h-5 w-5" />,
+  },
+];
+
 export default function AppSidebar() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
   const [elements, setElements] = useState<NavElement[]>([]);
   const [nombre, setNombre] = useState<string>("");
   const [rol, setRol] = useState<string>("");
   const pathname = usePathname();
 
   useEffect(() => {
-    if (user.rol == null) return;
+    if (!user?.rol) return;
 
-    const navegacionEmpleados: NavElement[] = [
-      { name: "Clientes", path: "/cliente", icon: <Users className="h-5 w-5" /> },
-    ];
+    const rolNombre = user.rol.nombre;
 
-    const navegacionAdministrador: NavElement[] = [
-      { name: "Clientes", path: "/cliente", icon: <Users className="h-5 w-5" /> },
-      {
-        name: "Configuración",
-        path: "/calendarioTributario",
-        icon: <Calendar className="h-5 w-5" />,
-      },
-    ];
-
-    if (user.rol.nombre === "cliente") {
+    if (rolNombre === "cliente" && user.cliente) {
       const navegacionClientes: NavElement[] = [
         {
           name: "Mis impuestos",
@@ -47,20 +49,22 @@ export default function AppSidebar() {
       setElements(navegacionClientes);
       setNombre(user.cliente.nombre_empresa);
       setRol("Cliente");
-    } else {
-      setNombre(
-        user.empleado.nombres.split(" ")[0] +
-          " " +
-          user.empleado.apellidos.split(" ")[0]
-      );
+      return;
     }
 
-    if (user.rol.nombre === "admin") {
-      setElements(navegacionAdministrador);
-      setRol("Administrador");
+    if (user.empleado) {
+      const nombreEmpleado =
+        user.empleado.nombres.split(" ")[0] +
+        " " +
+        user.empleado.apellidos.split(" ")[0];
+      setNombre(nombreEmpleado);
     }
-    if (user.rol.nombre === "auditor") {
-      setElements(navegacionEmpleados);
+
+    if (rolNombre === "admin") {
+      setElements(NAVEGACION_ADMINISTRADOR);
+      setRol("Administrador");
+    } else if (rolNombre === "auditor") {
+      setElements(NAVEGACION_EMPLEADOS);
       setRol("Auditor");
     }
   }, [user]);
@@ -71,7 +75,6 @@ export default function AppSidebar() {
 
   const handleLogout = () => {
     logout();
-    window.location.href = "/login";
   };
 
   const isActive = (path: string) =>
@@ -108,7 +111,7 @@ export default function AppSidebar() {
                 <button
                   onClick={() => handleNavigation(element.path)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer",
                     active
                       ? "bg-blue-600 text-white"
                       : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -130,7 +133,7 @@ export default function AppSidebar() {
       <div className="p-3 border-t border-slate-700">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors cursor-pointer"
         >
           <LogOut className="h-5 w-5" />
           <span>Cerrar Sesión</span>

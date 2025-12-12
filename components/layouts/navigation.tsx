@@ -3,22 +3,9 @@
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/authContext";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-  SidebarSeparator,
-} from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, Calendar, Landmark, LogOut, Sparkles } from "lucide-react";
+import { Users, Calendar, Landmark, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NavElement {
   name: string;
@@ -26,7 +13,7 @@ interface NavElement {
   icon: React.ReactNode;
 }
 
-export default function Navigation() {
+export default function AppSidebar() {
   const { user, logout } = useContext(AuthContext);
   const [elements, setElements] = useState<NavElement[]>([]);
   const [nombre, setNombre] = useState<string>("");
@@ -37,15 +24,15 @@ export default function Navigation() {
     if (user.rol == null) return;
 
     const navegacionEmpleados: NavElement[] = [
-      { name: "Clientes", path: "/cliente", icon: <Users /> },
+      { name: "Clientes", path: "/cliente", icon: <Users className="h-5 w-5" /> },
     ];
 
     const navegacionAdministrador: NavElement[] = [
-      { name: "Clientes", path: "/cliente", icon: <Users /> },
+      { name: "Clientes", path: "/cliente", icon: <Users className="h-5 w-5" /> },
       {
         name: "Configuración",
         path: "/calendarioTributario",
-        icon: <Calendar />,
+        icon: <Calendar className="h-5 w-5" />,
       },
     ];
 
@@ -54,7 +41,7 @@ export default function Navigation() {
         {
           name: "Mis impuestos",
           path: `/cliente/${user.cliente.id}/gestionTributaria`,
-          icon: <Landmark />,
+          icon: <Landmark className="h-5 w-5" />,
         },
       ];
       setElements(navegacionClientes);
@@ -91,81 +78,64 @@ export default function Navigation() {
     pathname === path || pathname?.startsWith(path + "/");
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
+    <aside className="w-44 min-h-screen bg-slate-900 text-white flex flex-col">
       {/* Header */}
-      <SidebarHeader className="p-3 group-data-[collapsible=icon]:p-2">
-        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
-          <Avatar className="h-9 w-9 shrink-0 ring-2 ring-sidebar-primary/30 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+      <div className="p-4 border-b border-slate-700">
+        <div className="flex flex-col items-center gap-2 text-center">
+          <Avatar className="h-12 w-12 ring-2 ring-blue-500/30">
             <AvatarImage src="/images/logo.png" alt="Logo" />
-            <AvatarFallback className="bg-linear-to-br from-sidebar-primary to-sidebar-primary/70 text-white font-bold text-xs">
+            <AvatarFallback className="bg-blue-600 text-white font-bold text-sm">
               CT
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-semibold tracking-tight truncate text-sidebar-foreground">
-              {nombre}
-            </span>
-            <span className="text-[11px] font-medium text-sidebar-foreground/60">
-              {rol}
-            </span>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold leading-tight">{nombre}</span>
+            <span className="text-xs text-slate-400">{rol}</span>
           </div>
         </div>
-      </SidebarHeader>
+      </div>
 
-      <SidebarSeparator className="opacity-30 group-data-[collapsible=icon]:mx-2" />
+      {/* Navigation */}
+      <nav className="flex-1 p-3">
+        <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold px-3 mb-2">
+          Navegación
+        </p>
+        <ul className="space-y-1">
+          {elements.map((element) => {
+            const active = isActive(element.path);
+            return (
+              <li key={element.path}>
+                <button
+                  onClick={() => handleNavigation(element.path)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    active
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                  )}
+                >
+                  {element.icon}
+                  <span>{element.name}</span>
+                  {active && (
+                    <span className="ml-auto h-2 w-2 rounded-full bg-white" />
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
-      <SidebarContent className="px-2 group-data-[collapsible=icon]:px-1">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-sidebar-foreground/40 font-semibold px-2">
-            Navegación
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {elements.map((element) => {
-                const active = isActive(element.path);
-                return (
-                  <SidebarMenuItem key={element.path}>
-                    <SidebarMenuButton
-                      onClick={() => handleNavigation(element.path)}
-                      isActive={active}
-                      tooltip={element.name}
-                      className={
-                        active
-                          ? "bg-linear-to-r from-sidebar-primary to-sidebar-primary/80 text-white shadow-lg shadow-sidebar-primary/25 font-medium"
-                          : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                      }
-                    >
-                      {element.icon}
-                      <span>{element.name}</span>
-                      {active && (
-                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter className="p-2 group-data-[collapsible=icon]:p-1">
-        <SidebarSeparator className="mb-2 opacity-30 group-data-[collapsible=icon]:mx-1" />
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={handleLogout}
-              tooltip="Cerrar Sesión"
-              className="text-sidebar-foreground/60 hover:bg-red-500/10 hover:text-red-400 transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Cerrar Sesión</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-
-      <SidebarRail />
-    </Sidebar>
+      {/* Footer */}
+      <div className="p-3 border-t border-slate-700">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+        >
+          <LogOut className="h-5 w-5" />
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </aside>
   );
 }

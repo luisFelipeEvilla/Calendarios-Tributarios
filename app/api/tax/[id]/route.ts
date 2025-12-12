@@ -1,55 +1,68 @@
-import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
-    const { id } = req.query;
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
 
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
+
+  try {
+    const url = `${process.env.API_URL}/impuesto/${id}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return NextResponse.json(false, { status: 404 });
+    }
+
+    const impuesto = await response.json();
+    return NextResponse.json(impuesto);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error fetching impuesto" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
+
+  try {
+    const body = await request.json();
     const url = `${process.env.API_URL}/impuesto/${id}`;
 
-    switch (req.method) {
-        case "GET":
-            try {
-                const url = `${process.env.API_URL}/impuesto/${id}`;
-                const impuesto = (await axios.get(url)).data;
-                if (impuesto != null) return res.status(200).json(impuesto) 
-                
-                return res.status(404).json(false);
-            } catch (error: any) {
-                res.status(500).json(error);
-            }
-            break;
-        case "PUT":	
-            try {
-                const { ...impuesto } = req.body;
-                const url = `${process.env.API_URL}/impuesto/${id}`;
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
 
-                const response = await axios.put(url, impuesto);
-                const impuestoActualizado = response.data;
-                
-                if (impuestoActualizado != null) return res.status(200).json(impuestoActualizado)
-
-                return res.status(404).json(false);
-            } catch (error: any) {
-                console.log(error)
-                res.status(500).json(error);
-            }
-        case "DELETE":
-            try {
-                const url = `${process.env.API_URL}/impuesto/${id}`;
-                const response = await axios.delete(url);
-                const deleted = response.data;
-                if (deleted != null) return res.status(200).json(deleted)
-
-                return res.status(404).json(false);
-            } catch (error: any) {
-                res.status(500).json(error);
-            }
-            break;
-    
-        default:
-            break;
+    if (!response.ok) {
+      return NextResponse.json(false, { status: 404 });
     }
+
+    const impuestoActualizado = await response.json();
+    return NextResponse.json(impuestoActualizado);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error updating impuesto" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
+
+  try {
+    const url = `${process.env.API_URL}/impuesto/${id}`;
+    const response = await fetch(url, { method: "DELETE" });
+
+    if (!response.ok) {
+      return NextResponse.json(false, { status: 404 });
+    }
+
+    const deleted = await response.json();
+    return NextResponse.json(deleted);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error deleting impuesto" }, { status: 500 });
+  }
 }

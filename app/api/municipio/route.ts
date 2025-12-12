@@ -1,25 +1,14 @@
-import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<any |  Error>
-) {
-    
-    switch (req.method) {
-        case 'GET':
-            try {
-                const url = `${process.env.NEXT_PUBLIC_API_URL}/municipio`
-                const municipalities = (await axios.get(url)).data;
+export async function GET() {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/municipio`;
+    const response = await fetch(url);
+    const municipalities = await response.json();
 
-                res.status(200).json(municipalities);
-            } catch (error) {
-                res.status(500).json(error);
-            }
-            break;
-    
-        default:
-            break;
-    }
-   
+    return NextResponse.json(municipalities);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Error fetching municipios" }, { status: 500 });
+  }
 }

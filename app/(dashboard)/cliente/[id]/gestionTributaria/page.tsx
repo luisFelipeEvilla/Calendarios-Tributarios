@@ -4,7 +4,6 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import TablaGestionImpuestos from "@/components/cliente/tablaGestionImpuestos";
-import Layout from "@/components/layout";
 import CalendarioCliente from "@/components/schedulers/calendarioCliente";
 import { getFechaConLocale } from "@/utils";
 import { Loader2 } from "lucide-react";
@@ -80,7 +79,7 @@ export default function GestionTributaria() {
   };
 
   return (
-    <Layout>
+
       <div className="flex flex-col items-center p-6">
         <h1 className="text-2xl font-bold text-foreground mb-6">
           Gestión Tributaria
@@ -100,6 +99,5 @@ export default function GestionTributaria() {
           </div>
         )}
       </div>
-    </Layout>
   );
 }

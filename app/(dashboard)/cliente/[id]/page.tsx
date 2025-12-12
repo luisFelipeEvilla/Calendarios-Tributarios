@@ -1,11 +1,10 @@
-'use client'
+"use client";
 import PeopleIcon from "@mui/icons-material/People";
 import { Avatar, Box, Typography } from "@mui/material";
 import axios from "axios";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import Layout from "../../../../components/layout";
 import FormularioCliente from "../../../../components/layouts/cliente/formulario";
 import Spinner from "../../../../components/layouts/spinner";
 import MessageModal from "../../../../components/messageModal";
@@ -44,13 +43,14 @@ export default function Client() {
 
   const { year } = useContext(FiltersContext);
   // get id from url
-  const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!id) return;
 
     getClient();
-  }, [router.isReady]);
+  }, [id]);
 
   useEffect(() => {
     getTaxes();
@@ -84,8 +84,6 @@ export default function Client() {
   }
 
   const getClient = async () => {
-    const { id } = router.query;
-
     const url = `/api/client/${id}`;
     try {
       const response = await axios.get(url);
@@ -93,15 +91,14 @@ export default function Client() {
 
       setClient(cliente);
 
-      const fechasPresentacion = cliente.impuestos
-        .map((impuesto: any) => {
-          const i = {
-            id: impuesto.id,
-            idImpuesto: impuesto.impuesto.id,
-            tipo: impuesto.impuesto.tipo,
-            nombre: impuesto.impuesto.nombre,
-            vigencia: impuesto.impuesto.vigencia,
-            cuotas: [],
+      const fechasPresentacion = cliente.impuestos.map((impuesto: any) => {
+        const i = {
+          id: impuesto.id,
+          idImpuesto: impuesto.impuesto.id,
+          tipo: impuesto.impuesto.tipo,
+          nombre: impuesto.impuesto.nombre,
+          vigencia: impuesto.impuesto.vigencia,
+          cuotas: [],
         };
 
         i.cuotas = impuesto.cuotas.map((cuota: any) => {
@@ -211,10 +208,7 @@ export default function Client() {
   };
 
   return (
-    <Layout>
-      <Head>
-        <title>Editar cliente</title>
-      </Head>
+    <>
       {loading ? (
         <Spinner />
       ) : (
@@ -262,6 +256,6 @@ export default function Client() {
           </Box>
         </Box>
       )}
-    </Layout>
+    </>
   );
 }

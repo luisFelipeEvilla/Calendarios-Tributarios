@@ -14,6 +14,7 @@ import {
   Paper,
   Skeleton,
   TextField,
+  Tooltip,
   Typography,
   alpha,
 } from "@mui/material";
@@ -44,12 +45,21 @@ export default function Clientes() {
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const sortByName = (clientsList: Client[]) => {
+    return [...clientsList].sort((a, b) =>
+      a.nombre_empresa.localeCompare(b.nombre_empresa, "es", {
+        sensitivity: "base",
+      })
+    );
+  };
+
   useEffect(() => {
     const getClients = async () => {
       try {
         const response = await axios.get("/api/client");
-        setClients(response.data);
-        setFilteredClients(response.data);
+        const sortedClients = sortByName(response.data);
+        setClients(sortedClients);
+        setFilteredClients(sortedClients);
       } catch (error) {
         console.error("Error fetching clients:", error);
       } finally {
@@ -73,7 +83,7 @@ export default function Clientes() {
         sanitizedNit.toLowerCase().includes(search.toLowerCase())
       );
     });
-    setFilteredClients(filtered);
+    setFilteredClients(sortByName(filtered));
   };
 
   const getInitials = (name: string) => {
@@ -284,17 +294,20 @@ export default function Clientes() {
                       {getInitials(client.nombre_empresa)}
                     </Avatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography
-                        variant="h6"
-                        fontWeight="600"
-                        sx={{
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {client.nombre_empresa}
-                      </Typography>
+                      <Tooltip title={client.nombre_empresa} arrow placement="top">
+                        <Typography
+                          variant="h6"
+                          fontWeight="600"
+                          sx={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            cursor: "default",
+                          }}
+                        >
+                          {client.nombre_empresa}
+                        </Typography>
+                      </Tooltip>
                       <Chip
                         size="small"
                         icon={<BadgeIcon sx={{ fontSize: 14 }} />}

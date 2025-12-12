@@ -1,68 +1,117 @@
-import  Router from "next/router";
-import { parseCookies, setCookie } from "nookies";
-import { createContext, useEffect, useState } from "react";
+"use client";
 
-export const AuthContext = createContext<any | null>(null);
+import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-export function AuthProvider({ children }: any) {
-    const [user, setUser] = useState<any>({});
-    const [token, setToken] = useState<string | null>('');
+interface User {
+  id: number;
+  username: string;
+  rol: {
+    id: number;
+    nombre: string;
+  };
+  cliente?: {
+    id: number;
+  };
+}
 
-    useEffect(() => {
-        // Comprueba si el usuario ya ha iniciado sesión
-        const cookies = parseCookies();
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (user: User, token: string) => void;
+  logout: () => void;
+}
 
-        try {
-            const userData = JSON.parse(cookies.user);
-            const token = cookies.token;
+const COOKIE_OPTIONS = {
+  maxAge: 30 * 24 * 60 * 60, // 30 días
+  path: "/",
+};
 
-            if (userData && token) {
-                setUser(userData);
-                setToken(token);
-            }
-        } catch (error) {
-            console.error(error);
-            Router.push('/login');
-        }
-    }, []);
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: true,
+  login: () => {},
+  logout: () => {},
+});
 
-    const login = (user: any, token: string) => {
-        setUser(user);
-        setToken(token);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-        // save token in cookies
-        setCookie(null, 'token', token, {
-            maxAge: 30 * 24 * 60 * 60,
-            path: '/'
-        });
+  const isLoginPage = () => {
+    if (typeof window === "undefined") return false;
+    return window.location.pathname.includes("/login");
+  };
 
-        // save user in cookies
-        setCookie(null, 'user', JSON.stringify(user), {
-            maxAge: 30 * 24 * 60 * 60,
-            path: '/',
-        });
+  const redirectToLogin = useCallback(() => {
+    if (!isLoginPage()) {
+      window.location.href = "/login";
+    }
+  }, []);
+
+  useEffect(() => {
+    const cookies = parseCookies();
+
+    if (!cookies.user || !cookies.token) {
+      setIsLoading(false);
+      redirectToLogin();
+      return;
     }
 
-    const logout = () => {
-        setUser({});
-        setToken(null);
-
-        // remove token from cookies
-        setCookie(null, 'token', '', {
-            maxAge: -1,
-            path: '/'
-        });
-
-        // remove user from cookies
-        setCookie(null, 'user', '', {
-            maxAge: -1,
-            path: '/',
-        });
+    try {
+      const userData: User = JSON.parse(cookies.user);
+      setUser(userData);
+      setToken(cookies.token);
+    } catch {
+      redirectToLogin();
+    } finally {
+      setIsLoading(false);
     }
+  }, [redirectToLogin]);
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const login = useCallback((userData: User, userToken: string) => {
+    setUser(userData);
+    setToken(userToken);
+
+    setCookie(null, "token", userToken, COOKIE_OPTIONS);
+    setCookie(null, "user", JSON.stringify(userData), COOKIE_OPTIONS);
+  }, []);
+
+  const logout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+
+    destroyCookie(null, "token", { path: "/" });
+    destroyCookie(null, "user", { path: "/" });
+
+    window.location.href = "/login";
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated: !!user && !!token,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth debe usarse dentro de un AuthProvider");
+  }
+  return context;
 }

@@ -27,14 +27,41 @@ export default function TaxForm({ impuesto, setImpuesto }: TaxFormProps) {
 
   useEffect(() => {
     const fetchDepartamentos = async () => {
-      const response = await axios.get(`/api/departamento`);
-      setDepartamentos(response.data);
+      try {
+        const response = await axios.get(`/api/departamento`);
+        console.log("Departamentos cargados:", response.data?.length || 0);
+        console.log("Estructura del primer departamento:", response.data?.[0]);
+        setDepartamentos(response.data || []);
+        
+        // Si los municipios vienen dentro de los departamentos, extraerlos
+        if (response.data?.[0]?.municipios) {
+          const todosLosMunicipios = response.data.flatMap((dep: Departamento) => 
+            dep.municipios?.map(mun => ({
+              ...mun,
+              codigo_departamento: dep.codigo_departamento
+            })) || []
+          );
+          console.log("Municipios extraídos de departamentos:", todosLosMunicipios.length);
+          if (todosLosMunicipios.length > 0) {
+            setMunicipios(todosLosMunicipios);
+            setAllMunicipios(todosLosMunicipios);
+          }
+        }
+      } catch (error) {
+        console.error("Error al cargar departamentos:", error);
+      }
     };
 
     const fetchMunicipios = async () => {
-      const response = await axios.get(`/api/municipio`);
-      setMunicipios(response.data);
-      setAllMunicipios(response.data);
+      try {
+        const response = await axios.get(`/api/municipio`);
+        console.log("Municipios cargados:", response.data?.length || 0);
+        console.log("Estructura del primer municipio:", response.data?.[0]);
+        setMunicipios(response.data || []);
+        setAllMunicipios(response.data || []);
+      } catch (error) {
+        console.error("Error al cargar municipios:", error);
+      }
     };
 
     fetchDepartamentos();
@@ -78,15 +105,33 @@ export default function TaxForm({ impuesto, setImpuesto }: TaxFormProps) {
     // @ts-ignore
     setImpuesto({ ...impuesto, departamento: departamentoCode });
 
+    console.log("Departamento seleccionado:", departamentoCode);
+    console.log("Total municipios disponibles:", allMunicipios.length);
+    console.log("Ejemplo de municipio:", allMunicipios[0]);
+
     const nuevosMunicipios = allMunicipios.filter(
-      (municipio) => municipio.codigo_departamento === departamentoCode
+      (municipio) => {
+        // Comparar como números para asegurar consistencia
+        const codigoDep = Number(municipio.codigo_departamento);
+        return codigoDep === departamentoCode;
+      }
     );
+    
+    console.log("Municipios filtrados:", nuevosMunicipios.length);
     setMunicipios(nuevosMunicipios);
   };
 
   const handleTaxTypeChange = (value: string) => {
     const taxType = parseInt(value);
-    setImpuesto({ ...impuesto, tipo: taxType });
+    // Reset departamento y municipio cuando cambia el tipo
+    setImpuesto({ 
+      ...impuesto, 
+      tipo: taxType,
+      departamento: undefined,
+      municipio: undefined 
+    });
+    // Reset municipios al listado completo
+    setMunicipios(allMunicipios);
   };
 
   return (
@@ -248,9 +293,10 @@ export default function TaxForm({ impuesto, setImpuesto }: TaxFormProps) {
             onValueChange={(value) =>
               setImpuesto({ ...impuesto, municipio: parseInt(value) as never })
             }
+            disabled={!impuesto.departamento}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Seleccione un municipio" />
+              <SelectValue placeholder={impuesto.departamento ? "Seleccione un municipio" : "Primero seleccione un departamento"} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="0">Selecciona un municipio</SelectItem>
